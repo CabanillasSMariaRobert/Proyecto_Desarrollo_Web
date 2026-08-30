@@ -2,7 +2,6 @@
 Diseño en Stitch:
 https://stitch.withgoogle.com/projects/216517536272036392
 # Estructura de carpetas
-# Proyecto_Desarrollo_Web
 ```
 Proyecto_Desarrollo_Web/
 ├── index.html
