@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi pagina web</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+ <header class="header">
+        <h1>KALZA</h1>
+
+        <nav>
+          <ul class="menu">
+            <li><a href="#">Hombre</a></li>
+            <li><a href ="#">Mujer</a></li>
+            <li><a href="#">Deportivo</a></li>
+            <li><a href="#">Casual</a></li>
+            <li><a href="#">Ofertas</a></li>
+          </ul>
+        </nav>
+
+        <div class="iconos">
+            <a href="#">🛒</a>
+            <a href="#">◉</a>
+        </div>
+
+    </header>
+    <aside class="aside">
+        <h2>MI CUENTA</h2>
+        <ul>
+            <li><a href="#">Detalles</a></li>
+            <li><a href="#">Historial de Órdenes</a></li>
+            <li><a href="#">Métodos de Pago</a></li>
+            <li><a href="#">Direcciones</a></li>
+            <li><a href="#">Cerrar Sesión</a></li>
+        </ul>
+    </aside>
+    <section class="contenido-principal">
+        <h1>Detalles personales</h1>
+        <p>Consulta y actualiza tu información personal y de contacto.</p>
+        <div class="formulario">
+            <form>
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required>
+
+                <label for="correo">Correo electrónico:</label>
+                <input type="email" id="correo" name="correo" required>
+
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" name="telefono" required>
+
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </section> 
+</body>    
+</html>
