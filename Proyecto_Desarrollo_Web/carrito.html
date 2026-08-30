@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KALZA - Carrito de Compras</title>
+</head>
+
+<body>
+    <header class="top-header">
+        <a href="index.html" class="titulo-inicio">
+            <h1>KALZA</h1>
+        </a>
+
+        <nav>
+            <a href="catalogo.html">Catalogo</a>
+            <a href="carrito.html">
+                <img src="https://www.svgrepo.com/show/440775/market-purchase.svg" alt="carrito-compras">
+            </a>
+            <a href="login.html">
+                <img src="https://www.svgrepo.com/show/532363/user-alt-1.svg" alt="login">
+            </a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="tu-carrito">
+            <h2>Tu Carrito</h2>
+            <div class="producto">
+                <div class="producto-imagen">
+                    <img src="https://http2.mlstatic.com/D_NQ_NP_893086-MPE85508742062_062025-O.webp"
+                        alt="Puma Caven 2.0 Greenside">
+                </div>
+                <div class="producto-detalles">
+                    <h3>Puma Caven 2.0 Greenside</h3>
+                    <p class="variantes">Talla: 42 | Color: Rojo</p>
+                    <div class="selector-cantidad">
+                        <button class="btn-restar">-</button>
+                        <span class="cantidad">1</span>
+                        <button class="btn-sumar">+</button>
+                    </div>
+                </div>
+                <div class="producto-precio-accion">
+                    <p class="precio">S/.300.00</p>
+                    <button class="btn-eliminar">
+                        <img src="https://www.svgrepo.com/show/533007/trash.svg" alt="icono eliminar">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section class="Resumen-pedido">
+            <h3>Resumen del pedido</h3>
+            <div class="detalles-resumen">
+                <p class="subtotal">Subtotal (1 item): <span>S/.246.00</span></p>
+                <p class="envio">Envio: <span>Calculado en el proceso de pago</span></p>
+                <p class="igv">IGV: <span>S/.54.00</span></p>
+            </div>
+            <p class="total">Total: <span>S/.300.00</span></p>
+            <a href="checkout.html">Procesar pago</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-items">
+                <a href="contacto.html">Contactenos</a>
+            </div>
+            <h4>&copy; 2026 Kalza. Todos los derechos reservados.</h4>
+        </div>
+    </footer>
+</body>
+
+</html>
