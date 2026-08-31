@@ -1,128 +1,209 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/icons/KALZA icon 1.png">
-    <title>KALZA</title>
+    <title>KALZA | Detalle de Producto</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-
 <body>
-    <header class="top-header">
-        <a href="index.html" class="titulo-inicio">
-            <h1>KALZA</h1>
-        </a>
 
-        <nav>
-            <a href="catalogo.html">Catalogo</a>
-            <a href="carrito.html">
-                <img src="https://www.svgrepo.com/show/440775/market-purchase.svg" alt="carrito-compras">
-            </a>
-            <a href="login.html">
-                <img src="https://www.svgrepo.com/show/532363/user-alt-1.svg" alt="login">
-            </a>
-        </nav>
+    <!-- ============ HEADER ============ -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="brand">KAL<span class="accent">ZA</span></a>
+            <nav class="main-nav">
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Zapatillas</a>
+                <a href="publicidad.html">Ofertas</a>
+                <a href="contacto.html">Contacto</a>
+            </nav>
+            <div class="header-actions">
+                <a href="carrito.html" class="icon-btn" aria-label="Carrito">
+                    <i class="bi bi-cart3"></i>
+                    <span class="cart-badge"></span>
+                </a>
+                <a href="login.html" class="icon-btn" aria-label="Mi cuenta">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+            </div>
+        </div>
     </header>
 
-    <main class="main-content">
-        <section class="main-product">
-            <div class="imagenes-producto">
-                <div class="imagen-arriba">
-                    <img src="https://http2.mlstatic.com/D_NQ_NP_893086-MPE85508742062_062025-O.webp" alt="imagen1">
-                </div>
-                <div class="imagen-abajo">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxMRk2cTzIq-5CaZRy5mWE0jHCa76SE4NQfHnkHjYM1Q&s"
-                        alt="imagen2">
-                </div>
-                <div class="imagen-abajo">
-                    <img src="https://http2.mlstatic.com/D_NQ_NP_724715-MPE85619183044_062025-O.webp" alt="imagen3">
-                </div>
-            </div>
+    <!-- ============ CONTENIDO (Bootstrap) ============ -->
+    <main class="py-5">
+        <div class="container">
 
-            <div class="info-producto">
-                <div class="Nombre-producto">
-                    <h3>Puma Caven 2.0 Greenside</h3>
+            <!-- PRODUCTO -->
+            <div class="row g-4 g-lg-5 mb-5">
+                <!-- GALERÍA DE IMÁGENES -->
+                <div class="col-lg-7">
+                    <div class="position-relative rounded-3 overflow-hidden mb-3"
+                        style="aspect-ratio: 4/3; background:#f5f5f5;">
+                        <img src="assets/img/banners/KALZA banner 1.jpg" class="w-100 h-100 object-fit-cover"
+                            alt="Puma Caven 2.0 Greenside">
+                        <span class="badge bg-dark position-absolute top-0 start-0 m-3 text-uppercase">Nuevo</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="rounded-3 overflow-hidden" style="aspect-ratio: 1/1; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 2.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Vista de la suela">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="rounded-3 overflow-hidden" style="aspect-ratio: 1/1; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 3.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Vista lateral">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="precio-producto">
-                    <h3>S/.300.00</h3>
-                </div>
-                <div class="Descripción">
-                    <h4>
+
+                <!-- INFORMACIÓN DEL PRODUCTO -->
+                <div class="col-lg-5">
+                    <h1 class="fs-2 fw-bold">Puma Caven 2.0 Greenside</h1>
+                    <p class="fs-5 text-muted">Zapatilla lifestyle unisex</p>
+                    <div class="fs-2 fw-bold mb-4" style="color: var(--kalza-blue);">S/ 300.00</div>
+
+                    <p class="text-muted mb-5">
                         Las Caven 2.0 le dan un sutil giro a una silueta clásica de basketball de los años 80,
                         ofreciendo un look atemporal para la cancha o fuera de ella. Combinando la comodidad de
                         SOFTFOAM+ con una estética retro, estas zapatillas unisex son la esencia del estilo deportivo.
-                    </h4>
+                    </p>
+
+                    <!-- SELECCIÓN DE TALLA -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">Seleccione una talla</span>
+                            <a href="#" class="small text-muted text-decoration-underline">Guía de tallas</a>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-sm btn-outline-dark">39</button>
+                            <button class="btn btn-sm btn-outline-dark">40</button>
+                            <button class="btn btn-sm btn-dark">41</button>
+                            <button class="btn btn-sm btn-outline-dark">42</button>
+                            <button class="btn btn-sm btn-outline-dark">43</button>
+                            <button class="btn btn-sm btn-outline-dark">44</button>
+                            <button class="btn btn-sm btn-outline-secondary disabled">45</button>
+                        </div>
+                    </div>
+
+                    <p class="small fw-semibold mb-4" style="color: var(--kalza-blue);">
+                        <i class="bi bi-check-circle me-1"></i>En stock - se envía hoy
+                    </p>
+
+                    <button class="btn btn-blue w-100 py-2 mb-3">Agregar al carrito</button>
+                    <button class="btn btn-outline-dark w-100 py-2">Favoritos</button>
                 </div>
-                <div class="seleccionar-talla">
-                    <h4>Seleccione una talla</h4>
-                    <div class="tallas-disponibles">
-                        <div class="talla">39</div>
-                        <div class="talla">40</div>
-                        <div class="talla">41</div>
-                        <div class="talla">42</div>
-                        <div class="talla">43</div>
-                        <div class="talla">44</div>
-                        <div class="talla">45</div>
+            </div>
+
+            <!-- PRODUCTOS RELACIONADOS -->
+            <section class="border-top pt-5">
+                <h2 class="kalza-section-title mb-4">Completa tu estilo</h2>
+                <div class="row g-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100 card-hover">
+                            <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 1.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Nike Court Vision Low">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="h6 fw-bold">Nike Court Vision Low</h3>
+                                <p class="mb-0 text-muted">S/ 299.90</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100 card-hover">
+                            <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 2.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Rapid Court Low">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="h6 fw-bold">Rapid Court Low</h3>
+                                <p class="mb-0 text-muted">S/ 229.00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100 card-hover">
+                            <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 3.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="James7 VE">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="h6 fw-bold">James7 VE</h3>
+                                <p class="mb-0 text-muted">S/ 149.90</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100 card-hover">
+                            <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 1.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Nike Killshot 2 Leather">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="h6 fw-bold">Nike Killshot 2 Leather</h3>
+                                <p class="mb-0 text-muted">S/ 439.90</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="agregar-carrito">
-                    <button>Agregar al carrito</button>
-                    <button>Favoritos</button>
-                </div>
-        </section>
-
-        <section class="productos-relacionados">
-            <h2>Productos Relacionados</h2>
-            <div class="contenedor-productos">
-                <!-- Producto 1 -->
-                <div class="producto-item">
-                    <a href="#">
-                        <img src="https://www.nike.com.pe/on/demandware.static/-/Sites-catalog-equinox/default/dwedae565c/images/hi-res/197599701958_1_20240805-mrtPeru.jpg"
-                            alt="Nike Court Vision Low Next Nature">
-                        <h3>Nike Court Vision Low Next Nature</h3>
-                        <p class="precio">S/.299.90</p>
-                    </a>
-                </div>
-                <!-- Producto 2 -->
-                <div class="producto-item">
-                    <a href="#">
-                        <img src="https://media.falabella.com/falabellaPE/21326663_1/w=1200,h=1200,fit=pad"
-                            alt="Rapid Court Low">
-                        <h3>Rapid Court Low</h3>
-                        <p class="precio">S/.229.00</p>
-                    </a>
-                </div>
-                <!-- Producto 3 -->
-                <div class="producto-item">
-                    <a href="#">
-                        <img src="https://media.falabella.com/falabellaPE/883643261_1/w=1200,h=1200,fit=pad"
-                            alt="JAMES7 VE">
-                        <h3>JAMES7 VE</h3>
-                        <p class="precio">S/.149.90</p>
-                    </a>
-                </div>
-                <!-- Producto 4 -->
-                <div class="producto-item">
-                    <a href="#">
-                        <img src="https://www.nike.com.pe/on/demandware.static/-/Sites-catalog-equinox/default/dwc28cb4e2/images/hi-res/883153780452_3_20241003-mrtPeru.jpg"
-                            alt="Nike Killshot 2 Leather">
-                        <h3>Nike Killshot 2 Leather</h3>
-                        <p class="precio">S/.439.90</p>
-                    </a>
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-items">
-                <a href="contacto.html">Contactenos</a>
+    <!-- ============ FOOTER ============ -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div>
+                <p class="footer-brand">KALZA</p>
+                <p class="footer-desc">Tu tienda online de zapatillas y sneakers. Camina a tu manera.</p>
             </div>
-            <h4>&copy; 2026 Kalza. Todos los derechos reservados.</h4>
+            <div class="footer-col">
+                <h4>Compañía</h4>
+                <a href="contacto.html">Sobre nosotros</a>
+                <a href="contacto.html">Política de privacidad</a>
+            </div>
+            <div class="footer-col">
+                <h4>Soporte</h4>
+                <a href="contacto.html">Contacto</a>
+                <a href="catalogo.html">Términos de servicio</a>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Zapatillas</a>
+                <a href="publicidad.html">Ofertas</a>
+                <a href="producto.html">Productos</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-inner">
+                <p>&copy; 2026 KALZA. Todos los derechos reservados.</p>
+                <div class="social">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">TikTok</a>
+                </div>
+            </div>
         </div>
     </footer>
-</body>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
 </html>

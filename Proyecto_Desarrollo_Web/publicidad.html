@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/icons/KALZA icon 1.png">
+    <title>KALZA | Ofertas y promociones</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 (CSS) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!-- Estilos propios: header / footer con CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+    <!-- ============ HEADER (CSS editable) ============ -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="brand">KAL<span class="accent">ZA</span></a>
+
+            <nav class="main-nav">
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Zapatillas</a>
+                <a href="publicidad.html" class="active">Ofertas</a>
+                <a href="contacto.html">Contacto</a>
+            </nav>
+
+            <div class="header-actions">
+                <a href="carrito.html" class="icon-btn" aria-label="Carrito">
+                    <i class="bi bi-cart3"></i>
+                    <span class="cart-badge"></span>
+                </a>
+                <a href="login.html" class="icon-btn" aria-label="Mi cuenta">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============ CONTENIDO (Bootstrap) ============ -->
+    <main class="py-5">
+        <div class="container">
+
+            <!-- HERO PROMOCIÓN -->
+            <section class="position-relative overflow-hidden rounded-4 bg-dark text-white mb-5" style="min-height:520px">
+                <img src="assets/img/banners/KALZA banner 1.jpg" alt="Oferta de temporada KALZA"
+                    class="position-absolute w-100 h-100 object-fit-cover opacity-50">
+                <div class="position-relative z-1 p-4 p-md-5" style="max-width:600px;">
+                    <span class="text-uppercase fw-semibold small bg-white text-dark px-2 py-1 rounded-1 d-inline-block mb-3">
+                        Por tiempo limitado
+                    </span>
+                    <h1 class="display-4 fw-bolder text-uppercase lh-sm mb-3" style="letter-spacing:-0.02em;">
+                        Rebajas de temporada<br>30% de descuento
+                    </h1>
+                    <p class="fs-5 text-white-50 mb-4">
+                        Eleva tu rendimiento con los últimos lanzamientos KALZA.
+                        El descuento se aplica automáticamente al finalizar la compra.
+                    </p>
+                    <a href="catalogo.html" class="btn btn-blue btn-lg px-4 py-2 text-uppercase fw-semibold">
+                        Comprar la colección <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </section>
+
+            <!-- GRID BENTO DE PROMOCIONES -->
+            <section class="row g-4 mb-2">
+
+                <!-- Banner 1 (Grande) -->
+                <div class="col-md-8">
+                    <div class="card border-0 rounded-4 overflow-hidden h-100 text-white position-relative card-hover">
+                        <img src="assets/img/banners/KALZA banner 2.jpg" class="w-100 h-100 object-fit-cover"
+                            style="min-height:360px;" alt="Esenciales urbanos">
+                        <div class="card-img-overlay d-flex flex-column justify-content-end p-4"
+                            style="background:linear-gradient(to top, rgba(0,0,0,0.75), transparent);">
+                            <h3 class="h3 fw-bold text-uppercase">Esenciales urbanos</h3>
+                            <p class="text-white-50 mb-3">Hasta 40% de descuento en modelos seleccionados.</p>
+                            <a href="catalogo.html" class="btn btn-light btn-sm text-uppercase fw-semibold w-auto px-3">
+                                Explorar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner 2 (Vertical / negro) -->
+                <div class="col-md-4">
+                    <div class="card border-0 rounded-4 overflow-hidden h-100 text-white bg-dark card-hover">
+                        <div class="card-body d-flex flex-column justify-content-between p-4" style="min-height:360px;">
+                            <span class="align-self-end bg-white text-dark text-uppercase small fw-bold px-2 py-1 rounded-1">
+                                Nuevos descuentos
+                            </span>
+                            <div>
+                                <h3 class="h3 fw-bold text-uppercase mb-3">Serie Pro<br>Footwear</h3>
+                                <a href="catalogo.html" class="fw-semibold text-uppercase small text-primary"
+                                    style="color:#0047ff !important;">
+                                    Comprar ahora <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner 3 (Envío gratis) -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 text-center d-flex align-items-center justify-content-center p-4 card-hover">
+                        <div class="card-body">
+                            <i class="bi bi-truck display-4 d-block mb-3 text-muted"></i>
+                            <h3 class="h4 fw-bold mb-2">Envío gratis express</h3>
+                            <p class="text-muted mb-0">En todos los pedidos superiores a S/ 150. Aplicado al pagar.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner 4 (Liquidación) -->
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 card-hover position-relative">
+                        <img src="assets/img/banners/KALZA banner 3.jpg" class="w-100 h-100 object-fit-cover"
+                            style="min-height:320px;" alt="Evento de liquidación">
+                        <div class="card-img-overlay d-flex flex-column justify-content-center p-4 pe-md-5"
+                            style="background:linear-gradient(to right, #f3f3f3 0%, rgba(243,243,243,0.9) 45%, transparent 100%);">
+                            <h3 class="h3 fw-bold text-uppercase mb-2">Evento de liquidación</h3>
+                            <p class="text-muted mb-4" style="max-width:380px;">
+                                Artículos finales de la última temporada. Precios imbatibles en calzado premium.
+                            </p>
+                            <div>
+                                <a href="catalogo.html" class="btn btn-dark btn-sm text-uppercase fw-semibold px-3">
+                                    Ver liquidación
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- ============ FOOTER (CSS editable) ============ -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div>
+                <p class="footer-brand">KALZA</p>
+                <p class="footer-desc">Tu tienda online de zapatillas y sneakers. Camina a tu manera.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Compañía</h4>
+                <a href="contacto.html">Sobre nosotros</a>
+                <a href="contacto.html">Política de privacidad</a>
+            </div>
+            <div class="footer-col">
+                <h4>Soporte</h4>
+                <a href="contacto.html">Contacto</a>
+                <a href="catalogo.html">Términos de servicio</a>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Zapatillas</a>
+                <a href="publicidad.html">Ofertas</a>
+                <a href="producto.html">Productos</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-inner">
+                <p>&copy; 2026 KALZA. Todos los derechos reservados.</p>
+                <div class="social">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">TikTok</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+</html>

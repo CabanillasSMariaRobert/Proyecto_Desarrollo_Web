@@ -1,178 +1,262 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KALZA: Zapatos, zapatillas y moda urbana</title>
-  </head>
-  <body>
-    <header>
-      <div>
-        <h1>KALZA</h1>
-      </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/icons/KALZA icon 1.png">
+    <title>KALZA | Zapatillas, zapatos y moda urbana</title>
 
-      <nav>
-        <ul>
-          <li><a href="index.html">Inicio</a></li>
-          <li><a href="catalogo.html">Zapatillas</a></li>
-          <li><a href="producto.html">Productos</a></li>
-          <li><a href="">Promociones</a></li>
-          <li><a href="contacto.html">Contacto</a></li>
-        </ul>
-      </nav>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-      <div>
-        <a href="carrito.html">Carrito</a>
-      </div>
+    <!-- Bootstrap 5 (CSS) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!-- Estilos propios: header / footer con CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+    <!-- ============ HEADER (CSS editable) ============ -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="brand">KAL<span class="accent">ZA</span></a>
+
+            <nav class="main-nav">
+                <a href="index.html" class="active">Inicio</a>
+                <a href="catalogo.html">Zapatillas</a>
+                <a href="publicidad.html">Ofertas</a>
+                <a href="contacto.html">Contacto</a>
+            </nav>
+
+            <div class="header-actions">
+                <a href="carrito.html" class="icon-btn" aria-label="Carrito">
+                    <i class="bi bi-cart3"></i>
+                    <span class="cart-badge"></span>
+                </a>
+                <a href="login.html" class="icon-btn" aria-label="Mi cuenta">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+            </div>
+        </div>
     </header>
 
+    <!-- ============ CONTENIDO (Bootstrap) ============ -->
     <main>
-      <section>
-        <div>
-          <p>NUEVA COLECCION</p>
-          <h2>Encuentra tu proximo par favorito</h2>
-          <p>
-            Descubre lo ultimo en tendencias y encuentra el que mas se adecue a
-            tu estilo
-          </p>
-          <a href="catalogo.html">Comprar ahora</a>
-        </div>
+        <!-- HERO -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row align-items-center g-4 g-lg-5">
+                    <div class="col-lg-6">
+                        <h1 class="display-4 fw-bolder lh-sm" style="letter-spacing:-0.02em;">
+                            Encuentra tu próximo
+                            par favorito
+                        </h1>
+                        <p class="fs-5 text-muted my-4" style="max-width: 480px;">
+                            Descubre lo último en tendencias y encuentra el que más se adecue
+                            a tu estilo.
+                        </p>
+                        <a href="catalogo.html" class="btn btn-blue btn-lg px-4 py-2">
+                            Comprar ahora
+                        </a>
+                    </div>
+                    <div class="col-lg-6">
+                        <img src="assets/img/banners/KALZA banner 1.jpg" alt="Nueva colección de zapatillas"
+                            class="img-fluid rounded-3 shadow-sm card-hover">
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div>
-          <img src="" alt="Nueva coleccion de zapatillas" />
-        </div>
-      </section>
+        <!-- CATEGORÍAS -->
+        <section class="py-5 border-top">
+            <div class="container">
+                <h2 class="kalza-section-title mb-4">Explora nuestras categorías</h2>
+                <div class="row g-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100 text-center card-hover">
+                            <img src="assets/img/banners/KALZA banner 2.jpg" class="card-img-top"
+                                alt="Zapatillas para hombre">
+                            <div class="card-body">
+                                <h3 class="h6 fw-bold">Hombre</h3>
+                                <a href="catalogo.html" class="small">Ver colección</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100 text-center card-hover">
+                            <img src="assets/img/banners/KALZA banner 3.jpg" class="card-img-top"
+                                alt="Zapatillas para mujer">
+                            <div class="card-body">
+                                <h3 class="h6 fw-bold">Mujer</h3>
+                                <a href="catalogo.html" class="small">Ver colección</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100 text-center card-hover">
+                            <img src="assets/img/banners/KALZA banner 2.jpg" class="card-img-top"
+                                alt="Zapatillas unisex">
+                            <div class="card-body">
+                                <h3 class="h6 fw-bold">Unisex</h3>
+                                <a href="catalogo.html" class="small">Ver colección</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100 text-center card-hover">
+                            <img src="assets/img/banners/KALZA banner 3.jpg" class="card-img-top"
+                                alt="Zapatillas deportivas">
+                            <div class="card-body">
+                                <h3 class="h6 fw-bold">Running</h3>
+                                <a href="catalogo.html" class="small">Ver colección</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-      <section>
-        <h2>Explora nuestras categorías</h2>
-        <div>
-          <article>
-            <img src="img/hombre.jpg" alt="Zapatillas para hombre" />
-            <h3>Hombre</h3>
-            <a href="zapatillas.html">Ver colección</a>
-          </article>
-          <article>
-            <img src="img/mujer.jpg" alt="Zapatillas para mujer" />
-            <h3>Mujer</h3>
-            <a href="zapatillas.html">Ver colección</a>
-          </article>
-          <article>
-            <img src="img/unisex.jpg" alt="Zapatillas unisex" />
-            <h3>Unisex</h3>
-            <a href="zapatillas.html">Ver colección</a>
-          </article>
-          <article>
-            <img src="img/running.jpg" alt="Zapatillas deportivas" />
-            <h3>Running</h3>
-            <a href="zapatillas.html">Ver colección</a>
-          </article>
-        </div>
-      </section>
+        <!-- PRODUCTOS DESTACADOS -->
+        <section class="py-5 border-top">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-end mb-4">
+                    <div>
+                        <h2 class="kalza-section-title mb-0">Productos destacados</h2>
+                        <p class="text-muted mb-0 mt-1">Los favoritos de nuestros clientes</p>
+                    </div>
+                    <a href="producto.html" class="fw-semibold small">
+                        Ver todas
+                    </a>
+                </div>
 
-      <section>
-        <h2>Productos destacados</h2>
-        <p>Los favoritos de nuestros clientes</p>
-        <div>
-          <article>
-            <img src="img/samba.jpg" alt="Adidas Samba OG" />
-            <p>Adidas</p>
-            <h3>Samba OG</h3>
-            <p>S/ 499.00</p>
-            <a href="producto.html">Ver producto</a>
-          </article>
-          <article>
-            <img src="img/air-force.jpg" alt="Nike Air Force 1" />
-            <p>Nike</p>
-            <h3>Air Force 1</h3>
-            <p>S/ 429.00</p>
-            <a href="producto.html">Ver producto</a>
-          </article>
-          <article>
-            <img src="img/forum.jpg" alt="Adidas Forum Low" />
-            <p>Adidas</p>
-            <h3>Forum Low</h3>
-            <p>S/ 399.00</p>
-            <a href="producto.html">Ver producto</a>
-          </article>
-          <article>
-            <img src="img/dunk.jpg" alt="Nike Dunk Low" />
-            <p>Nike</p>
-            <h3>Dunk Low</h3>
-            <p>S/ 459.00</p>
-            <a href="producto.html">Ver producto</a>
-          </article>
-        </div>
-        <div><a href="producto.html">Ver todas las zapatillas</a></div>
-      </section>
+                <div class="row g-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100 card-hover">
+                            <div class="position-relative overflow-hidden" style="aspect-ratio: 4/5; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 1.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Adidas Samba OG">
+                                <span class="badge bg-dark position-absolute top-0 start-0 m-2 text-uppercase">Nuevo</span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-1">Adidas</p>
+                                <h3 class="h6 fw-bold">Samba OG</h3>
+                                <p class="fw-bold mb-2">S/ 499.00</p>
+                                <a href="producto.html" class="btn btn-sm btn-outline-dark w-100">Ver producto</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100 card-hover">
+                            <div class="overflow-hidden" style="aspect-ratio: 4/5; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 2.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Nike Air Force 1">
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-1">Nike</p>
+                                <h3 class="h6 fw-bold">Air Force 1</h3>
+                                <p class="fw-bold mb-2">S/ 429.00</p>
+                                <a href="producto.html" class="btn btn-sm btn-outline-dark w-100">Ver producto</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100 card-hover">
+                            <div class="overflow-hidden" style="aspect-ratio: 4/5; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 3.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Adidas Forum Low">
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-1">Adidas</p>
+                                <h3 class="h6 fw-bold">Forum Low</h3>
+                                <p class="fw-bold mb-2">S/ 399.00</p>
+                                <a href="producto.html" class="btn btn-sm btn-outline-dark w-100">Ver producto</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100 card-hover">
+                            <div class="overflow-hidden" style="aspect-ratio: 4/5; background:#f5f5f5;">
+                                <img src="assets/img/banners/KALZA banner 1.jpg" class="w-100 h-100 object-fit-cover"
+                                    alt="Nike Dunk Low">
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-1">Nike</p>
+                                <h3 class="h6 fw-bold">Dunk Low</h3>
+                                <p class="fw-bold mb-2">S/ 459.00</p>
+                                <a href="producto.html" class="btn btn-sm btn-outline-dark w-100">Ver producto</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-      <section>
-        <div>
-          <p>OFERTA ESPECIAL</p>
-          <h2>Hasta 30% de descuento</h2>
-          <p>
-            Aprovecha nuestras promociones especiales en modelos seleccionados.
-          </p>
-          <a href="promociones.html">Ver promociones</a>
-        </div>
-        <div><img src="img/promocion.jpg" alt="Promoción de zapatillas" /></div>
-      </section>
-      <!-- NUEVOS PRODUCTOS -->
-      <section>
-        <h2>Recién llegados</h2>
-        <p>Descubre nuestros nuevos modelos</p>
-        <div>
-          <article>
-            <img src="img/new1.jpg" alt="Nueva zapatilla" />
-            <h3>New Balance 550</h3>
-            <p>S/ 449.00</p>
-            <a href="producto.html">Ver producto</a>
-          </article>
-          <article>
-            <img src="img/new2.jpg" alt="Nueva zapatilla" />
-            <h3>Adidas Campus</h3>
-            <p>S/ 399.00</p>
-            <a href="producto.html">Ver producto</a>
-          </article>
-          <article>
-            <img src="img/new3.jpg" alt="Nueva zapatilla" />
-            <h3>Nike Air Max</h3>
-            <p>S/ 549.00</p>
-            <a href="producto.html">Ver producto</a>
-          </article>
-        </div>
-      </section>
+        <!-- OFERTA ESPECIAL -->
+        <section class="py-5 border-top">
+            <div class="container">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-7">
+                        <p class="text-uppercase fw-semibold text-muted small mb-2">Oferta especial</p>
+                        <h2 class="display-6 fw-bold mb-3">Hasta 30% de descuento</h2>
+                        <p class="text-muted mb-4" style="max-width: 480px;">
+                            Aprovecha nuestras promociones especiales en modelos seleccionados.
+                        </p>
+                        <a href="publicidad.html" class="btn btn-blue btn-lg px-4 py-2">Ver promociones</a>
+                    </div>
+                    <div class="col-lg-5">
+                        <img src="assets/img/banners/KALZA banner 1.jpg" alt="Promoción de zapatillas"
+                            class="img-fluid rounded-3 shadow-sm">
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer>
-      <div>
-        <h3>CALZA</h3>
-        <p>Tu tienda online de zapatillas y sneakers.</p>
-      </div>
-
-      <div>
-        <h3>Enlaces</h3>
-        <ul>
-          git pull origin main
-          <li><a href="index.html">Inicio</a></li>
-          <li><a href="catalogo.html">Zapatillas</a></li>
-          <li><a href="producto.html">Productos</a></li>
-          <li><a href="contacto.html">Contacto</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h3>Contacto</h3>
-        <p>Email: contacto@calzastore.com</p>
-        <p>Teléfono: +51</p>
-      </div>
-      <div>
-        <h3>Síguenos</h3>
-        <a href="#">Instagram</a>
-        <a href="#">Facebook</a>
-        <a href="#">TikTok</a>
-      </div>
-      <hr />
-      <p>© 2026. Todos los derechos reservados.</p>
+    <!-- ============ FOOTER (CSS editable) ============ -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div>
+                <p class="footer-brand">KALZA</p>
+                <p class="footer-desc">Tu tienda online de zapatillas y sneakers. Camina a tu manera.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Compañía</h4>
+                <a href="contacto.html">Sobre nosotros</a>
+                <a href="contacto.html">Política de privacidad</a>
+            </div>
+            <div class="footer-col">
+                <h4>Soporte</h4>
+                <a href="contacto.html">Contacto</a>
+                <a href="catalogo.html">Términos de servicio</a>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Zapatillas</a>
+                <a href="publicidad.html">Ofertas</a>
+                <a href="producto.html">Productos</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-inner">
+                <p>&copy; 2026 KALZA. Todos los derechos reservados.</p>
+                <div class="social">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">TikTok</a>
+                </div>
+            </div>
+        </div>
     </footer>
-  </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
 </html>
