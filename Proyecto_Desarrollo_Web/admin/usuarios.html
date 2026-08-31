@@ -47,10 +47,7 @@
     <!-- ============ CONTENIDO ============ -->
     <div class="admin-main">
         <header class="admin-topbar">
-            <span class="user-name">John Doe</span>
-            <a href="../login.html" class="logout-link">
-                Cerrar sesión <i class="bi bi-box-arrow-right ms-1"></i>
-            </a>
+            <span class="user-name">Aldhair Salazar Manrique</span>
         </header>
 
         <main class="admin-content">
@@ -102,7 +99,7 @@
                                     <td>12</td>
                                     <td><span class="badge text-bg-success text-uppercase">Activo</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar" data-bs-toggle="modal" data-bs-target="#editModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-secondary" title="Bloquear">
@@ -122,7 +119,7 @@
                                     <td>8</td>
                                     <td><span class="badge text-bg-success text-uppercase">Activo</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar" data-bs-toggle="modal" data-bs-target="#editModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-secondary" title="Bloquear">
@@ -142,7 +139,7 @@
                                     <td>5</td>
                                     <td><span class="badge text-bg-success text-uppercase">Activo</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar" data-bs-toggle="modal" data-bs-target="#editModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-secondary" title="Bloquear">
@@ -162,7 +159,7 @@
                                     <td>2</td>
                                     <td><span class="badge text-bg-success text-uppercase">Activo</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar" data-bs-toggle="modal" data-bs-target="#editModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-secondary" title="Bloquear">
@@ -182,7 +179,7 @@
                                     <td>0</td>
                                     <td><span class="badge bg-danger text-white text-uppercase">Bloqueado</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Editar" data-bs-toggle="modal" data-bs-target="#editModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-primary" title="Desbloquear">
@@ -246,6 +243,72 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL EDITAR USUARIO -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-5 fw-bold">Editar usuario</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nombre completo</label>
+                        <input type="text" class="form-control" id="editUserNombre">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Correo electrónico</label>
+                        <input type="email" class="form-control" id="editUserMail">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold d-block">Rol</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="editRol" id="editCliente" checked>
+                            <label class="form-check-label" for="editCliente">Cliente</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="editRol" id="editAdmin">
+                            <label class="form-check-label" for="editAdmin">Administrador</label>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label fw-semibold d-block">Estado</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="editEstado" id="editUserActivo" checked>
+                            <label class="form-check-label" for="editUserActivo">Activo</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="editEstado" id="editUserBloqueado">
+                            <label class="form-check-label" for="editUserBloqueado">Bloqueado</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-dark">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Precarga el modal de edición con los datos del usuario -->
+    <script>
+        document.querySelectorAll('[data-bs-target="#editModal"]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var row = btn.closest('tr');
+                var nameCell = row.querySelector('.fw-semibold');
+                var name = nameCell.textContent.trim();
+                var initials = nameCell.querySelector('.user-avatar');
+                if (initials) name = name.replace(initials.textContent.trim(), '').trim();
+                document.getElementById('editUserNombre').value = name;
+                document.getElementById('editUserMail').value = row.cells[1].textContent.trim();
+                var activo = row.querySelector('.badge').textContent.trim() === 'Activo';
+                document.getElementById('editUserActivo').checked = activo;
+                document.getElementById('editUserBloqueado').checked = !activo;
+            });
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

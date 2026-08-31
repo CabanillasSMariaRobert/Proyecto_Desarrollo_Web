@@ -33,7 +33,7 @@
                     <i class="bi bi-cart3"></i>
                     <span class="cart-badge"></span>
                 </a>
-                <a href="login.html" class="icon-btn" aria-label="Mi cuenta">
+                <a href="perfil.html" class="icon-btn" aria-label="Mi cuenta">
                     <i class="bi bi-person-circle"></i>
                 </a>
             </div>
@@ -89,12 +89,12 @@
                             <a href="#" class="small text-muted text-decoration-underline">Guía de tallas</a>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-sm btn-outline-dark">39</button>
-                            <button class="btn btn-sm btn-outline-dark">40</button>
-                            <button class="btn btn-sm btn-dark">41</button>
-                            <button class="btn btn-sm btn-outline-dark">42</button>
-                            <button class="btn btn-sm btn-outline-dark">43</button>
-                            <button class="btn btn-sm btn-outline-dark">44</button>
+                            <button class="btn btn-sm btn-outline-dark size-btn">39</button>
+                            <button class="btn btn-sm btn-outline-dark size-btn">40</button>
+                            <button class="btn btn-sm btn-dark size-btn">41</button>
+                            <button class="btn btn-sm btn-outline-dark size-btn">42</button>
+                            <button class="btn btn-sm btn-outline-dark size-btn">43</button>
+                            <button class="btn btn-sm btn-outline-dark size-btn">44</button>
                             <button class="btn btn-sm btn-outline-secondary disabled">45</button>
                         </div>
                     </div>
@@ -175,12 +175,12 @@
             <div class="footer-col">
                 <h4>Compañía</h4>
                 <a href="contacto.html">Sobre nosotros</a>
-                <a href="contacto.html">Política de privacidad</a>
+                <a href="contacto.html#privacidad">Política de privacidad</a>
             </div>
             <div class="footer-col">
                 <h4>Soporte</h4>
                 <a href="contacto.html">Contacto</a>
-                <a href="catalogo.html">Términos de servicio</a>
+                <a href="contacto.html#terminos">Términos de servicio</a>
             </div>
             <div class="footer-col">
                 <h4>Enlaces</h4>
@@ -201,6 +201,20 @@
             </div>
         </div>
     </footer>
+
+    <!-- Selección de talla: mantener la talla seleccionada -->
+    <script>
+        document.querySelectorAll('.size-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                if (this.classList.contains('disabled')) return;
+                document.querySelectorAll('.size-btn:not(.disabled)').forEach(function (b) {
+                    b.classList.remove('btn-dark');
+                    b.classList.add('btn-outline-dark');
+                });
+                this.classList.add('btn-dark');
+            });
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

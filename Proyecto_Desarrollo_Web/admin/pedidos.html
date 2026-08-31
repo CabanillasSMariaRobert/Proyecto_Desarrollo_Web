@@ -47,10 +47,7 @@
     <!-- ============ CONTENIDO ============ -->
     <div class="admin-main">
         <header class="admin-topbar">
-            <span class="user-name">John Doe</span>
-            <a href="../login.html" class="logout-link">
-                Cerrar sesión <i class="bi bi-box-arrow-right ms-1"></i>
-            </a>
+            <span class="user-name">Aldhair Salazar Manrique</span>
         </header>
 
         <main class="admin-content">
@@ -101,7 +98,7 @@
                                     <td class="fw-bold">S/ 449.00</td>
                                     <td><span class="badge text-bg-success text-uppercase">Entregado</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle" data-bs-toggle="modal" data-bs-target="#detailModal">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </td>
@@ -114,7 +111,7 @@
                                     <td class="fw-bold">S/ 189.00</td>
                                     <td><span class="badge text-bg-warning text-dark text-uppercase">Enviado</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle" data-bs-toggle="modal" data-bs-target="#detailModal">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </td>
@@ -127,7 +124,7 @@
                                     <td class="fw-bold">S/ 320.00</td>
                                     <td><span class="badge text-bg-info text-dark text-uppercase">Pagado</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle" data-bs-toggle="modal" data-bs-target="#detailModal">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </td>
@@ -140,7 +137,7 @@
                                     <td class="fw-bold">S/ 512.00</td>
                                     <td><span class="badge text-bg-warning text-dark text-uppercase">Pendiente</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle" data-bs-toggle="modal" data-bs-target="#detailModal">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </td>
@@ -153,7 +150,7 @@
                                     <td class="fw-bold">S/ 149.00</td>
                                     <td><span class="badge bg-danger text-white text-uppercase">Cancelado</span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle">
+                                        <button class="btn btn-sm btn-outline-secondary me-1" title="Ver detalle" data-bs-toggle="modal" data-bs-target="#detailModal">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                     </td>
@@ -217,6 +214,96 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL DETALLE DE PEDIDO -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-5 fw-bold">Detalle del pedido</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <span class="small text-muted d-block">Nº de pedido</span>
+                            <span class="fw-bold text-primary" id="dtId">#20241</span>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="small text-muted d-block">Cliente</span>
+                            <span class="fw-semibold" id="dtCliente">John Doe</span>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="small text-muted d-block">Fecha</span>
+                            <span class="fw-semibold" id="dtFecha">12 may, 2026</span>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="small text-muted d-block">Estado</span>
+                            <span id="dtEstado"></span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive border rounded-3 mb-4">
+                        <table class="table align-middle mb-0 small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cant.</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Puma Caven 2.0 Greenside</td>
+                                    <td>1</td>
+                                    <td class="text-end">S/ 300.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Nike Court Vision Low</td>
+                                    <td>2</td>
+                                    <td class="text-end">S/ 149.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                        <span><span class="text-muted small">Artículos: </span><span class="fw-semibold" id="dtItems">3</span></span>
+                        <span class="fs-5 fw-bold" id="dtTotal">S/ 449.00</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Precarga el modal de detalle con los datos del pedido -->
+    <script>
+        (function () {
+            var badges = {
+                'Entregado': 'text-bg-success',
+                'Enviado': 'text-bg-warning text-dark',
+                'Pagado': 'text-bg-info text-dark',
+                'Pendiente': 'text-bg-warning text-dark',
+                'Cancelado': 'bg-danger text-white'
+            };
+            document.querySelectorAll('[data-bs-target="#detailModal"]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var cells = btn.closest('tr').querySelectorAll('td');
+                    document.getElementById('dtId').textContent = cells[0].textContent.trim();
+                    document.getElementById('dtCliente').textContent = cells[1].textContent.trim();
+                    document.getElementById('dtFecha').textContent = cells[2].textContent.trim();
+                    document.getElementById('dtItems').textContent = cells[3].textContent.trim();
+                    document.getElementById('dtTotal').textContent = cells[4].textContent.trim();
+                    var estado = cells[5].textContent.trim();
+                    document.getElementById('dtEstado').innerHTML =
+                        '<span class="badge ' + (badges[estado] || 'text-bg-secondary') + ' text-uppercase">' + estado + '</span>';
+                });
+            });
+        })();
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
