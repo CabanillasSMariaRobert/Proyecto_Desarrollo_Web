@@ -1,6 +1,6 @@
 package com.ecommerce.tienda_kalza.servicios;
 
-import com.ecommerce.tienda_kalza.dto.publico.BannerPromo;
+import com.ecommerce.tienda_kalza.dtos.publico.BannerPromo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

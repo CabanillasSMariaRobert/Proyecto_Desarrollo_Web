@@ -1,8 +1,8 @@
 package com.ecommerce.tienda_kalza.servicios;
 
-import com.ecommerce.tienda_kalza.dto.publico.DatoContacto;
-import com.ecommerce.tienda_kalza.dto.publico.HorarioAtencion;
-import com.ecommerce.tienda_kalza.dto.publico.SeccionLegal;
+import com.ecommerce.tienda_kalza.dtos.publico.DatoContacto;
+import com.ecommerce.tienda_kalza.dtos.publico.HorarioAtencion;
+import com.ecommerce.tienda_kalza.dtos.publico.SeccionLegal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

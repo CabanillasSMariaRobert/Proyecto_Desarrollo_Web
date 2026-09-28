@@ -1,7 +1,7 @@
 package com.ecommerce.tienda_kalza.controladores;
 
-import com.ecommerce.tienda_kalza.dtos.auth.LoginRequest;
-import com.ecommerce.tienda_kalza.dtos.auth.RegisterRequest;
+import com.ecommerce.tienda_kalza.dtos.auth.LoginForm;
+import com.ecommerce.tienda_kalza.dtos.auth.RegistroForm;
 import com.ecommerce.tienda_kalza.servicios.CatalogoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Pantallas de autenticacion y listado de catalogo.
  *
- * Login y registro son las unicas que usan datos reales: el form se enlaza con
- * el request de AuthController contra /api/auth. El catalogo es de prueba y
- * sale del CatalogoService.
+ * Login y registro son las unicas que usan datos reales. El render de la
+ * pantalla esta aca y el envio de los formularios vive en
+ * {@link AuthViewController}; los dos comparten los mismos DTO de formulario
+ * ({@link LoginForm} y {@link RegistroForm}). El catalogo es de prueba y sale
+ * del CatalogoService.
  */
 @Controller
 public class ViewController {
@@ -28,7 +30,7 @@ public class ViewController {
     public String login(Model model) {
         model.addAttribute("title", "KALZA | Iniciar Sesión");
         model.addAttribute("currentPage", "login");
-        model.addAttribute("loginRequest", new LoginRequest());
+        model.addAttribute("loginForm", new LoginForm());
         return "vistas/login";
     }
 
@@ -36,7 +38,7 @@ public class ViewController {
     public String registro(Model model) {
         model.addAttribute("title", "KALZA | Crear Cuenta");
         model.addAttribute("currentPage", "registro");
-        model.addAttribute("registerRequest", new RegisterRequest());
+        model.addAttribute("registroForm", new RegistroForm());
         return "vistas/registro";
     }
 

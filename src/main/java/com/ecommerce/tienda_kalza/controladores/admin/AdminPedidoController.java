@@ -1,7 +1,7 @@
 package com.ecommerce.tienda_kalza.controladores.admin;
 
-import com.ecommerce.tienda_kalza.dto.EstadoPedido;
-import com.ecommerce.tienda_kalza.dto.PedidoAdmin;
+import com.ecommerce.tienda_kalza.dtos.EstadoPedido;
+import com.ecommerce.tienda_kalza.dtos.PedidoAdmin;
 import com.ecommerce.tienda_kalza.servicios.PedidoAdminService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

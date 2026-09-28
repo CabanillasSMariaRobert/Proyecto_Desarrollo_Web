@@ -1,10 +1,10 @@
 package com.ecommerce.tienda_kalza.servicios;
 
-import com.ecommerce.tienda_kalza.dto.publico.CategoriaHome;
-import com.ecommerce.tienda_kalza.dto.publico.DestacadoHome;
-import com.ecommerce.tienda_kalza.dto.publico.PortadaHero;
-import com.ecommerce.tienda_kalza.dto.publico.PortadaOferta;
-import com.ecommerce.tienda_kalza.dto.publico.ProductoPublico;
+import com.ecommerce.tienda_kalza.dtos.publico.CategoriaHome;
+import com.ecommerce.tienda_kalza.dtos.publico.DestacadoHome;
+import com.ecommerce.tienda_kalza.dtos.publico.PortadaHero;
+import com.ecommerce.tienda_kalza.dtos.publico.PortadaOferta;
+import com.ecommerce.tienda_kalza.dtos.publico.ProductoPublico;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

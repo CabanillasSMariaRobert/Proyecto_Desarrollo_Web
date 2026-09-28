@@ -1,11 +1,11 @@
 package com.ecommerce.tienda_kalza.servicios;
 
-import com.ecommerce.tienda_kalza.dto.publico.FiltroCategoria;
-import com.ecommerce.tienda_kalza.dto.publico.Ordenamiento;
-import com.ecommerce.tienda_kalza.dto.publico.PaginaCatalogo;
-import com.ecommerce.tienda_kalza.dto.publico.ProductoPublico;
-import com.ecommerce.tienda_kalza.dto.publico.RangoPrecio;
-import com.ecommerce.tienda_kalza.dto.publico.Talla;
+import com.ecommerce.tienda_kalza.dtos.publico.FiltroCategoria;
+import com.ecommerce.tienda_kalza.dtos.publico.Ordenamiento;
+import com.ecommerce.tienda_kalza.dtos.publico.PaginaCatalogo;
+import com.ecommerce.tienda_kalza.dtos.publico.ProductoPublico;
+import com.ecommerce.tienda_kalza.dtos.publico.RangoPrecio;
+import com.ecommerce.tienda_kalza.dtos.publico.Talla;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

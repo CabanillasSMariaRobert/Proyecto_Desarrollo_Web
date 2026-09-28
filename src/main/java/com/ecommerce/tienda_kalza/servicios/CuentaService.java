@@ -1,9 +1,9 @@
 package com.ecommerce.tienda_kalza.servicios;
 
-import com.ecommerce.tienda_kalza.dto.publico.AccesoRapido;
-import com.ecommerce.tienda_kalza.dto.publico.PedidoCliente;
-import com.ecommerce.tienda_kalza.dto.publico.ResumenUsuario;
-import com.ecommerce.tienda_kalza.dto.publico.UsuarioPerfil;
+import com.ecommerce.tienda_kalza.dtos.publico.AccesoRapido;
+import com.ecommerce.tienda_kalza.dtos.publico.PedidoCliente;
+import com.ecommerce.tienda_kalza.dtos.publico.ResumenUsuario;
+import com.ecommerce.tienda_kalza.dtos.publico.UsuarioPerfil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

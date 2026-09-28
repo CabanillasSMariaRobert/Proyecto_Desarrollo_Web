@@ -1,6 +1,6 @@
 package com.ecommerce.tienda_kalza.servicios;
 
-import com.ecommerce.tienda_kalza.dto.CategoriaAdmin;
+import com.ecommerce.tienda_kalza.dtos.CategoriaAdmin;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

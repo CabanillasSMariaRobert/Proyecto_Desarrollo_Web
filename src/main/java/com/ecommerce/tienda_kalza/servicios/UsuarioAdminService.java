@@ -1,7 +1,7 @@
 package com.ecommerce.tienda_kalza.servicios;
 
-import com.ecommerce.tienda_kalza.dto.EstadoUsuario;
-import com.ecommerce.tienda_kalza.dto.UsuarioAdmin;
+import com.ecommerce.tienda_kalza.dtos.EstadoUsuario;
+import com.ecommerce.tienda_kalza.dtos.UsuarioAdmin;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

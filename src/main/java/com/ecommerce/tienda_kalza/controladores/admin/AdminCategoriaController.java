@@ -1,6 +1,6 @@
 package com.ecommerce.tienda_kalza.controladores.admin;
 
-import com.ecommerce.tienda_kalza.dto.CategoriaAdmin;
+import com.ecommerce.tienda_kalza.dtos.CategoriaAdmin;
 import com.ecommerce.tienda_kalza.servicios.CategoriaAdminService;
 import com.ecommerce.tienda_kalza.servicios.Paginacion;
 import org.springframework.stereotype.Controller;

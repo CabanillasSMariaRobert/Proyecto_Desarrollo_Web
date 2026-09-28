@@ -1,6 +1,6 @@
 package com.ecommerce.tienda_kalza.servicios;
 
-import com.ecommerce.tienda_kalza.dto.publico.PedidoCliente;
+import com.ecommerce.tienda_kalza.dtos.publico.PedidoCliente;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
