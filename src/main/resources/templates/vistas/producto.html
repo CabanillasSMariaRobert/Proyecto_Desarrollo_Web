@@ -13,14 +13,14 @@
                 <div class="col-lg-7">
                     <div class="position-relative rounded-3 overflow-hidden mb-3"
                         style="aspect-ratio: 4/3; background:#f5f5f5;">
-                        <img th:if="${not #lists.isEmpty(producto.imagenes)}" th:src="${producto.imagenes[0].src}"
+                        <img th:if="${not #lists.isEmpty(producto.imagenes)}" th:src="@{${producto.imagenes[0].src}}"
                             class="w-100 h-100 object-fit-cover" th:alt="${producto.imagenes[0].alt}">
                         <span th:if="${producto.nuevo}" class="badge bg-dark position-absolute top-0 start-0 m-3 text-uppercase">Nuevo</span>
                     </div>
                     <div class="row g-3">
                         <div class="col-6" th:each="img : ${producto.imagenes}">
                             <div class="rounded-3 overflow-hidden" style="aspect-ratio: 1/1; background:#f5f5f5;">
-                                <img th:src="${img.src}"
+                                <img th:src="@{${img.src}}"
                                     class="w-100 h-100 object-fit-cover" th:alt="${img.alt}">
                             </div>
                         </div>
@@ -69,13 +69,13 @@
                     <div class="col-6 col-md-3" th:each="rel : ${producto.relacionados}">
                         <div class="card border-0 shadow-sm h-100 card-hover">
                             <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
-                                <a th:href="@{/producto}">
-                                    <img th:src="${rel.imagen}"
+                                <a th:href="@{|/producto/${rel.id}|}">
+                                    <img th:src="@{|/img/productos/${rel.imagen}|}"
                                         class="w-100 h-100 object-fit-cover" th:alt="${rel.nombre}">
                                 </a>
                             </div>
                             <div class="card-body">
-                                <a th:href="@{/producto}" class="text-decoration-none text-dark">
+                                <a th:href="@{|/producto/${rel.id}|}" class="text-decoration-none text-dark">
                                     <h3 class="h6 fw-bold" th:text="${rel.nombre}">Nike Dunk Low</h3>
                                 </a>
                                 <p class="mb-0 text-muted" th:text="${rel.precio}">S/ 299.90</p>

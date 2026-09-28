@@ -30,7 +30,7 @@
                 style="aspect-ratio: 1/1; background: #f5f5f5"
               >
                 <img
-                  th:src="${hero.imagen}"
+                  th:src="@{${hero.imagen}}"
                   alt="Nueva colección de zapatillas"
                   class="w-100 h-100 object-fit-cover"
                 />
@@ -52,14 +52,14 @@
                   style="aspect-ratio: 1/1; background: #f5f5f5"
                 >
                   <img
-                    th:src="${cat.imagen}"
+                    th:src="@{${cat.imagen}}"
                     class="w-100 h-100 object-fit-cover"
                     th:alt="${cat.alt}"
                   />
                 </div>
                 <div class="card-body">
                   <h3 class="h6 fw-bold" th:text="${cat.nombre}">Hombre</h3>
-                  <a th:href="${cat.enlace}" class="small">Ver colección</a>
+                  <a th:href="@{${cat.enlace}}" class="small">Ver colección</a>
                 </div>
               </div>
             </div>
@@ -89,7 +89,7 @@
                 >
                   <a th:href="@{|/producto/${prod.id}|}">
                     <img
-                      th:src="${prod.imagen}"
+                      th:src="@{${prod.imagen}}"
                       class="w-100 h-100 object-fit-cover"
                       th:alt="${prod.alt}"
                     />
@@ -144,7 +144,7 @@
                 style="aspect-ratio: 1/1; background: #f5f5f5"
               >
                 <img
-                  th:src="${oferta.imagen}"
+                  th:src="@{${oferta.imagen}}"
                   alt="Promoción de zapatillas"
                   class="w-100 h-100 object-fit-cover"
                 />

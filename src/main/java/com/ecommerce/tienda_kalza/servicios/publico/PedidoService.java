@@ -6,6 +6,6 @@ import java.math.BigDecimal;
 @Service
 public class PedidoService {
     public List<PedidoCliente> obtenerPedidos() {
-        return List.of(new PedidoCliente("ORD-001", "2024-01-01", "/img/p1.jpg", "Nike", "1 item", "Entregado", "bg-success", new BigDecimal("350.00"), "/pedidos/1", "Ver"));
+        return List.of(new PedidoCliente("ORD-001", "2024-01-01", "/img/productos/nike Air Force 1.webp", "Nike", "1 item", "Entregado", "bg-success", new BigDecimal("350.00"), "/pedidos/1", "Ver"));
     }
 }

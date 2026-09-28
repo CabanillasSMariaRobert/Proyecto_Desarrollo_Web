@@ -46,7 +46,7 @@
                                 <div class="col-12 col-md-2 fw-bold" th:text="${pedido.codigo}">#ORD-99382</div>
                                 <div class="col-6 col-md-2 text-muted" th:text="${pedido.fecha}">24/10/2024</div>
                                 <div class="col-12 col-md-4 d-flex align-items-center gap-3">
-                                    <img th:src="${pedido.imagen}" alt="Producto" width="48" height="48"
+                                    <img th:src="@{${pedido.imagen}}" alt="Producto" width="48" height="48"
                                         class="rounded-3 object-fit-cover">
                                     <span th:text="${pedido.resumenProductos}">Velocity Pro X + 1 más</span>
                                 </div>
@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="col-12 col-md-2 d-flex justify-content-between align-items-center md:justify-end">
                                     <span class="fw-bold" th:text="${pedido.total}">S/ 640.00</span>
-                                    <a th:href="${pedido.accion}" class="btn btn-sm btn-outline-dark" th:text="${pedido.textoAccion}">Detalles</a>
+                                    <a th:href="@{${pedido.accion}}" class="btn btn-sm btn-outline-dark" th:text="${pedido.textoAccion}">Detalles</a>
                                 </div>
                             </div>
                         </div>

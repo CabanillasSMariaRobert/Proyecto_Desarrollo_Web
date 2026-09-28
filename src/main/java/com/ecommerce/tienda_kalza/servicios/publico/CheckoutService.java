@@ -6,6 +6,6 @@ import java.math.BigDecimal;
 @Service
 public class CheckoutService {
     public ResumenPedido obtenerResumen() {
-        return ResumenPedido.calcular(List.of(new ItemCarrito(1L, "Nike", "/img/p1.jpg", "40", "Negro", new BigDecimal("350.00"), 1)), new BigDecimal("15.00"), false, "S/ 15.00");
+        return ResumenPedido.calcular(List.of(new ItemCarrito(1L, "Nike", "/img/productos/nike Air Force 1.webp", "40", "Negro", new BigDecimal("350.00"), 1)), new BigDecimal("15.00"), false, "S/ 15.00");
     }
 }

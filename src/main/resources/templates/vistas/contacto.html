@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
 <body>
 
@@ -12,7 +12,7 @@
                     <h1 class="fs-2 fw-bold">Contacta con nosotros</h1>
                     <p class="text-muted lead">
                         Si tienes alguna pregunta, sugerencia o comentario, no dudes en ponerte en
-                        contacto con nosotros. Estamos aquí para ayudarte y asegurarnos de que tengas
+                        contacto con nosotros. Estamos aquÃ­ para ayudarte y asegurarnos de que tengas
                         la mejor experiencia posible.
                     </p>
 
@@ -20,31 +20,31 @@
                         <li class="mb-3 d-flex align-items-start gap-3">
                             <i class="bi bi-geo-alt-fill fs-4"></i>
                             <div>
-                                <h3 class="h6 mb-0">Nuestra dirección</h3>
-                                <p class="mb-0 text-muted" th:text="${datos.direccion}">123 Calle Principal, Lima, Perú</p>
+                                <h3 class="h6 mb-0">Nuestra direcciÃ³n</h3>
+                                <p class="mb-0 text-muted" th:text="${datos.get('direccion')}">123 Calle Principal, Lima, PerÃº</p>
                             </div>
                         </li>
                         <li class="mb-3 d-flex align-items-start gap-3">
                             <i class="bi bi-telephone-fill fs-4"></i>
                             <div>
-                                <h3 class="h6 mb-0">Teléfono</h3>
-                                <p class="mb-0 text-muted" th:text="${datos.telefono}">+51 (123) 456-7890</p>
+                                <h3 class="h6 mb-0">TelÃ©fono</h3>
+                                <p class="mb-0 text-muted" th:text="${datos.get('telefono')}">+51 (123) 456-7890</p>
                             </div>
                         </li>
                         <li class="mb-3 d-flex align-items-start gap-3">
                             <i class="bi bi-envelope-fill fs-4"></i>
                             <div>
-                                <h3 class="h6 mb-0">Correo electrónico</h3>
-                                <p class="mb-0 text-muted" th:text="${datos.correo}">info@kalza.com</p>
+                                <h3 class="h6 mb-0">Correo electrÃ³nico</h3>
+                                <p class="mb-0 text-muted" th:text="${datos.get('correo')}">info@kalza.com</p>
                             </div>
                         </li>
                     </ul>
 
-                    <h3 class="h6 mt-4">Horario de atención</h3>
+                    <h3 class="h6 mt-4">Horario de atenciÃ³n</h3>
                     <table class="table table-bordered w-auto">
                         <thead class="table-dark">
                             <tr>
-                                <th scope="col">Día</th>
+                                <th scope="col">DÃ­a</th>
                                 <th scope="col">Horario</th>
                             </tr>
                         </thead>
@@ -64,7 +64,7 @@
                             <input type="text" id="nombre" name="nombre" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="correo" class="form-label fw-semibold">Correo electrónico</label>
+                            <label for="correo" class="form-label fw-semibold">Correo electrÃ³nico</label>
                             <input type="email" id="correo" name="correo" class="form-control" required>
                         </div>
                         <div class="mb-3">
@@ -78,30 +78,30 @@
                 </div>
             </div>
 
-            <!-- ============ POLÍTICA DE PRIVACIDAD ============ -->
+            <!-- ============ POLÃTICA DE PRIVACIDAD ============ -->
             <section id="privacidad" class="border-top pt-5 mt-5">
-                <h2 class="fs-2 fw-bold mb-3">Política de privacidad</h2>
+                <h2 class="fs-2 fw-bold mb-3">PolÃ­tica de privacidad</h2>
                 <p class="text-muted">
-                    En KALZA nos tomamos muy en serio la protección de tus datos personales. Esta política
-                    explica qué información recopilamos, cómo la usamos y los derechos que tienes sobre ella.
+                    En KALZA nos tomamos muy en serio la protecciÃ³n de tus datos personales. Esta polÃ­tica
+                    explica quÃ© informaciÃ³n recopilamos, cÃ³mo la usamos y los derechos que tienes sobre ella.
                 </p>
 
                 <div class="row g-3 mt-1 mb-4">
                     <div class="col-md-6" th:each="faq : ${faqs}">
-                        <h3 class="h6 fw-bold" th:text="${faq.titulo}">Información que recopilamos</h3>
+                        <h3 class="h6 fw-bold" th:text="${faq.titulo}">InformaciÃ³n que recopilamos</h3>
                         <p class="text-muted mb-0" th:text="${faq.descripcion}">
-                            Nombre, correo electrónico, dirección de envío, datos de facturación y el
+                            Nombre, correo electrÃ³nico, direcciÃ³n de envÃ­o, datos de facturaciÃ³n y el
                             historial de tus compras dentro de la tienda.
                         </p>
                     </div>
                 </div>
             </section>
 
-            <!-- ============ TÉRMINOS DE SERVICIO ============ -->
+            <!-- ============ TÃ‰RMINOS DE SERVICIO ============ -->
             <section id="terminos" class="border-top pt-5 mt-5">
-                <h2 class="fs-2 fw-bold mb-3">Términos de servicio</h2>
+                <h2 class="fs-2 fw-bold mb-3">TÃ©rminos de servicio</h2>
                 <p class="text-muted">
-                    Al utilizar el sitio web de KALZA aceptas los siguientes términos y condiciones. Te
+                    Al utilizar el sitio web de KALZA aceptas los siguientes tÃ©rminos y condiciones. Te
                     recomendamos leerlos antes de realizar una compra.
                 </p>
 
@@ -109,28 +109,28 @@
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Pedidos y precios</h3>
                         <p class="text-muted mb-0">
-                            Los precios están expresados en soles (S/) e incluyen impuestos. Nos reservamos
+                            Los precios estÃ¡n expresados en soles (S/) e incluyen impuestos. Nos reservamos
                             el derecho de rechazar o cancelar pedidos por errores de stock o de precio.
                         </p>
                     </div>
                     <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Envíos y entregas</h3>
+                        <h3 class="h6 fw-bold">EnvÃ­os y entregas</h3>
                         <p class="text-muted mb-0">
-                            Los plazos de entrega son estimados y pueden variar según la disponibilidad y la
-                            zona de envío. El cliente es responsable de brindar una dirección válida.
+                            Los plazos de entrega son estimados y pueden variar segÃºn la disponibilidad y la
+                            zona de envÃ­o. El cliente es responsable de brindar una direcciÃ³n vÃ¡lida.
                         </p>
                     </div>
                     <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Devoluciones y garantía</h3>
+                        <h3 class="h6 fw-bold">Devoluciones y garantÃ­a</h3>
                         <p class="text-muted mb-0">
-                            Aceptamos devoluciones dentro de los 30 días posteriores a la compra siempre que
+                            Aceptamos devoluciones dentro de los 30 dÃ­as posteriores a la compra siempre que
                             el producto se encuentre en su estado original, sin uso y con su etiqueta.
                         </p>
                     </div>
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Responsabilidad</h3>
                         <p class="text-muted mb-0">
-                            KALZA no es responsable de daños indirectos derivados del uso indebido de los
+                            KALZA no es responsable de daÃ±os indirectos derivados del uso indebido de los
                             productos o del uso de la plataforma de forma contraria a estas condiciones.
                         </p>
                     </div>
@@ -142,3 +142,4 @@
 
 </body>
 </html>
+

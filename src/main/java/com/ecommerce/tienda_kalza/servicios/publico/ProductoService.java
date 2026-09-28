@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class ProductoService {
     public ProductoDetalle obtenerDetalle(Long id) {
         return new ProductoDetalle(id, "Nike", "Urbana", new BigDecimal("350.00"), "Desc", true, "Stock", 
-            List.of(new ImagenProducto("/img/p1.jpg", "Imagen del producto")), 
+            List.of(new ImagenProducto("/img/productos/nike Air Force 1.webp", "Imagen del producto")), 
             List.of(new Talla("40", false, true)), 
             List.of());
     }
