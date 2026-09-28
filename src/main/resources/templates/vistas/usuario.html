@@ -8,32 +8,14 @@
       <div class="container">
         <!-- RESÚMENES DEL USUARIO -->
         <section class="mb-5">
-          <h1 class="fs-2 fw-bold mb-4">Hola, John Doe</h1>
+          <h1 class="fs-2 fw-bold mb-4" th:text="|Hola, ${saludo}|"></h1>
           <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-md-4" th:each="resumen : ${resumenes}">
               <div class="card border-0 shadow-sm p-4 text-center">
-                <i class="bi bi-bag fs-1"></i>
-                <h2 class="h5 fw-bold mt-3 mb-1">Pedidos</h2>
-                <p class="text-muted mb-2">Tienes 3 pedidos realizados</p>
-                <a th:href="@{/pedidos}" class="small fw-semibold"
-                  >Ver historial</a
-                >
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card border-0 shadow-sm p-4 text-center">
-                <i class="bi bi-geo-alt fs-1"></i>
-                <h2 class="h5 fw-bold mt-3 mb-1">Direcciones</h2>
-                <p class="text-muted mb-2">1 dirección guardada</p>
-                <a th:href="@{/perfil}" class="small fw-semibold">Administrar</a>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card border-0 shadow-sm p-4 text-center">
-                <i class="bi bi-heart fs-1"></i>
-                <h2 class="h5 fw-bold mt-3 mb-1">Favoritos</h2>
-                <p class="text-muted mb-2">4 productos favoritos</p>
-                <a th:href="@{/catalogo}" class="small fw-semibold">Explorar</a>
+                <i class="bi fs-1" th:class="'bi ' + ${resumen.icono}"></i>
+                <h2 class="h5 fw-bold mt-3 mb-1" th:text="${resumen.titulo}"></h2>
+                <p class="text-muted mb-2" th:text="${resumen.detalle}"></p>
+                <a th:href="${resumen.enlace}" class="small fw-semibold" th:text="${resumen.textoEnlace}"></a>
               </div>
             </div>
           </div>
@@ -43,40 +25,13 @@
         <section>
           <h2 class="h5 fw-bold mb-4">Accesos rápidos</h2>
           <div class="row g-3">
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-3" th:each="acceso : ${accesos}">
               <a
-                th:href="@{/perfil}"
+                th:href="${acceso.enlace}"
                 class="card border-0 shadow-sm p-4 h-100 text-center text-decoration-none card-hover"
               >
-                <i class="bi bi-person fs-2"></i>
-                <span class="fw-semibold mt-2 d-block">Mi perfil</span>
-              </a>
-            </div>
-            <div class="col-6 col-md-3">
-              <a
-                th:href="@{/pedidos}"
-                class="card border-0 shadow-sm p-4 h-100 text-center text-decoration-none card-hover"
-              >
-                <i class="bi bi-box-seam fs-2"></i>
-                <span class="fw-semibold mt-2 d-block">Mis pedidos</span>
-              </a>
-            </div>
-            <div class="col-6 col-md-3">
-              <a
-                th:href="@{/carrito}"
-                class="card border-0 shadow-sm p-4 h-100 text-center text-decoration-none card-hover"
-              >
-                <i class="bi bi-cart3 fs-2"></i>
-                <span class="fw-semibold mt-2 d-block">Mi carrito</span>
-              </a>
-            </div>
-            <div class="col-6 col-md-3">
-              <a
-                th:href="@{/catalogo}"
-                class="card border-0 shadow-sm p-4 h-100 text-center text-decoration-none card-hover"
-              >
-                <i class="bi bi-bag fs-2"></i>
-                <span class="fw-semibold mt-2 d-block">Comprar</span>
+                <i class="bi fs-2" th:class="'bi ' + ${acceso.icono}"></i>
+                <span class="fw-semibold mt-2 d-block" th:text="${acceso.titulo}"></span>
               </a>
             </div>
           </div>

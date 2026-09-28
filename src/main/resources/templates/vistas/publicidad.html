@@ -7,22 +7,18 @@
     <!-- ============ CONTENIDO ============ -->
         <div class="container">
 
-            <section class="position-relative overflow-hidden rounded-4 bg-dark text-white mb-5" style="min-height:520px">
-                <img th:src="@{/img/banners/KALZA banner 1.jpg}" alt="Oferta de temporada KALZA"
+            <section class="position-relative overflow-hidden rounded-4 bg-dark text-white mb-5" style="min-height:520px"
+                th:with="b=${hero}">
+                <img th:src="@{'/img/banners/' + ${b.imagen}}" th:alt="${b.alt}"
                     class="position-absolute w-100 h-100 object-fit-cover opacity-50">
                 <div class="position-relative z-1 p-4 p-md-5" style="max-width:600px;">
-                    <span class="text-uppercase fw-semibold small bg-white text-dark px-2 py-1 rounded-1 d-inline-block mb-3">
-                        Por tiempo limitado
-                    </span>
-                    <h1 class="display-4 fw-bolder text-uppercase lh-sm mb-3" style="letter-spacing:-0.02em;">
-                        Rebajas de temporada<br>30% de descuento
-                    </h1>
-                    <p class="fs-5 text-white-50 mb-4">
-                        Eleva tu rendimiento con los últimos lanzamientos KALZA.
-                        El descuento se aplica automáticamente al finalizar la compra.
-                    </p>
-                    <a th:href="@{/catalogo}" class="btn btn-blue btn-lg px-4 py-2 text-uppercase fw-semibold">
-                        Comprar la colección <i class="bi bi-arrow-right ms-1"></i>
+                    <span class="text-uppercase fw-semibold small bg-white text-dark px-2 py-1 rounded-1 d-inline-block mb-3"
+                        th:text="${b.badge}"></span>
+                    <h1 class="display-4 fw-bolder text-uppercase lh-sm mb-3" style="letter-spacing:-0.02em;"
+                        th:text="${b.titulo}"></h1>
+                    <p class="fs-5 text-white-50 mb-4" th:text="${b.descripcion}"></p>
+                    <a th:href="${b.enlace}" class="btn btn-blue btn-lg px-4 py-2 text-uppercase fw-semibold">
+                        <span th:text="${b.textoEnlace}"></span> <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
             </section>
@@ -30,69 +26,64 @@
             <!-- GRID -->
             <section class="row g-4 mb-2">
 
-                <!-- Banner 1 -->
-                <div class="col-md-8">
-                    <div class="card border-0 rounded-4 overflow-hidden h-100 text-white position-relative card-hover">
-                        <img th:src="@{/img/banners/KALZA banner 2.jpg}" class="w-100 h-100 object-fit-cover"
-                            style="min-height:360px;" alt="Esenciales urbanos">
+                <div th:each="b : ${banners}" th:class="${b.claseColumna}">
+
+                    <!-- Banner con imagen y overlay en degradado oscuro desde abajo -->
+                    <div th:if="${b.tipo.name() == 'IMAGEN'}"
+                        class="card border-0 rounded-4 overflow-hidden h-100 text-white position-relative card-hover">
+                        <img th:src="@{'/img/banners/' + ${b.imagen}}" class="w-100 h-100 object-fit-cover"
+                            style="min-height:360px;" th:alt="${b.alt}">
                         <div class="card-img-overlay d-flex flex-column justify-content-end p-4"
                             style="background:linear-gradient(to top, rgba(0,0,0,0.75), transparent);">
-                            <h3 class="h3 fw-bold text-uppercase">Esenciales urbanos</h3>
-                            <p class="text-white-50 mb-3">Hasta 40% de descuento en modelos seleccionados.</p>
-                            <a th:href="@{/catalogo}" class="btn btn-light btn-sm text-uppercase fw-semibold w-auto px-3">
-                                Explorar
-                            </a>
+                            <h3 class="h3 fw-bold text-uppercase" th:text="${b.titulo}"></h3>
+                            <p class="text-white-50 mb-3" th:text="${b.descripcion}"></p>
+                            <a th:href="${b.enlace}" class="btn btn-light btn-sm text-uppercase fw-semibold w-auto px-3"
+                                th:text="${b.textoEnlace}"></a>
                         </div>
                     </div>
-                </div>
 
-                <!-- Banner 2 -->
-                <div class="col-md-4">
-                    <div class="card border-0 rounded-4 overflow-hidden h-100 text-white bg-dark card-hover">
+                    <!-- Bloque oscuro de texto, sin imagen -->
+                    <div th:if="${b.tipo.name() == 'TEXTO'}"
+                        class="card border-0 rounded-4 overflow-hidden h-100 text-white bg-dark card-hover">
                         <div class="card-body d-flex flex-column justify-content-between p-4" style="min-height:360px;">
-                            <span class="align-self-end bg-white text-dark text-uppercase small fw-bold px-2 py-1 rounded-1">
-                                Nuevos descuentos
-                            </span>
+                            <span class="align-self-end bg-white text-dark text-uppercase small fw-bold px-2 py-1 rounded-1"
+                                th:text="${b.badge}"></span>
                             <div>
-                                <h3 class="h3 fw-bold text-uppercase mb-3">Serie Pro<br>Footwear</h3>
-                                <a th:href="@{/catalogo}" class="fw-semibold text-uppercase small text-primary"
+                                <h3 class="h3 fw-bold text-uppercase mb-3" th:text="${b.titulo}"></h3>
+                                <a th:href="${b.enlace}" class="fw-semibold text-uppercase small text-primary"
                                     style="color:#0047ff !important;">
-                                    Comprar ahora <i class="bi bi-chevron-right"></i>
+                                    <span th:text="${b.textoEnlace}"></span> <i class="bi bi-chevron-right"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Banner 3 -->
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 text-center d-flex align-items-center justify-content-center p-4 card-hover">
+                    <!-- Tarjeta centrada con icono, sin imagen -->
+                    <div th:if="${b.tipo.name() == 'ICONO'}"
+                        class="card border-0 shadow-sm rounded-4 h-100 text-center d-flex align-items-center justify-content-center p-4 card-hover">
                         <div class="card-body">
-                            <i class="bi bi-truck display-4 d-block mb-3 text-muted"></i>
-                            <h3 class="h4 fw-bold mb-2">Envío gratis express</h3>
-                            <p class="text-muted mb-0">En todos los pedidos superiores a S/ 150. Aplicado al pagar.</p>
+                            <i th:class="|bi ${b.icono} display-4 d-block mb-3 text-muted|"></i>
+                            <h3 class="h4 fw-bold mb-2" th:text="${b.titulo}"></h3>
+                            <p class="text-muted mb-0" th:text="${b.descripcion}"></p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Banner 4 -->
-                <div class="col-md-8">
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 card-hover position-relative">
-                        <img th:src="@{/img/banners/KALZA banner 3.jpg}" class="w-100 h-100 object-fit-cover"
-                            style="min-height:320px;" alt="Evento de liquidación">
+                    <!-- Liquidacion: overlay claro desde la izquierda -->
+                    <div th:if="${b.tipo.name() == 'LIQUIDACION'}"
+                        class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 card-hover position-relative">
+                        <img th:src="@{'/img/banners/' + ${b.imagen}}" class="w-100 h-100 object-fit-cover"
+                            style="min-height:320px;" th:alt="${b.alt}">
                         <div class="card-img-overlay d-flex flex-column justify-content-center p-4 pe-md-5"
                             style="background:linear-gradient(to right, #f3f3f3 0%, rgba(243,243,243,0.9) 45%, transparent 100%);">
-                            <h3 class="h3 fw-bold text-uppercase mb-2">Evento de liquidación</h3>
-                            <p class="text-muted mb-4" style="max-width:380px;">
-                                Artículos finales de la última temporada. Precios imbatibles en calzado premium.
-                            </p>
+                            <h3 class="h3 fw-bold text-uppercase mb-2" th:text="${b.titulo}"></h3>
+                            <p class="text-muted mb-4" style="max-width:380px;" th:text="${b.descripcion}"></p>
                             <div>
-                                <a th:href="@{/catalogo}" class="btn btn-dark btn-sm text-uppercase fw-semibold px-3">
-                                    Ver liquidación
-                                </a>
+                                <a th:href="${b.enlace}" class="btn btn-dark btn-sm text-uppercase fw-semibold px-3"
+                                    th:text="${b.textoEnlace}"></a>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </section>
         </div>

@@ -17,25 +17,11 @@
                     </p>
 
                     <ul class="list-unstyled mt-4">
-                        <li class="mb-3 d-flex align-items-start gap-3">
-                            <i class="bi bi-geo-alt-fill fs-4"></i>
+                        <li class="mb-3 d-flex align-items-start gap-3" th:each="canal : ${canales}">
+                            <i class="bi fs-4" th:class="'bi ' + ${canal.icono}"></i>
                             <div>
-                                <h3 class="h6 mb-0">Nuestra dirección</h3>
-                                <p class="mb-0 text-muted">123 Calle Principal, Lima, Perú</p>
-                            </div>
-                        </li>
-                        <li class="mb-3 d-flex align-items-start gap-3">
-                            <i class="bi bi-telephone-fill fs-4"></i>
-                            <div>
-                                <h3 class="h6 mb-0">Teléfono</h3>
-                                <p class="mb-0 text-muted">+51 (123) 456-7890</p>
-                            </div>
-                        </li>
-                        <li class="mb-3 d-flex align-items-start gap-3">
-                            <i class="bi bi-envelope-fill fs-4"></i>
-                            <div>
-                                <h3 class="h6 mb-0">Correo electrónico</h3>
-                                <p class="mb-0 text-muted">info@kalza.com</p>
+                                <h3 class="h6 mb-0" th:text="${canal.titulo}"></h3>
+                                <p class="mb-0 text-muted" th:text="${canal.valor}"></p>
                             </div>
                         </li>
                     </ul>
@@ -49,17 +35,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Lunes a viernes</td>
-                                <td>9:00 AM - 6:00 PM</td>
-                            </tr>
-                            <tr>
-                                <td>Sábado</td>
-                                <td>9:00 AM - 1:00 PM</td>
-                            </tr>
-                            <tr>
-                                <td>Domingo</td>
-                                <td>Cerrado</td>
+                            <tr th:each="horario : ${horarios}">
+                                <td th:text="${horario.dia}"></td>
+                                <td th:text="${horario.horario}"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -95,33 +73,9 @@
                 </p>
 
                 <div class="row g-3 mt-1 mb-4">
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Información que recopilamos</h3>
-                        <p class="text-muted mb-0">
-                            Nombre, correo electrónico, dirección de envío, datos de facturación y el
-                            historial de tus compras dentro de la tienda.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Uso de la información</h3>
-                        <p class="text-muted mb-0">
-                            Utilizamos tus datos para procesar pedidos, gestionar tu cuenta, mejorar la
-                            experiencia de compra y enviarte ofertas si lo autorizas.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Seguridad</h3>
-                        <p class="text-muted mb-0">
-                            Tus datos se almacenan de forma segura y solo tienen acceso a ellos el personal
-                            autorizado. No compartimos tu información con terceros sin tu consentimiento.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Tus derechos</h3>
-                        <p class="text-muted mb-0">
-                            Puedes solicitar el acceso, corrección o eliminación de tus datos en cualquier
-                            momento escribiéndonos a info@kalza.com.
-                        </p>
+                    <div class="col-md-6" th:each="seccion : ${privacidad}">
+                        <h3 class="h6 fw-bold" th:text="${seccion.titulo}"></h3>
+                        <p class="text-muted mb-0" th:text="${seccion.descripcion}"></p>
                     </div>
                 </div>
             </section>
@@ -135,33 +89,9 @@
                 </p>
 
                 <div class="row g-3 mt-1 mb-4">
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Pedidos y precios</h3>
-                        <p class="text-muted mb-0">
-                            Los precios están expresados en soles (S/) e incluyen impuestos. Nos reservamos
-                            el derecho de rechazar o cancelar pedidos por errores de stock o de precio.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Envíos y entregas</h3>
-                        <p class="text-muted mb-0">
-                            Los plazos de entrega son estimados y pueden variar según la disponibilidad y la
-                            zona de envío. El cliente es responsable de brindar una dirección válida.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Devoluciones y garantía</h3>
-                        <p class="text-muted mb-0">
-                            Aceptamos devoluciones dentro de los 30 días posteriores a la compra siempre que
-                            el producto se encuentre en su estado original, sin uso y con su etiqueta.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Responsabilidad</h3>
-                        <p class="text-muted mb-0">
-                            KALZA no es responsable de daños indirectos derivados del uso indebido de los
-                            productos o del uso de la plataforma de forma contraria a estas condiciones.
-                        </p>
+                    <div class="col-md-6" th:each="seccion : ${terminos}">
+                        <h3 class="h6 fw-bold" th:text="${seccion.titulo}"></h3>
+                        <p class="text-muted mb-0" th:text="${seccion.descripcion}"></p>
                     </div>
                 </div>
             </section>

@@ -25,11 +25,13 @@ public record BannerPromo(
     public enum Tipo {
         /** Imagen a pantalla completa con overlay. */
         HERO,
-        /** Imagen con overlay en degradado. */
+        /** Imagen con overlay en degradado oscuro desde abajo. */
         IMAGEN,
         /** Bloque oscuro de texto, sin imagen. */
         TEXTO,
         /** Tarjeta centrada con icono, sin imagen. */
-        ICONO
+        ICONO,
+        /** Imagen con overlay claro desde la izquierda, para liquidaciones. */
+        LIQUIDACION
     }
 }

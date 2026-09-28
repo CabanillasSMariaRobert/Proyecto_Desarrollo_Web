@@ -1,5 +1,6 @@
 package com.ecommerce.tienda_kalza.controladores;
 
+import com.ecommerce.tienda_kalza.servicios.PublicidadService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +12,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PublicidadController {
 
+    private final PublicidadService publicidad;
+
+    public PublicidadController(PublicidadService publicidad) {
+        this.publicidad = publicidad;
+    }
+
     @GetMapping("/publicidad")
     public String publicidad(Model model) {
         model.addAttribute("title", "KALZA | Ofertas y promociones");
         model.addAttribute("currentPage", "ofertas");
+        model.addAttribute("hero", publicidad.obtenerHero());
+        model.addAttribute("banners", publicidad.obtenerBanners());
         return "vistas/publicidad";
     }
 }

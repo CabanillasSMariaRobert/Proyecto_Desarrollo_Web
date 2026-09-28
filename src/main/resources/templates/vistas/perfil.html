@@ -36,20 +36,20 @@
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold" for="firstName">Nombre</label>
-                                    <input type="text" class="form-control" id="firstName" value="John">
+                                    <input type="text" class="form-control" id="firstName" th:value="${perfil.nombre}">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold" for="lastName">Apellido</label>
-                                    <input type="text" class="form-control" id="lastName" value="Doe">
+                                    <input type="text" class="form-control" id="lastName" th:value="${perfil.apellido}">
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold" for="email">Correo electrónico</label>
-                                <input type="email" class="form-control" id="email" value="john.doe@example.com">
+                                <input type="email" class="form-control" id="email" th:value="${perfil.correo}">
                             </div>
                             <div class="mb-4">
                                 <label class="form-label fw-semibold" for="phone">Teléfono</label>
-                                <input type="tel" class="form-control" id="phone" value="+51 987 654 321">
+                                <input type="tel" class="form-control" id="phone" th:value="${perfil.telefono}">
                             </div>
                             <div class="d-flex justify-content-end border-top pt-3">
                                 <button type="button" class="btn btn-blue px-4">Guardar cambios</button>
@@ -59,40 +59,22 @@
 
                     <h3 class="h5 fw-bold mt-5 mb-3">Pedidos recientes</h3>
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6" th:each="pedido : ${pedidosRecientes}">
                             <div class="card border-0 shadow-sm h-100 p-3 card-hover">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <div>
-                                        <span class="small text-muted text-uppercase">Pedido #KF-9921</span>
-                                        <h4 class="h6 fw-bold mt-1 mb-0">AeroGlide Pro Runner</h4>
+                                        <span class="small text-muted text-uppercase"
+                                            th:text="|Pedido ${pedido.codigo}|"></span>
+                                        <h4 class="h6 fw-bold mt-1 mb-0" th:text="${pedido.nombre}"></h4>
                                     </div>
-                                    <span class="badge bg-light text-dark">Entregado</span>
+                                    <span th:class="|badge ${pedido.claseEstado}|" th:text="${pedido.estado}"></span>
                                 </div>
                                 <div class="d-flex align-items-center gap-3 border-top pt-3">
-                                    <img th:src="@{/img/productos/AeroGlide Pro Runner.webp}" alt="Producto" width="64" height="64"
+                                    <img th:src="@{'/img/productos/' + ${pedido.imagen}}" alt="Producto" width="64" height="64"
                                         class="rounded-3 object-fit-cover">
                                     <div>
-                                        <p class="fw-bold mb-1">S/ 640.00</p>
-                                        <a href="#" class="small">Ver detalles</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm h-100 p-3 card-hover">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div>
-                                        <span class="small text-muted text-uppercase">Pedido #KF-9804</span>
-                                        <h4 class="h6 fw-bold mt-1 mb-0">Quantum Court</h4>
-                                    </div>
-                                    <span class="badge bg-light text-dark">Enviado</span>
-                                </div>
-                                <div class="d-flex align-items-center gap-3 border-top pt-3">
-                                    <img th:src="@{/img/productos/Quantum Court.jpg}" alt="Producto" width="64" height="64"
-                                        class="rounded-3 object-fit-cover">
-                                    <div>
-                                        <p class="fw-bold mb-1">S/ 740.00</p>
-                                        <a href="#" class="small">Rastrear pedido</a>
+                                        <p class="fw-bold mb-1" th:text="|S/ ${pedido.total}|"></p>
+                                        <a th:href="${pedido.accion}" class="small" th:text="${pedido.textoAccion}"></a>
                                     </div>
                                 </div>
                             </div>
