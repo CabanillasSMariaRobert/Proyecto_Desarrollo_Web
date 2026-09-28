@@ -1,46 +1,42 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="https://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="assets/icons/KALZA icon 1.png">
+    <link rel="icon" type="image/png" th:href="@{/icons/KALZA icon 1.png}" />
     <title>KALZA | Historial de Pedidos</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-
-    <!-- ============ HEADER ============ -->
     <header class="site-header">
         <div class="header-inner">
-            <a href="index.html" class="brand">KAL<span class="accent">ZA</span></a>
+            <a th:href="@{/}" class="brand">KAL<span class="accent">ZA</span></a>
             <nav class="main-nav">
-                <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Zapatillas</a>
-                <a href="publicidad.html">Ofertas</a>
-                <a href="contacto.html">Contacto</a>
+                <a th:href="@{/}">Inicio</a>
+                <a th:href="@{/catalogo}">Zapatillas</a>
+                <a th:href="@{/publicidad}">Ofertas</a>
+                <a th:href="@{/contacto}">Contacto</a>
             </nav>
             <div class="header-actions">
-                <a href="carrito.html" class="icon-btn" aria-label="Carrito">
+                <a th:href="@{/carrito}" class="icon-btn" aria-label="Carrito">
                     <i class="bi bi-cart3"></i>
                     <span class="cart-badge"></span>
                 </a>
-                <a href="perfil.html" class="icon-btn" aria-label="Mi cuenta">
+                <a th:href="@{/perfil}" class="icon-btn" aria-label="Mi cuenta">
                     <i class="bi bi-person-circle"></i>
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- ============ CONTENIDO ============ -->
     <main class="py-5">
         <div class="container">
             <div class="border-bottom pb-3 mb-4">
@@ -51,19 +47,20 @@
             </div>
 
             <div class="row g-4">
-                <!-- MENÚ LATERAL -->
                 <aside class="col-md-3 col-lg-2">
                     <nav class="nav flex-column gap-1">
                         <h3 class="h6 fw-bold mb-2">Mi cuenta</h3>
-                        <a href="perfil.html" class="nav-link text-muted">
+                        <a th:href="@{/perfil}" class="nav-link text-muted">
                             <i class="bi bi-person me-2"></i>Perfil
                         </a>
-                        <a href="pedidos.html" class="nav-link fw-semibold active bg-light border-start border-2 border-dark">
+                        <a th:href="@{/pedidos}" class="nav-link fw-semibold active bg-light border-start border-2 border-dark">
                             <i class="bi bi-box-seam me-2"></i>Historial de pedidos
                         </a>
-                        <a href="login.html" class="nav-link text-muted mt-3">
-                            <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
-                        </a>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="nav-link text-muted mt-3 w-100 text-start p-0 border-0 bg-transparent">
+                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                            </button>
+                        </form>
                     </nav>
                 </aside>
 
@@ -77,62 +74,20 @@
                             <div class="text-end">Total</div>
                         </div>
 
-                        <!-- Pedido 1 -->
-                        <div class="p-3 border-bottom hover-bg">
+                        <div th:each="pedido : ${pedidos}" class="p-3 border-bottom hover-bg">
                             <div class="row g-3 align-items-center">
-                                <div class="col-12 col-md-2 fw-bold">#ORD-99382</div>
-                                <div class="col-6 col-md-2 text-muted">24/10/2024</div>
+                                <div class="col-12 col-md-2 fw-bold" th:text="'#' + ${pedido.idCompra}">#ORD-99382</div>
+                                <div class="col-6 col-md-2 text-muted" th:text="${#temporals.format(pedido.fechaCompra, 'dd/MM/yyyy')}">24/10/2024</div>
                                 <div class="col-12 col-md-4 d-flex align-items-center gap-3">
-                                    <img src="assets/img/productos/Velocity Pro X.webp" alt="Producto" width="48" height="48"
-                                        class="rounded-3 object-fit-cover">
-                                    <span>Velocity Pro X + 1 más</span>
+                                    <img th:src="${pedido.items[0].urlImagen}" th:alt="${pedido.items[0].nombreProducto}" width="48" height="48" class="rounded-3 object-fit-cover" />
+                                    <span th:text="${pedido.items[0].nombreProducto} + (${pedido.items.size() > 1} ? ' + ' + (${pedido.items.size()} - 1) + ' más' : '')">Velocity Pro X + 1 más</span>
                                 </div>
                                 <div class="col-6 col-md-2">
-                                    <span class="badge bg-light text-dark text-uppercase">Entregado</span>
-                                </div>
-                                <div class="col-12 col-md-2 d-flex justify-content-between align-items-center md:justify-end">
-                                    <span class="fw-bold">S/ 640.00</span>
-                                    <a href="#" class="btn btn-sm btn-outline-dark">Detalles</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pedido 2 -->
-                        <div class="p-3 border-bottom hover-bg">
-                            <div class="row g-3 align-items-center">
-                                <div class="col-12 col-md-2 fw-bold">#ORD-99451</div>
-                                <div class="col-6 col-md-2 text-muted">02/11/2024</div>
-                                <div class="col-12 col-md-4 d-flex align-items-center gap-3">
-                                    <img src="assets/img/productos/Aero Float.jpg" alt="Producto" width="48" height="48"
-                                        class="rounded-3 object-fit-cover">
-                                    <span>Aero Float</span>
-                                </div>
-                                <div class="col-6 col-md-2">
-                                    <span class="badge text-bg-secondary text-uppercase">Enviado</span>
+                                    <span th:class="'badge ' + ${pedido.estadoEntrega == 'entregado' ? 'bg-light text-dark' : (${pedido.estadoEntrega == 'enviado'} ? 'text-bg-secondary' : 'border border-dark text-dark')} text-uppercase" th:text="${pedido.estadoEntrega}">Entregado</span>
                                 </div>
                                 <div class="col-12 col-md-2 d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold">S/ 89.00</span>
-                                    <a href="#" class="btn btn-sm btn-outline-dark">Detalles</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pedido 3 -->
-                        <div class="p-3 hover-bg">
-                            <div class="row g-3 align-items-center">
-                                <div class="col-12 col-md-2 fw-bold">#ORD-99502</div>
-                                <div class="col-6 col-md-2 text-muted">15/11/2024</div>
-                                <div class="col-12 col-md-4 d-flex align-items-center gap-3">
-                                    <img src="assets/img/productos/Terra Grip Pro.jpg" alt="Producto" width="48" height="48"
-                                        class="rounded-3 object-fit-cover">
-                                    <span>Terra Grip Pro</span>
-                                </div>
-                                <div class="col-6 col-md-2">
-                                    <span class="badge border border-dark text-dark text-uppercase">Confirmado</span>
-                                </div>
-                                <div class="col-12 col-md-2 d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold">S/ 520.00</span>
-                                    <a href="#" class="btn btn-sm btn-outline-dark">Detalles</a>
+                                    <span class="fw-bold" th:text="'S/ ' + ${pedido.total}">S/ 640.00</span>
+                                    <a th:href="@{/pedidos/{id}(id=${pedido.idCompra})}" class="btn btn-sm btn-outline-dark">Detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +97,6 @@
         </div>
     </main>
 
-    <!-- ============ FOOTER ============ -->
     <footer class="site-footer">
         <div class="footer-grid">
             <div>
@@ -151,20 +105,20 @@
             </div>
             <div class="footer-col">
                 <h4>Compañía</h4>
-                <a href="contacto.html">Sobre nosotros</a>
-                <a href="contacto.html#privacidad">Política de privacidad</a>
+                <a th:href="@{/contacto}">Sobre nosotros</a>
+                <a th:href="@{/contacto#privacidad}">Política de privacidad</a>
             </div>
             <div class="footer-col">
                 <h4>Soporte</h4>
-                <a href="contacto.html">Contacto</a>
-                <a href="contacto.html#terminos">Términos de servicio</a>
+                <a th:href="@{/contacto}">Contacto</a>
+                <a th:href="@{/contacto#terminos}">Términos de servicio</a>
             </div>
             <div class="footer-col">
                 <h4>Enlaces</h4>
-                <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Zapatillas</a>
-                <a href="publicidad.html">Ofertas</a>
-                <a href="producto.html">Productos</a>
+                <a th:href="@{/}">Inicio</a>
+                <a th:href="@{/catalogo}">Zapatillas</a>
+                <a th:href="@{/publicidad}">Ofertas</a>
+                <a th:href="@{/producto}">Productos</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -179,8 +133,6 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

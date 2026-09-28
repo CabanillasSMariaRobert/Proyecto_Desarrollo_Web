@@ -1,57 +1,48 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="https://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="assets/icons/KALZA icon 1.png">
+    <link rel="icon" type="image/png" th:href="@{/icons/KALZA icon 1.png}" />
     <title>KALZA | Contacto</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-
-    <!-- ============ HEADER ============ -->
     <header class="site-header">
         <div class="header-inner">
-            <a href="index.html" class="brand">KAL<span class="accent">ZA</span></a>
+            <a th:href="@{/}" class="brand">KAL<span class="accent">ZA</span></a>
             <nav class="main-nav">
-                <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Zapatillas</a>
-                <a href="publicidad.html">Ofertas</a>
-                <a href="contacto.html" class="active">Contacto</a>
+                <a th:href="@{/}">Inicio</a>
+                <a th:href="@{/catalogo}">Zapatillas</a>
+                <a th:href="@{/publicidad}">Ofertas</a>
+                <a th:href="@{/contacto}" class="active">Contacto</a>
             </nav>
             <div class="header-actions">
-                <a href="carrito.html" class="icon-btn" aria-label="Carrito">
+                <a th:href="@{/carrito}" class="icon-btn" aria-label="Carrito">
                     <i class="bi bi-cart3"></i>
                     <span class="cart-badge"></span>
                 </a>
-                <a href="perfil.html" class="icon-btn" aria-label="Mi cuenta">
+                <a th:href="@{/perfil}" class="icon-btn" aria-label="Mi cuenta">
                     <i class="bi bi-person-circle"></i>
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- ============ CONTENIDO ============ -->
     <main class="py-5">
         <div class="container">
             <div class="row g-5">
-
                 <div class="col-lg-6">
                     <h1 class="fs-2 fw-bold">Contacta con nosotros</h1>
-                    <p class="text-muted lead">
-                        Si tienes alguna pregunta, sugerencia o comentario, no dudes en ponerte en
-                        contacto con nosotros. Estamos aquí para ayudarte y asegurarnos de que tengas
-                        la mejor experiencia posible.
-                    </p>
+                    <p class="text-muted lead">Si tienes alguna pregunta, sugerencia o comentario, no dudes en ponerte en contacto con nosotros. Estamos aquí para ayudarte.</p>
 
                     <ul class="list-unstyled mt-4">
                         <li class="mb-3 d-flex align-items-start gap-3">
@@ -80,132 +71,85 @@
                     <h3 class="h6 mt-4">Horario de atención</h3>
                     <table class="table table-bordered w-auto">
                         <thead class="table-dark">
-                            <tr>
-                                <th scope="col">Día</th>
-                                <th scope="col">Horario</th>
-                            </tr>
+                            <tr><th scope="col">Día</th><th scope="col">Horario</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Lunes a viernes</td>
-                                <td>9:00 AM - 6:00 PM</td>
-                            </tr>
-                            <tr>
-                                <td>Sábado</td>
-                                <td>9:00 AM - 1:00 PM</td>
-                            </tr>
-                            <tr>
-                                <td>Domingo</td>
-                                <td>Cerrado</td>
-                            </tr>
+                            <tr><td>Lunes a viernes</td><td>9:00 AM - 6:00 PM</td></tr>
+                            <tr><td>Sábado</td><td>9:00 AM - 1:00 PM</td></tr>
+                            <tr><td>Domingo</td><td>Cerrado</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="col-lg-6">
-                    <form class="p-4 border rounded-3 shadow-sm bg-white">
+                    <form th:action="@{/api/contacto}" method="post" th:object="${contactoForm}" class="p-4 border rounded-3 shadow-sm bg-white">
                         <div class="mb-3">
                             <label for="nombre" class="form-label fw-semibold">Nombre</label>
-                            <input type="text" id="nombre" name="nombre" class="form-control" required>
+                            <input type="text" id="nombre" name="nombre" class="form-control" th:field="*{nombre}" required />
                         </div>
                         <div class="mb-3">
                             <label for="correo" class="form-label fw-semibold">Correo electrónico</label>
-                            <input type="email" id="correo" name="correo" class="form-control" required>
+                            <input type="email" id="correo" name="correo" class="form-control" th:field="*{correo}" required />
                         </div>
                         <div class="mb-3">
                             <label for="mensaje" class="form-label fw-semibold">Mensaje</label>
-                            <textarea id="mensaje" name="mensaje" rows="5" class="form-control" required></textarea>
+                            <textarea id="mensaje" name="mensaje" rows="5" class="form-control" th:field="*{mensaje}" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-blue w-100 py-2">
-                            <i class="bi bi-send-fill me-2"></i>Enviar
-                        </button>
+                        <button type="submit" class="btn btn-blue w-100 py-2"><i class="bi bi-send-fill me-2"></i>Enviar</button>
                     </form>
                 </div>
             </div>
 
-            <!-- ============ POLÍTICA DE PRIVACIDAD ============ -->
             <section id="privacidad" class="border-top pt-5 mt-5">
                 <h2 class="fs-2 fw-bold mb-3">Política de privacidad</h2>
-                <p class="text-muted">
-                    En KALZA nos tomamos muy en serio la protección de tus datos personales. Esta política
-                    explica qué información recopilamos, cómo la usamos y los derechos que tienes sobre ella.
-                </p>
+                <p class="text-muted">En KALZA nos tomamos muy en serio la protección de tus datos personales. Esta política explica qué información recopilamos, cómo la usamos y los derechos que tienes sobre ella.</p>
 
                 <div class="row g-3 mt-1 mb-4">
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Información que recopilamos</h3>
-                        <p class="text-muted mb-0">
-                            Nombre, correo electrónico, dirección de envío, datos de facturación y el
-                            historial de tus compras dentro de la tienda.
-                        </p>
+                        <p class="text-muted mb-0">Nombre, correo electrónico, dirección de envío, datos de facturación y el historial de tus compras dentro de la tienda.</p>
                     </div>
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Uso de la información</h3>
-                        <p class="text-muted mb-0">
-                            Utilizamos tus datos para procesar pedidos, gestionar tu cuenta, mejorar la
-                            experiencia de compra y enviarte ofertas si lo autorizas.
-                        </p>
+                        <p class="text-muted mb-0">Utilizamos tus datos para procesar pedidos, gestionar tu cuenta, mejorar la experiencia de compra y enviarte ofertas si lo autorizas.</p>
                     </div>
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Seguridad</h3>
-                        <p class="text-muted mb-0">
-                            Tus datos se almacenan de forma segura y solo tienen acceso a ellos el personal
-                            autorizado. No compartimos tu información con terceros sin tu consentimiento.
-                        </p>
+                        <p class="text-muted mb-0">Tus datos se almacenan de forma segura y solo tienen acceso a ellos el personal autorizado. No compartimos tu información con terceros sin tu consentimiento.</p>
                     </div>
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Tus derechos</h3>
-                        <p class="text-muted mb-0">
-                            Puedes solicitar el acceso, corrección o eliminación de tus datos en cualquier
-                            momento escribiéndonos a info@kalza.com.
-                        </p>
+                        <p class="text-muted mb-0">Puedes solicitar el acceso, corrección o eliminación de tus datos en cualquier momento escribiéndonos a info@kalza.com.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- ============ TÉRMINOS DE SERVICIO ============ -->
             <section id="terminos" class="border-top pt-5 mt-5">
                 <h2 class="fs-2 fw-bold mb-3">Términos de servicio</h2>
-                <p class="text-muted">
-                    Al utilizar el sitio web de KALZA aceptas los siguientes términos y condiciones. Te
-                    recomendamos leerlos antes de realizar una compra.
-                </p>
+                <p class="text-muted">Al utilizar el sitio web de KALZA aceptas los siguientes términos y condiciones. Te recomendamos leerlos antes de realizar una compra.</p>
 
                 <div class="row g-3 mt-1 mb-4">
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Pedidos y precios</h3>
-                        <p class="text-muted mb-0">
-                            Los precios están expresados en soles (S/) e incluyen impuestos. Nos reservamos
-                            el derecho de rechazar o cancelar pedidos por errores de stock o de precio.
-                        </p>
+                        <p class="text-muted mb-0">Los precios están expresados en soles (S/) e incluyen impuestos. Nos reservamos el derecho de rechazar o cancelar pedidos por errores de stock o de precio.</p>
                     </div>
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Envíos y entregas</h3>
-                        <p class="text-muted mb-0">
-                            Los plazos de entrega son estimados y pueden variar según la disponibilidad y la
-                            zona de envío. El cliente es responsable de brindar una dirección válida.
-                        </p>
+                        <p class="text-muted mb-0">Los plazos de entrega son estimados y pueden variar según la disponibilidad y la zona de envío. El cliente es responsable de brindar una dirección válida.</p>
                     </div>
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Devoluciones y garantía</h3>
-                        <p class="text-muted mb-0">
-                            Aceptamos devoluciones dentro de los 30 días posteriores a la compra siempre que
-                            el producto se encuentre en su estado original, sin uso y con su etiqueta.
-                        </p>
+                        <p class="text-muted mb-0">Aceptamos devoluciones dentro de los 30 días posteriores a la compra siempre que el producto se encuentre en su estado original, sin uso y con su etiqueta.</p>
                     </div>
                     <div class="col-md-6">
                         <h3 class="h6 fw-bold">Responsabilidad</h3>
-                        <p class="text-muted mb-0">
-                            KALZA no es responsable de daños indirectos derivados del uso indebido de los
-                            productos o del uso de la plataforma de forma contraria a estas condiciones.
-                        </p>
+                        <p class="text-muted mb-0">KALZA no es responsable de daños indirectos derivados del uso indebido de los productos o del uso de la plataforma de forma contraria a estas condiciones.</p>
                     </div>
                 </div>
             </section>
         </div>
     </main>
 
-    <!-- ============ FOOTER ============ -->
     <footer class="site-footer">
         <div class="footer-grid">
             <div>
@@ -214,20 +158,20 @@
             </div>
             <div class="footer-col">
                 <h4>Compañía</h4>
-                <a href="contacto.html">Sobre nosotros</a>
-                <a href="contacto.html#privacidad">Política de privacidad</a>
+                <a th:href="@{/contacto}">Sobre nosotros</a>
+                <a th:href="@{/contacto#privacidad}">Política de privacidad</a>
             </div>
             <div class="footer-col">
                 <h4>Soporte</h4>
-                <a href="contacto.html">Contacto</a>
-                <a href="contacto.html#terminos">Términos de servicio</a>
+                <a th:href="@{/contacto}">Contacto</a>
+                <a th:href="@{/contacto#terminos}">Términos de servicio</a>
             </div>
             <div class="footer-col">
                 <h4>Enlaces</h4>
-                <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Zapatillas</a>
-                <a href="publicidad.html">Ofertas</a>
-                <a href="producto.html">Productos</a>
+                <a th:href="@{/}">Inicio</a>
+                <a th:href="@{/catalogo}">Zapatillas</a>
+                <a th:href="@{/publicidad}">Ofertas</a>
+                <a th:href="@{/producto}">Productos</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -242,8 +186,6 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

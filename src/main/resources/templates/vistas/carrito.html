@@ -1,114 +1,86 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html xmlns:th="https://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="assets/icons/KALZA icon 1.png">
+    <link rel="icon" type="image/png" th:href="@{/icons/KALZA icon 1.png}" />
     <title>KALZA | Carrito de Compras</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 
 <body>
-
-    <!-- ============ HEADER ============ -->
     <header class="site-header">
         <div class="header-inner">
-            <a href="index.html" class="brand">KAL<span class="accent">ZA</span></a>
+            <a th:href="@{/}" class="brand">KAL<span class="accent">ZA</span></a>
             <nav class="main-nav">
-                <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Zapatillas</a>
-                <a href="publicidad.html">Ofertas</a>
-                <a href="contacto.html">Contacto</a>
+                <a th:href="@{/}">Inicio</a>
+                <a th:href="@{/catalogo}">Zapatillas</a>
+                <a th:href="@{/publicidad}">Ofertas</a>
+                <a th:href="@{/contacto}">Contacto</a>
             </nav>
             <div class="header-actions">
-                <a href="carrito.html" class="icon-btn" aria-label="Carrito">
+                <a th:href="@{/carrito}" class="icon-btn" aria-label="Carrito">
                     <i class="bi bi-cart3"></i>
                     <span class="cart-badge"></span>
                 </a>
-                <a href="perfil.html" class="icon-btn" aria-label="Mi cuenta">
+                <a th:href="@{/perfil}" class="icon-btn" aria-label="Mi cuenta">
                     <i class="bi bi-person-circle"></i>
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- ============ CONTENIDO ============ -->
     <main class="py-5">
         <div class="container">
             <h1 class="fs-2 fw-bold mb-4">Tu carrito</h1>
 
             <div class="row g-4 g-lg-5">
-                <!-- ITEMS DEL CARRITO -->
                 <div class="col-lg-8">
                     <div class="d-flex flex-column gap-3">
-                        <div class="card border rounded-3 p-3">
-                            <div class="row g-3 align-items-center">
-                                <div class="col-4 col-sm-3 col-md-2">
-                                    <div class="rounded-3 overflow-hidden"
-                                        style="aspect-ratio:1/1; background:#f5f5f5;">
-                                        <img src="assets/img/productos/AeroGlide Pro Runner.webp"
-                                            class="w-100 h-100 object-fit-cover" alt="AeroGlide Pro Runner">
-                                    </div>
-                                </div>
-                                <div class="col-8 col-sm-9 col-md-10">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h3 class="h6 fw-bold mb-1">AeroGlide Pro Runner</h3>
-                                            <p class="small text-muted mb-2">Talla: 10.5 | Color: Negro Obsidiana</p>
-                                        </div>
-                                        <span class="fw-bold">S/ 145.00</span>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3 mt-2">
-                                        <div class="input-group input-group-sm" style="width: 130px;">
-                                            <button class="btn btn-outline-secondary" type="button">-</button>
-                                            <span class="input-group-text fw-bold">1</span>
-                                            <button class="btn btn-outline-secondary" type="button">+</button>
-                                        </div>
-                                        <button class="btn btn-link text-danger p-0 small">
-                                            <i class="bi bi-trash me-1"></i>Eliminar
-                                        </button>
-                                    </div>
-                                </div>
+                        <div th:if="${carrito.items.isEmpty()}">
+                            <div class="text-center py-5">
+                                <i class="bi bi-cart-x display-1 text-muted"></i>
+                                <h3 class="mt-3">Tu carrito está vacío</h3>
+                                <p class="text-muted">Agrega algunos productos para comenzar.</p>
+                                <a th:href="@{/catalogo}" class="btn btn-blue mt-3">Ir a comprar</a>
                             </div>
                         </div>
-
-                        <div class="card border rounded-3 p-3">
-                            <div class="row g-3 align-items-center">
-                                <div class="col-4 col-sm-3 col-md-2">
-                                    <div class="rounded-3 overflow-hidden"
-                                        style="aspect-ratio:1/1; background:#f5f5f5;">
-                                        <img src="assets/img/productos/Court Classic Low.webp"
-                                            class="w-100 h-100 object-fit-cover" alt="Court Classic Low">
-                                    </div>
-                                </div>
-                                <div class="col-8 col-sm-9 col-md-10">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h3 class="h6 fw-bold mb-1">Court Classic Low</h3>
-                                            <p class="small text-muted mb-2">Talla: 9 | Color: Blanco Nube</p>
+                        <div th:if="${!carrito.items.isEmpty()}">
+                            <div th:each="item : ${carrito.items}" class="card border rounded-3 p-3">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-4 col-sm-3 col-md-2">
+                                        <div class="rounded-3 overflow-hidden" style="aspect-ratio:1/1; background:#f5f5f5;">
+                                            <img th:src="${item.urlImagen}" class="w-100 h-100 object-fit-cover" th:alt="${item.nombreProducto}" />
                                         </div>
-                                        <span class="fw-bold">S/ 95.00</span>
                                     </div>
-                                    <div class="d-flex align-items-center gap-3 mt-2">
-                                        <div class="input-group input-group-sm" style="width: 130px;">
-                                            <button class="btn btn-outline-secondary" type="button">-</button>
-                                            <span class="input-group-text fw-bold">2</span>
-                                            <button class="btn btn-outline-secondary" type="button">+</button>
+                                    <div class="col-8 col-sm-9 col-md-10">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h3 class="h6 fw-bold mb-1" th:text="${item.nombreProducto}">AeroGlide Pro Runner</h3>
+                                                <p class="small text-muted mb-2" th:text="'Talla: ' + ${item.talla} + ' | Color: ' + ${item.color}">Talla: 10.5 | Color: Negro Obsidiana</p>
+                                            </div>
+                                            <span class="fw-bold" th:text="'S/ ' + ${item.precioConDescuento}">S/ 145.00</span>
                                         </div>
-                                        <button class="btn btn-link text-danger p-0 small">
-                                            <i class="bi bi-trash me-1"></i>Eliminar
-                                        </button>
+                                        <div class="d-flex align-items-center gap-3 mt-2">
+                                            <form th:action="@{/api/carrito/items/{idVariante}(idVariante=${item.idVariante})}" method="post" class="d-flex align-items-center gap-2">
+                                                <input type="hidden" name="_method" value="put" />
+                                                <button class="btn btn-outline-secondary btn-sm" type="submit" name="cantidad" value="${item.cantidad - 1}" th:disabled="${item.cantidad <= 1}">-</button>
+                                                <span class="fw-bold input-group-text" style="min-width: 40px; text-align: center;" th:text="${item.cantidad}">1</span>
+                                                <button class="btn btn-outline-secondary btn-sm" type="submit" name="cantidad" value="${item.cantidad + 1}" th:disabled="${item.cantidad >= item.stockDisponible}">+</button>
+                                            </form>
+                                            <form th:action="@{/api/carrito/items/{idVariante}(idVariante=${item.idVariante})}" method="post">
+                                                <input type="hidden" name="_method" value="delete" />
+                                                <button class="btn btn-link text-danger p-0 small" type="submit"><i class="bi bi-trash me-1"></i>Eliminar</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -116,13 +88,12 @@
                     </div>
                 </div>
 
-                <!-- RESUMEN DEL PEDIDO -->
                 <div class="col-lg-4">
                     <div class="card border rounded-3 p-4">
                         <h2 class="h5 fw-bold border-bottom pb-2 mb-3">Resumen del pedido</h2>
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Subtotal (3 items)</span>
-                            <span class="fw-semibold">S/ 335.00</span>
+                            <span class="text-muted" th:text="'Subtotal (' + ${carrito.totalItems} + ' items)'">Subtotal (3 items)</span>
+                            <span class="fw-semibold" th:text="'S/ ' + ${carrito.totalConDescuento}">S/ 335.00</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Envío</span>
@@ -130,22 +101,22 @@
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span class="text-muted">IGV</span>
-                            <span class="fw-semibold">S/ 60.30</span>
+                            <span class="fw-semibold" th:text="'S/ ' + ${carrito.totalConDescuento * 0.18}">S/ 60.30</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-end border-top pt-3 mb-4">
                             <span class="fw-bold">Total</span>
-                            <span class="fs-4 fw-bold">S/ 395.30</span>
+                            <span class="fs-4 fw-bold" th:text="'S/ ' + ${carrito.totalConDescuento * 1.18}">S/ 395.30</span>
                         </div>
-                        <a href="checkout.html" class="btn btn-blue w-100 py-2">
+                        <a th:href="@{/checkout}" class="btn btn-blue w-100 py-2" th:disabled="${!carrito.validoParaCheckout}">
                             Procesar pago
                         </a>
+                        <p th:if="${!carrito.validoParaCheckout}" class="text-danger small mt-2 text-center">Hay items sin stock suficiente</p>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- ============ FOOTER ============ -->
     <footer class="site-footer">
         <div class="footer-grid">
             <div>
@@ -154,20 +125,20 @@
             </div>
             <div class="footer-col">
                 <h4>Compañía</h4>
-                <a href="contacto.html">Sobre nosotros</a>
-                <a href="contacto.html#privacidad">Política de privacidad</a>
+                <a th:href="@{/contacto}">Sobre nosotros</a>
+                <a th:href="@{/contacto#privacidad}">Política de privacidad</a>
             </div>
             <div class="footer-col">
                 <h4>Soporte</h4>
-                <a href="contacto.html">Contacto</a>
-                <a href="contacto.html#terminos">Términos de servicio</a>
+                <a th:href="@{/contacto}">Contacto</a>
+                <a th:href="@{/contacto#terminos}">Términos de servicio</a>
             </div>
             <div class="footer-col">
                 <h4>Enlaces</h4>
-                <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Zapatillas</a>
-                <a href="publicidad.html">Ofertas</a>
-                <a href="producto.html">Productos</a>
+                <a th:href="@{/}">Inicio</a>
+                <a th:href="@{/catalogo}">Zapatillas</a>
+                <a th:href="@{/publicidad}">Ofertas</a>
+                <a th:href="@{/producto}">Productos</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -182,9 +153,6 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
-
 </html>
