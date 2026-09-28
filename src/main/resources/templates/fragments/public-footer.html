@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer class="site-footer" th:fragment="footer">
+    <div class="footer-grid">
+        <div>
+            <p class="footer-brand">KALZA</p>
+            <p class="footer-desc">
+                Tu tienda online de zapatillas y sneakers. Camina a tu manera.
+            </p>
+        </div>
+        <div class="footer-col">
+            <h4>Compañía</h4>
+            <a th:href="@{/contacto}">Sobre nosotros</a>
+            <a th:href="@{/contacto#privacidad}">Política de privacidad</a>
+        </div>
+        <div class="footer-col">
+            <h4>Soporte</h4>
+            <a th:href="@{/contacto}">Contacto</a>
+            <a th:href="@{/contacto#terminos}">Términos de servicio</a>
+        </div>
+        <div class="footer-col">
+            <h4>Enlaces</h4>
+            <a th:href="@{/}">Inicio</a>
+            <a th:href="@{/catalogo}">Zapatillas</a>
+            <a th:href="@{/publicidad}">Ofertas</a>
+            <a th:href="@{/producto}">Productos</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-bottom-inner">
+            <p>&copy; 2026 KALZA. Todos los derechos reservados.</p>
+            <div class="social">
+                <a href="#">Instagram</a>
+                <a href="#">Facebook</a>
+                <a href="#">TikTok</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

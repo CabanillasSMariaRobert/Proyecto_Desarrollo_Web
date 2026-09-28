@@ -1,6 +1,7 @@
 package com.ecommerce.tienda_kalza.controladores;
 
 import org.springframework.stereotype.Controller;
+import com.ecommerce.tienda_kalza.servicios.publico.PedidoService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -10,6 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class PedidoController {
+    private final PedidoService pedidoService;
+
+    public PedidoController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
+    }
+
+
 
     @GetMapping("/pedidos")
     public String pedidos(Model model) {

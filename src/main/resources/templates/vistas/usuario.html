@@ -8,7 +8,7 @@
       <div class="container">
         <!-- RESÚMENES DEL USUARIO -->
         <section class="mb-5">
-          <h1 class="fs-2 fw-bold mb-4">Hola, John Doe</h1>
+          <h1 class="fs-2 fw-bold mb-4" th:text="'Hola, ' + ${usuario.nombre} + ' ' + ${usuario.apellido}">Hola, John Doe</h1>
           <div class="row g-4">
             <div class="col-md-4">
               <div class="card border-0 shadow-sm p-4 text-center">

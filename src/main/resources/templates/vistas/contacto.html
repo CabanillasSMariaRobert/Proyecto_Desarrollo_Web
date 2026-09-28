@@ -21,21 +21,21 @@
                             <i class="bi bi-geo-alt-fill fs-4"></i>
                             <div>
                                 <h3 class="h6 mb-0">Nuestra dirección</h3>
-                                <p class="mb-0 text-muted">123 Calle Principal, Lima, Perú</p>
+                                <p class="mb-0 text-muted" th:text="${datos.direccion}">123 Calle Principal, Lima, Perú</p>
                             </div>
                         </li>
                         <li class="mb-3 d-flex align-items-start gap-3">
                             <i class="bi bi-telephone-fill fs-4"></i>
                             <div>
                                 <h3 class="h6 mb-0">Teléfono</h3>
-                                <p class="mb-0 text-muted">+51 (123) 456-7890</p>
+                                <p class="mb-0 text-muted" th:text="${datos.telefono}">+51 (123) 456-7890</p>
                             </div>
                         </li>
                         <li class="mb-3 d-flex align-items-start gap-3">
                             <i class="bi bi-envelope-fill fs-4"></i>
                             <div>
                                 <h3 class="h6 mb-0">Correo electrónico</h3>
-                                <p class="mb-0 text-muted">info@kalza.com</p>
+                                <p class="mb-0 text-muted" th:text="${datos.correo}">info@kalza.com</p>
                             </div>
                         </li>
                     </ul>
@@ -49,17 +49,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Lunes a viernes</td>
-                                <td>9:00 AM - 6:00 PM</td>
-                            </tr>
-                            <tr>
-                                <td>Sábado</td>
-                                <td>9:00 AM - 1:00 PM</td>
-                            </tr>
-                            <tr>
-                                <td>Domingo</td>
-                                <td>Cerrado</td>
+                            <tr th:each="horario : ${horarios}">
+                                <td th:text="${horario.dia}">Lunes a viernes</td>
+                                <td th:text="${horario.horario}">9:00 AM - 6:00 PM</td>
                             </tr>
                         </tbody>
                     </table>
@@ -95,32 +87,11 @@
                 </p>
 
                 <div class="row g-3 mt-1 mb-4">
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Información que recopilamos</h3>
-                        <p class="text-muted mb-0">
+                    <div class="col-md-6" th:each="faq : ${faqs}">
+                        <h3 class="h6 fw-bold" th:text="${faq.titulo}">Información que recopilamos</h3>
+                        <p class="text-muted mb-0" th:text="${faq.descripcion}">
                             Nombre, correo electrónico, dirección de envío, datos de facturación y el
                             historial de tus compras dentro de la tienda.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Uso de la información</h3>
-                        <p class="text-muted mb-0">
-                            Utilizamos tus datos para procesar pedidos, gestionar tu cuenta, mejorar la
-                            experiencia de compra y enviarte ofertas si lo autorizas.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Seguridad</h3>
-                        <p class="text-muted mb-0">
-                            Tus datos se almacenan de forma segura y solo tienen acceso a ellos el personal
-                            autorizado. No compartimos tu información con terceros sin tu consentimiento.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="h6 fw-bold">Tus derechos</h3>
-                        <p class="text-muted mb-0">
-                            Puedes solicitar el acceso, corrección o eliminación de tus datos en cualquier
-                            momento escribiéndonos a info@kalza.com.
                         </p>
                     </div>
                 </div>

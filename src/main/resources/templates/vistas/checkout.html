@@ -66,48 +66,37 @@
                         <h4 class="mb-4 fw-bold">Resumen del pedido</h4>
 
                         <ul class="list-group list-group-flush mb-3">
-                            <li class="list-group-item d-flex justify-content-between align-items-center lh-sm px-0">
+                            <li class="list-group-item d-flex justify-content-between align-items-center lh-sm px-0" th:each="item : ${resumen.items}">
                                 <div class="d-flex gap-3">
-                                    <img th:src="@{/img/productos/AeroGlide Pro Runner.webp}" alt="Producto"
+                                    <img th:src="@{'/img/productos/' + ${item.imagen}}" th:alt="${item.nombre}"
                                         class="rounded-3" style="width: 60px; height: 60px; object-fit: cover;">
                                     <div>
-                                        <h6 class="my-0 fw-bold" style="font-size: 0.9rem;">AeroGlide Pro Runner</h6>
-                                        <small class="text-muted">Negro / Talla 10.5</small>
+                                        <h6 class="my-0 fw-bold" style="font-size: 0.9rem;" th:text="${item.nombre}">AeroGlide Pro Runner</h6>
+                                        <small class="text-muted" th:text="${item.color} + ' / Talla ' + ${item.talla}">Negro / Talla 10.5</small>
                                     </div>
                                 </div>
-                                <span class="fw-bold" style="font-size: 0.9rem;">S/ 145.00</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center lh-sm px-0">
-                                <div class="d-flex gap-3">
-                                    <img th:src="@{/img/productos/Court Classic Low.webp}" alt="Producto"
-                                        class="rounded-3" style="width: 60px; height: 60px; object-fit: cover;">
-                                    <div>
-                                        <h6 class="my-0 fw-bold" style="font-size: 0.9rem;">Court Classic Low</h6>
-                                        <small class="text-muted">Blanco / Talla 9</small>
-                                    </div>
-                                </div>
-                                <span class="fw-bold" style="font-size: 0.9rem;">S/ 190.00</span>
+                                <span class="fw-bold" style="font-size: 0.9rem;" th:text="${'S/ ' + item.precioUnitario}">S/ 145.00</span>
                             </li>
                         </ul>
 
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Subtotal</span>
-                            <strong>S/ 335.00</strong>
+                            <strong th:text="${resumen.subtotal}">S/ 335.00</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span class="text-muted">Envío</span>
-                            <span class="text-muted">Gratis</span>
+                            <span class="text-muted" th:text="${resumen.envioTexto}">Gratis</span>
                         </div>
                         <div class="d-flex justify-content-between mb-4">
                             <span class="text-muted">IGV</span>
-                            <strong>S/ 60.30</strong>
+                            <strong th:text="${resumen.igv}">S/ 60.30</strong>
                         </div>
 
                         <hr class="my-3">
 
                         <div class="d-flex justify-content-between mb-4">
                             <span class="fw-bold">Total</span>
-                            <strong class="fs-5">S/ 395.30</strong>
+                            <strong class="fs-5" th:text="${resumen.total}">S/ 395.30</strong>
                         </div>
 
                         <button type="button" class="btn btn-primary w-100 py-2 fw-bold">

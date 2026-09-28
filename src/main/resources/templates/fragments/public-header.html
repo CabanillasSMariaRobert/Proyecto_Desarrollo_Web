@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="site-header" th:fragment="header(activePage)">
+    <div class="header-inner">
+        <a th:href="@{/}" class="brand">KAL<span class="accent">ZA</span></a>
+        <nav class="main-nav">
+            <a th:href="@{/}" th:classappend="${activePage == 'inicio'} ? 'active'">Inicio</a>
+            <a th:href="@{/catalogo}" th:classappend="${activePage == 'catalogo'} ? 'active'">Zapatillas</a>
+            <a th:href="@{/publicidad}" th:classappend="${activePage == 'publicidad'} ? 'active'">Ofertas</a>
+            <a th:href="@{/contacto}" th:classappend="${activePage == 'contacto'} ? 'active'">Contacto</a>
+        </nav>
+        <div class="header-actions">
+            <a th:href="@{/carrito}" class="icon-btn" aria-label="Carrito">
+                <i class="bi bi-cart3"></i>
+                <span class="cart-badge"></span>
+            </a>
+            <a th:href="@{/perfil}" class="icon-btn" aria-label="Mi cuenta">
+                <i class="bi bi-person-circle"></i>
+            </a>
+        </div>
+    </div>
+</header>
+</body>
+</html>

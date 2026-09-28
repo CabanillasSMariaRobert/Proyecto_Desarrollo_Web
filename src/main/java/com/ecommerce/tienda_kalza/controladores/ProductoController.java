@@ -1,6 +1,7 @@
 package com.ecommerce.tienda_kalza.controladores;
 
 import org.springframework.stereotype.Controller;
+import com.ecommerce.tienda_kalza.servicios.publico.ProductoService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @Controller
 public class ProductoController {
+    private final ProductoService productoService;
+
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
+
+
 
     @GetMapping("/producto")
     public String productoPorDefecto(Model model) {
@@ -29,6 +37,7 @@ public class ProductoController {
         model.addAttribute("title", "KALZA | Detalle de Producto");
         model.addAttribute("currentPage", "catalogo");
         model.addAttribute("productoId", id);
+        model.addAttribute("producto", productoService.obtenerDetalle(id != null ? id.longValue() : 1L));
         return "vistas/producto";
     }
 }

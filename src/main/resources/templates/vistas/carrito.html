@@ -12,58 +12,27 @@
                 <!-- ITEMS DEL CARRITO -->
                 <div class="col-lg-8">
                     <div class="d-flex flex-column gap-3">
-                        <div class="card border rounded-3 p-3">
+                        <div class="card border rounded-3 p-3" th:each="item : ${resumen.items}">
                             <div class="row g-3 align-items-center">
                                 <div class="col-4 col-sm-3 col-md-2">
                                     <div class="rounded-3 overflow-hidden"
                                         style="aspect-ratio:1/1; background:#f5f5f5;">
-                                        <img th:src="@{/img/productos/AeroGlide Pro Runner.webp}"
-                                            class="w-100 h-100 object-fit-cover" alt="AeroGlide Pro Runner">
+                                        <img th:src="@{'/img/productos/' + ${item.imagen}}"
+                                            class="w-100 h-100 object-fit-cover" th:alt="${item.nombre}">
                                     </div>
                                 </div>
                                 <div class="col-8 col-sm-9 col-md-10">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <h3 class="h6 fw-bold mb-1">AeroGlide Pro Runner</h3>
-                                            <p class="small text-muted mb-2">Talla: 10.5 | Color: Negro Obsidiana</p>
+                                            <h3 class="h6 fw-bold mb-1" th:text="${item.nombre}">AeroGlide Pro Runner</h3>
+                                            <p class="small text-muted mb-2" th:text="'Talla: ' + ${item.talla} + ' | Color: ' + ${item.color}">Talla: 10.5 | Color: Negro Obsidiana</p>
                                         </div>
-                                        <span class="fw-bold">S/ 145.00</span>
+                                        <span class="fw-bold" th:text="${'S/ ' + item.precioUnitario}">S/ 145.00</span>
                                     </div>
                                     <div class="d-flex align-items-center gap-3 mt-2">
                                         <div class="input-group input-group-sm" style="width: 130px;">
                                             <button class="btn btn-outline-secondary" type="button">-</button>
-                                            <span class="input-group-text fw-bold">1</span>
-                                            <button class="btn btn-outline-secondary" type="button">+</button>
-                                        </div>
-                                        <button class="btn btn-link text-danger p-0 small">
-                                            <i class="bi bi-trash me-1"></i>Eliminar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card border rounded-3 p-3">
-                            <div class="row g-3 align-items-center">
-                                <div class="col-4 col-sm-3 col-md-2">
-                                    <div class="rounded-3 overflow-hidden"
-                                        style="aspect-ratio:1/1; background:#f5f5f5;">
-                                        <img th:src="@{/img/productos/Court Classic Low.webp}"
-                                            class="w-100 h-100 object-fit-cover" alt="Court Classic Low">
-                                    </div>
-                                </div>
-                                <div class="col-8 col-sm-9 col-md-10">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h3 class="h6 fw-bold mb-1">Court Classic Low</h3>
-                                            <p class="small text-muted mb-2">Talla: 9 | Color: Blanco Nube</p>
-                                        </div>
-                                        <span class="fw-bold">S/ 95.00</span>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3 mt-2">
-                                        <div class="input-group input-group-sm" style="width: 130px;">
-                                            <button class="btn btn-outline-secondary" type="button">-</button>
-                                            <span class="input-group-text fw-bold">2</span>
+                                            <span class="input-group-text fw-bold" th:text="${item.cantidad}">1</span>
                                             <button class="btn btn-outline-secondary" type="button">+</button>
                                         </div>
                                         <button class="btn btn-link text-danger p-0 small">
@@ -81,20 +50,20 @@
                     <div class="card border rounded-3 p-4">
                         <h2 class="h5 fw-bold border-bottom pb-2 mb-3">Resumen del pedido</h2>
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Subtotal (3 items)</span>
-                            <span class="fw-semibold">S/ 335.00</span>
+                            <span class="text-muted" th:text="'Subtotal (' + ${resumen.totalItems} + ' items)'">Subtotal (3 items)</span>
+                            <span class="fw-semibold" th:text="${resumen.subtotal}">S/ 335.00</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Envío</span>
-                            <span class="fw-semibold">Calculado en el pago</span>
+                            <span class="fw-semibold" th:text="${resumen.envioTexto}">Calculado en el pago</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span class="text-muted">IGV</span>
-                            <span class="fw-semibold">S/ 60.30</span>
+                            <span class="fw-semibold" th:text="${resumen.igv}">S/ 60.30</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-end border-top pt-3 mb-4">
                             <span class="fw-bold">Total</span>
-                            <span class="fs-4 fw-bold">S/ 395.30</span>
+                            <span class="fs-4 fw-bold" th:text="${resumen.total}">S/ 395.30</span>
                         </div>
                         <a th:href="@{/checkout}" class="btn btn-blue w-100 py-2">
                             Procesar pago
