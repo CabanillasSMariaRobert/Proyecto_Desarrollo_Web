@@ -1,0 +1,325 @@
+package com.ecommerce.tienda_kalza.servicios.carrito;
+
+import com.ecommerce.tienda_kalza.dtos.carrito.*;
+import com.ecommerce.tienda_kalza.modelos.*;
+import com.ecommerce.tienda_kalza.repositorios.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * SERVICIO CARRITO - Gestión del carrito de compras
+ * 
+ * REPOSITORIOS NECESARIOS:
+ * - CompraRepository
+ * - DetalleDeCompraRepository
+ * - VarianteDeZapatoRepository
+ * - ProductoRepository
+ * - UsuarioRepository
+ * 
+ * MÉTODOS A IMPLEMENTAR:
+ * 
+ * 1. obtenerOCrearCarrito(Integer usuarioId) -> Compra
+ *    - Buscar compra con estado="carrito" del usuario
+ *    - Si no existe, crear nueva Compra con estado="carrito", totales en 0
+ * 
+ * 2. agregarItem(Integer usuarioId, CarritoItemRequestDTO request) -> CarritoResponseDTO
+ *    - Validar que variante existe y tiene stock
+ *    - Obtener/crear carrito
+ *    - Si item ya existe en carrito -> sumar cantidad (validar stock total)
+ *    - Si nuevo -> crear DetalleDeCompra
+ *    - Recalcular totales del carrito
+ *    - Retornar carrito actualizado
+ * 
+ * 3. actualizarCantidad(Integer usuarioId, Integer idVariante, Integer nuevaCantidad) -> CarritoResponseDTO
+ *    - Validar nuevaCantidad > 0 y <= stock
+ *    - Si 0 -> eliminar item
+ *    - Actualizar DetalleDeCompra
+ *    - Recalcular totales
+ * 
+ * 4. eliminarItem(Integer usuarioId, Integer idVariante) -> CarritoResponseDTO
+ *    - Eliminar DetalleDeCompra
+ *    - Recalcular totales
+ * 
+ * 5. vaciarCarrito(Integer usuarioId) -> void
+ *    - Eliminar todos DetalleDeCompra del carrito
+ *    - Resetear totales a 0
+ * 
+ * 6. verCarrito(Integer usuarioId) -> CarritoResponseDTO
+ *    - Obtener carrito con items
+ *    - Mapear a DTO con cálculos
+ *    - Verificar stock actual de cada variante
+ * 
+ * 7. validarCarrito(Integer usuarioId) -> ValidarCarritoDTO
+ *    - Para cada item: comparar cantidad vs stock actual
+ *    - Retornar lista de problemas
+ *    - Usado antes de checkout
+ * 
+ * 8. prepararCheckout(Integer usuarioId) -> Compra
+ *    - Validar carrito (stock, usuario verificado, etc.)
+ *    - Cambiar estado "carrito" -> "pendiente"
+ *    - Bloquear stock (restar de variantes)
+ *    - Retornar compra lista para pago
+ * 
+ * CONSIDERACIONES:
+ * - @Transactional en métodos que modifican
+ * - Lock pesimista en variantes al preparar checkout (SELECT FOR UPDATE)
+ * - Manejar concurrencia: usuario añade item mientras otro hace checkout
+ * - Expirar carritos abandonados (job programado: estado=carrito > 24h -> cancelado)
+ */
+
+@Service
+@RequiredArgsConstructor
+public class CarritoService {
+
+    // TODO: Inyectar repositorios
+    // private final CompraRepository compraRepository;
+    // private final DetalleDeCompraRepository detalleRepository;
+    // private final VarianteDeZapatoRepository varianteRepository;
+    // private final UsuarioRepository usuarioRepository;
+
+    /*
+    @Transactional(readOnly = true)
+    public CarritoResponseDTO verCarrito(Integer usuarioId) {
+        Compra carrito = obtenerOCrearCarrito(usuarioId);
+        return mapToDTO(carrito);
+    }
+
+    @Transactional
+    public CarritoResponseDTO agregarItem(Integer usuarioId, CarritoItemRequestDTO request) {
+        // 1. Validar variante
+        VarianteDeZapato variante = varianteRepository.findByIdWithRelations(request.getIdVariante())
+            .orElseThrow(() -> new EntityNotFoundException("Variante no encontrada"));
+        
+        if (variante.getStock() < request.getCantidad()) {
+            throw new IllegalArgumentException("Stock insuficiente. Disponible: " + variante.getStock());
+        }
+
+        // 2. Obtener/crear carrito
+        Compra carrito = obtenerOCrearCarrito(usuarioId);
+
+        // 3. Verificar si item ya existe
+        Optional<DetalleDeCompra> existente = carrito.getDetalles().stream()
+            .filter(d -> d.getVarianteDeZapato().getIdVarianteDeZapato().equals(request.getIdVariante()))
+            .findFirst();
+
+        if (existente.isPresent()) {
+            // Actualizar cantidad
+            DetalleDeCompra detalle = existente.get();
+            int nuevaCantidad = detalle.getCantidad() + request.getCantidad();
+            
+            if (variante.getStock() < nuevaCantidad) {
+                throw new IllegalArgumentException("Stock insuficiente para la cantidad total");
+            }
+            detalle.setCantidad(nuevaCantidad);
+            recalcularDetalle(detalle);
+        } else {
+            // Crear nuevo detalle
+            DetalleDeCompra detalle = crearDetalleDesdeVariante(variante, request.getCantidad());
+            carrito.agregarDetalle(detalle);
+        }
+
+        // 4. Recalcular totales carrito
+        recalcularCarrito(carrito);
+        carrito = compraRepository.save(carrito);
+
+        return mapToDTO(carrito);
+    }
+
+    @Transactional
+    public CarritoResponseDTO actualizarCantidad(Integer usuarioId, Integer idVariante, Integer nuevaCantidad) {
+        Compra carrito = obtenerOCrearCarrito(usuarioId);
+        
+        DetalleDeCompra detalle = carrito.getDetalles().stream()
+            .filter(d -> d.getVarianteDeZapato().getIdVarianteDeZapato().equals(idVariante))
+            .findFirst()
+            .orElseThrow(() -> new EntityNotFoundException("Item no en carrito"));
+
+        if (nuevaCantidad <= 0) {
+            return eliminarItem(usuarioId, idVariante);
+        }
+
+        VarianteDeZapato variante = detalle.getVarianteDeZapato();
+        if (variante.getStock() < nuevaCantidad) {
+            throw new IllegalArgumentException("Stock insuficiente. Disponible: " + variante.getStock());
+        }
+
+        detalle.setCantidad(nuevaCantidad);
+        recalcularDetalle(detalle);
+        recalcularCarrito(carrito);
+        compraRepository.save(carrito);
+
+        return mapToDTO(carrito);
+    }
+
+    @Transactional
+    public CarritoResponseDTO eliminarItem(Integer usuarioId, Integer idVariante) {
+        Compra carrito = obtenerOCrearCarrito(usuarioId);
+        
+        carrito.getDetalles().removeIf(d -> 
+            d.getVarianteDeZapato().getIdVarianteDeZapato().equals(idVariante));
+        
+        recalcularCarrito(carrito);
+        compraRepository.save(carrito);
+
+        return mapToDTO(carrito);
+    }
+
+    @Transactional
+    public void vaciarCarrito(Integer usuarioId) {
+        Compra carrito = obtenerOCrearCarrito(usuarioId);
+        carrito.getDetalles().clear();
+        carrito.setTotalConDescuento(BigDecimal.ZERO);
+        carrito.setTotalSinDescuento(BigDecimal.ZERO);
+        compraRepository.save(carrito);
+    }
+
+    @Transactional(readOnly = true)
+    public ValidarCarritoDTO validarCarrito(Integer usuarioId) {
+        Compra carrito = obtenerOCrearCarrito(usuarioId);
+        List<String> errores = new ArrayList<>();
+        List<CarritoItemDTO> itemsConProblema = new ArrayList<>();
+
+        for (DetalleDeCompra detalle : carrito.getDetalles()) {
+            VarianteDeZapato variante = varianteRepository.findById(detalle.getVarianteDeZapato().getIdVarianteDeZapato())
+                .orElse(null);
+            
+            if (variante == null || variante.getStock() < detalle.getCantidad()) {
+                String msg = "Stock insuficiente para " + detalle.getNombreDelProducto() 
+                    + " (disponible: " + (variante != null ? variante.getStock() : 0) 
+                    + ", solicitado: " + detalle.getCantidad() + ")";
+                errores.add(msg);
+                itemsConProblema.add(mapToItemDTO(detalle, variante));
+            }
+        }
+
+        return ValidarCarritoDTO.builder()
+            .valido(errores.isEmpty())
+            .errores(errores)
+            .itemsConProblema(itemsConProblema)
+            .build();
+    }
+
+    @Transactional
+    public Compra prepararCheckout(Integer usuarioId) {
+        // 1. Validar
+        ValidarCarritoDTO validacion = validarCarrito(usuarioId);
+        if (!validacion.isValido()) {
+            throw new IllegalStateException("Carrito inválido: " + String.join("; ", validacion.getErrores()));
+        }
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+            .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        
+        if (!usuario.getEstaVerificado() || !usuario.getEstaActivo()) {
+            throw new IllegalStateException("Usuario no verificado o inactivo");
+        }
+
+        // 2. Obtener carrito con lock en variantes
+        Compra carrito = compraRepository.findByIdWithCliente(carrito.getIdCompra())
+            .orElseThrow(() -> new EntityNotFoundException("Carrito no encontrado"));
+
+        // 3. Bloquear y descontar stock (SELECT FOR UPDATE)
+        for (DetalleDeCompra detalle : carrito.getDetalles()) {
+            VarianteDeZapato variante = varianteRepository.lockForUpdate(detalle.getVarianteDeZapato().getIdVarianteDeZapato());
+            if (variante.getStock() < detalle.getCantidad()) {
+                throw new IllegalStateException("Stock cambió durante checkout");
+            }
+            variante.setStock(variante.getStock() - detalle.getCantidad());
+            varianteRepository.save(variante);
+        }
+
+        // 4. Cambiar estado
+        carrito.setEstado("pendiente");
+        carrito.setFechaDeCompra(LocalDateTime.now());
+        
+        return compraRepository.save(carrito);
+    }
+
+    private Compra obtenerOCrearCarrito(Integer usuarioId) {
+        return compraRepository.findByClienteIdUsuarioAndEstado(usuarioId, "carrito")
+            .orElseGet(() -> {
+                Usuario usuario = usuarioRepository.getReferenceById(usuarioId);
+                Compra nuevo = Compra.builder()
+                    .cliente(usuario)
+                    .estado("carrito")
+                    .totalConDescuento(BigDecimal.ZERO)
+                    .totalSinDescuento(BigDecimal.ZERO)
+                    .build();
+                return compraRepository.save(nuevo);
+            });
+    }
+
+    private void recalcularDetalle(DetalleDeCompra detalle) {
+        // Los @PrePersist/@PreUpdate de la entidad calculan precioConDescuento y precioSinDescuento
+        // Solo necesitamos recalcular si cambiamos cantidad manualmente
+    }
+
+    private void recalcularCarrito(Compra carrito) {
+        BigDecimal totalConDesc = carrito.getDetalles().stream()
+            .map(DetalleDeCompra::getPrecioConDescuento)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        BigDecimal totalSinDesc = carrito.getDetalles().stream()
+            .map(DetalleDeCompra::getPrecioSinDescuento)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        carrito.setTotalConDescuento(totalConDesc);
+        carrito.setTotalSinDescuento(totalSinDesc);
+    }
+
+    private CarritoResponseDTO mapToDTO(Compra carrito) {
+        List<CarritoItemDTO> items = carrito.getDetalles().stream()
+            .map(this::mapToItemDTO)
+            .collect(Collectors.toList());
+
+        return CarritoResponseDTO.builder()
+            .idCompra(carrito.getIdCompra())
+            .items(items)
+            .totalOriginal(carrito.getTotalSinDescuento())
+            .totalDescuento(carrito.getTotalSinDescuento().subtract(carrito.getTotalConDescuento()))
+            .totalConDescuento(carrito.getTotalConDescuento())
+            .totalItems(items.stream().mapToInt(CarritoItemDTO::getCantidad).sum())
+            .validoParaCheckout(items.stream().allMatch(CarritoItemDTO::getHayStockSuficiente))
+            .build();
+    }
+
+    private CarritoItemDTO mapToItemDTO(DetalleDeCompra detalle) {
+        return mapToItemDTO(detalle, detalle.getVarianteDeZapato());
+    }
+
+    private CarritoItemDTO mapToItemDTO(DetalleDeCompra detalle, VarianteDeZapato variante) {
+        int stock = variante != null ? variante.getStock() : 0;
+        return CarritoItemDTO.builder()
+            .idVariante(detalle.getVarianteDeZapato().getIdVarianteDeZapato())
+            .idProducto(detalle.getVarianteDeZapato().getZapato().getProducto().getIdProducto())
+            .nombreProducto(detalle.getNombreDelProducto())
+            .urlImagen(detalle.getVarianteDeZapato().getZapato().getProducto().getUrlImagen())
+            .talla(detalle.getVarianteDeZapato().getTalla())
+            .color(detalle.getVarianteDeZapato().getColor())
+            .precioOriginal(detalle.getPrecioOriginalXUnidad())
+            .descuento(detalle.getDescuentoXUnidad())
+            .precioConDescuento(detalle.getPrecioConDescuento().divide(BigDecimal.valueOf(detalle.getCantidad())))
+            .cantidad(detalle.getCantidad())
+            .stockDisponible(stock)
+            .hayStockSuficiente(stock >= detalle.getCantidad())
+            .subtotal(detalle.getPrecioConDescuento())
+            .build();
+    }
+
+    private DetalleDeCompra crearDetalleDesdeVariante(VarianteDeZapato variante, int cantidad) {
+        Producto producto = variante.getZapato().getProducto();
+        return DetalleDeCompra.builder()
+            .varianteDeZapato(variante)
+            .nombreDelProducto(producto.getNombre())
+            .precioOriginalXUnidad(producto.getPrecioOriginal())
+            .cantidad(cantidad)
+            .descuentoXUnidad(producto.getDescuento())
+            .build();
+    }
+    */
+}

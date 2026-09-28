@@ -1,0 +1,342 @@
+package com.ecommerce.tienda_kalza.servicios.pedido;
+
+import com.ecommerce.tienda_kalza.dtos.pedido.*;
+import com.ecommerce.tienda_kalza.modelos.*;
+import com.ecommerce.tienda_kalza.repositorios.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * SERVICIO PEDIDOS - Gestión completa de órdenes
+ * 
+ * REPOSITORIOS NECESARIOS:
+ * - CompraRepository
+ * - DetalleDeCompraRepository
+ * - BoletaRepository
+ * - EntregaRepository
+ * - MetodoDePagoRepository
+ * - PuntoDeEntregaRepository
+ * - UsuarioRepository
+ * - VarianteDeZapatoRepository (para re-stock si cancelación)
+ * 
+ * MÉTODOS A IMPLEMENTAR:
+ * 
+ * 1. listarMisPedidos(Integer usuarioId, FiltroPedidosDTO filtro) -> Page<PedidoResumenDTO>
+ *    - Solo pedidos del usuario (estado != carrito)
+ *    - Filtros: estado, fechaDesde/hasta
+ *    - Incluir info de entrega para tracking
+ * 
+ * 2. obtenerDetallePedido(Integer usuarioId, Integer idCompra) -> PedidoDetalleDTO
+ *    - Validar que pedido pertenece al usuario (o es admin)
+ *    - Cargar: items, pago, entrega, boleta
+ * 
+ * 3. procesarPago(Integer usuarioId, Integer idCompra, PagarPedidoRequestDTO request) -> PedidoDetalleDTO
+ *    - Validar compra: estado="pendiente", pertenece a usuario
+ *    - Validar método de pago pertenece al usuario
+ *    - Llamar pasarela de pago (MercadoPago, Culqi, PayPal, etc.)
+ *    - Si éxito:
+ *      - Cambiar estado compra -> "pagado"
+ *      - Crear Boleta
+ *      - Crear Entrega (estado="pendiente", asignar punto de entrega)
+ *      - Notificar usuario (email/push)
+ *    - Si fallo: mantener estado="pendiente", registrar intento
+ * 
+ * 4. cancelarPedido(Integer usuarioId, Integer idCompra) -> void
+ *    - Solo si estado="pendiente" o "pagado" (no enviado)
+ *    - Si pagado: iniciar reembolso
+ *    - Devolver stock a variantes
+ *    - Cambiar estado -> "cancelado"
+ * 
+ * 5. (ADMIN) cambiarEstadoPedido(Integer idCompra, String nuevoEstado, String observacion) -> PedidoDetalleDTO
+ *    - Validar transición de estado permitida
+ *    - Estados: pendiente -> pagado -> enviado -> entregado
+ *    -                 \-> cancelado (desde pendiente/pagado)
+ *    - Si enviado: crear/actualizar Entrega, asignar transportista
+ *    - Si entregado: marcar Entrega.fechaEntregado = now
+ *    - Notificar usuario
+ * 
+ * 6. (ADMIN) listarTodosPedidos(FiltroPedidosDTO filtro) -> Page<PedidoResumenDTO>
+ *    - Ver todos, con info de cliente
+ * 
+ * 7. obtenerReporteVentas(LocalDateTime desde, LocalDateTime hasta) -> ReporteVentasDTO
+ *    - Total ventas, pedidos, ticket promedio
+ *    - Por categoría, marca, método pago
+ *    - Top productos
+ * 
+ * CONSIDERACIONES:
+ * - @Transactional en métodos que modifican
+ * - Idempotencia en pago (evitar doble cargo)
+ * - Manejo de reembolsos (parcial/total)
+ * - Notificaciones async (eventos + message queue)
+ * - Auditoría de cambios de estado
+ */
+
+@Service
+@RequiredArgsConstructor
+public class PedidoService {
+
+    // TODO: Inyectar repositorios
+    // private final CompraRepository compraRepository;
+    // private final DetalleDeCompraRepository detalleRepository;
+    // private final BoletaRepository boletaRepository;
+    // private final EntregaRepository entregaRepository;
+    // private final MetodoDePagoRepository metodoPagoRepository;
+    // private final PuntoDeEntregaRepository puntoEntregaRepository;
+    // private final UsuarioRepository usuarioRepository;
+    // private final VarianteDeZapatoRepository varianteRepository;
+
+    /*
+    @Transactional(readOnly = true)
+    public Page<PedidoResumenDTO> listarMisPedidos(Integer usuarioId, FiltroPedidosDTO filtro) {
+        Pageable pageable = PageRequest.of(filtro.getPage(), filtro.getSize(),
+            Sort.by("fechaDeCompra").descending());
+        
+        Page<Compra> page = compraRepository.findByClienteIdUsuarioAndEstadoNot(usuarioId, "carrito", pageable);
+        // O con Specification para filtros adicionales
+        
+        return page.map(this::mapToResumenDTO);
+    }
+
+    @Transactional(readOnly = true)
+    public PedidoDetalleDTO obtenerDetallePedido(Integer usuarioId, Integer idCompra) {
+        Compra compra = compraRepository.findByIdWithCliente(idCompra)
+            .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado"));
+        
+        // Validar propiedad (o admin)
+        if (!compra.getCliente().getIdUsuario().equals(usuarioId)) {
+            // TODO: Verificar si es admin via SecurityContext
+            throw new AccessDeniedException("No autorizado");
+        }
+        
+        return mapToDetalleDTO(compra);
+    }
+
+    @Transactional
+    public PedidoDetalleDTO procesarPago(Integer usuarioId, Integer idCompra, PagarPedidoRequestDTO request) {
+        Compra compra = compraRepository.findByIdWithCliente(idCompra)
+            .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado"));
+        
+        if (!compra.getCliente().getIdUsuario().equals(usuarioId)) {
+            throw new AccessDeniedException("No autorizado");
+        }
+        if (!"pendiente".equals(compra.getEstado())) {
+            throw new IllegalStateException("Pedido no está pendiente de pago");
+        }
+
+        // 1. Validar método de pago
+        MetodoDePago metodo = metodoPagoRepository.findById(request.getIdMetodoPago())
+            .orElseThrow(() -> new EntityNotFoundException("Método de pago no encontrado"));
+        
+        if (!metodo.getUsuario().getIdUsuario().equals(usuarioId)) {
+            throw new AccessDeniedException("Método de pago no pertenece al usuario");
+        }
+
+        // 2. Procesar con pasarela (TODO: implementar integración real)
+        // PagoResultado resultado = pasarelaService.cobrar(compra.getTotalConDescuento(), request);
+        
+        // Simulación exitosa:
+        boolean pagoExitoso = true;
+        String transaccionId = "txn_" + UUID.randomUUID().toString().substring(0, 12);
+        
+        if (!pagoExitoso) {
+            throw new PaymentException("Pago rechazado");
+        }
+
+        // 3. Actualizar compra
+        compra.setEstado("pagado");
+        compra = compraRepository.save(compra);
+
+        // 4. Crear Boleta
+        Boleta boleta = Boleta.builder()
+            .compra(compra)
+            .metodoDePago(metodo)
+            .cliente(compra.getCliente().getNombreCompleto())
+            .rucDeLaTienda("20123456789") // Configurable
+            .pasarelaDePago(request.getPasarela())
+            .redDeTarjeta(metodo.getRedUsada())
+            .ultimos4Digitos(metodo.getUltimos4Digitos())
+            .total(compra.getTotalConDescuento())
+            .build();
+        boletaRepository.save(boleta);
+
+        // 5. Crear Entrega (asignar punto más cercano al usuario)
+        // TODO: Lógica geográfica para encontrar punto de entrega
+        PuntoDeEntrega punto = puntoEntregaRepository.findAll().get(0); // Placeholder
+        Entrega entrega = Entrega.builder()
+            .compra(compra)
+            .puntoDeEntrega(punto)
+            .estado("pendiente")
+            .build();
+        entregaRepository.save(entrega);
+
+        // 6. Notificar (async)
+        // eventPublisher.publishEvent(new PedidoPagadoEvent(compra));
+
+        return mapToDetalleDTO(compra);
+    }
+
+    @Transactional
+    public void cancelarPedido(Integer usuarioId, Integer idCompra) {
+        Compra compra = compraRepository.findByIdWithCliente(idCompra)
+            .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado"));
+        
+        if (!compra.getCliente().getIdUsuario().equals(usuarioId)) {
+            throw new AccessDeniedException("No autorizado");
+        }
+        
+        if ("enviado".equals(compra.getEstado()) || "entregado".equals(compra.getEstado())) {
+            throw new IllegalStateException("No se puede cancelar un pedido ya enviado");
+        }
+
+        // Devolver stock
+        for (DetalleDeCompra detalle : compra.getDetalles()) {
+            VarianteDeZapato variante = detalle.getVarianteDeZapato();
+            variante.setStock(variante.getStock() + detalle.getCantidad());
+            varianteRepository.save(variante);
+        }
+
+        // Si ya pagado, iniciar reembolso
+        if ("pagado".equals(compra.getEstado())) {
+            // TODO: Procesar reembolso en pasarela
+            // reembolsoService.procesar(compra);
+        }
+
+        compra.setEstado("cancelado");
+        compraRepository.save(compra);
+    }
+
+    @Transactional
+    public PedidoDetalleDTO cambiarEstadoPedido(Integer idCompra, String nuevoEstado, String observacion) {
+        Compra compra = compraRepository.findByIdWithCliente(idCompra)
+            .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado"));
+
+        // Validar transición
+        validarTransicionEstado(compra.getEstado(), nuevoEstado);
+
+        compra.setEstado(nuevoEstado);
+        
+        // Acciones según nuevo estado
+        switch (nuevoEstado) {
+            case "enviado" -> {
+                Entrega entrega = entregaRepository.findByCompraIdCompra(idCompra)
+                    .orElseThrow(() -> new EntityNotFoundException("Entrega no encontrada"));
+                entrega.setEstado("asignado");
+                entrega.setAsignadoEl(LocalDateTime.now());
+                entregaRepository.save(entrega);
+            }
+            case "entregado" -> {
+                Entrega entrega = entregaRepository.findByCompraIdCompra(idCompra)
+                    .orElseThrow(() -> new EntityNotFoundException("Entrega no encontrada"));
+                entrega.setEstado("entregado");
+                entrega.setEntregadoEl(LocalDateTime.now());
+                entregaRepository.save(entrega);
+            }
+        }
+
+        compraRepository.save(compra);
+        // Auditoría + notificación
+        return mapToDetalleDTO(compra);
+    }
+
+    private void validarTransicionEstado(String actual, String nuevo) {
+        Map<String, Set<String>> transiciones = Map.of(
+            "pendiente", Set.of("pagado", "cancelado"),
+            "pagado", Set.of("enviado", "cancelado"),
+            "enviado", Set.of("entregado"),
+            "entregado", Set.of(),
+            "cancelado", Set.of()
+        );
+        
+        if (!transiciones.getOrDefault(actual, Set.of()).contains(nuevo)) {
+            throw new IllegalStateException("Transición inválida: " + actual + " -> " + nuevo);
+        }
+    }
+
+    private PedidoResumenDTO mapToResumenDTO(Compra c) {
+        Entrega entrega = entregaRepository.findByCompraIdCompra(c.getIdCompra()).orElse(null);
+        return PedidoResumenDTO.builder()
+            .idCompra(c.getIdCompra())
+            .estado(c.getEstado())
+            .fechaCompra(c.getFechaDeCompra())
+            .total(c.getTotalConDescuento())
+            .totalItems(c.getDetalles().size())
+            .estadoEntrega(entrega != null ? entrega.getEstado() : "sin_entrega")
+            .build();
+    }
+
+    private PedidoDetalleDTO mapToDetalleDTO(Compra c) {
+        List<PedidoItemDTO> items = c.getDetalles().stream()
+            .map(d -> PedidoItemDTO.builder()
+                .idVariante(d.getVarianteDeZapato().getIdVarianteDeZapato())
+                .nombreProducto(d.getNombreDelProducto())
+                .urlImagen(d.getVarianteDeZapato().getZapato().getProducto().getUrlImagen())
+                .talla(d.getVarianteDeZapato().getTalla())
+                .color(d.getVarianteDeZapato().getColor())
+                .precioOriginal(d.getPrecioOriginalXUnidad())
+                .descuento(d.getDescuentoXUnidad())
+                .precioConDescuento(d.getPrecioConDescuento().divide(BigDecimal.valueOf(d.getCantidad())))
+                .cantidad(d.getCantidad())
+                .subtotal(d.getPrecioConDescuento())
+                .build())
+            .collect(Collectors.toList());
+
+        Boleta boleta = boletaRepository.findByCompraIdCompra(c.getIdCompra()).orElse(null);
+        Entrega entrega = entregaRepository.findByCompraIdCompra(c.getIdCompra()).orElse(null);
+
+        return PedidoDetalleDTO.builder()
+            .idCompra(c.getIdCompra())
+            .estado(c.getEstado())
+            .fechaCompra(c.getFechaDeCompra())
+            .totalOriginal(c.getTotalSinDescuento())
+            .totalDescuento(c.getTotalSinDescuento().subtract(c.getTotalConDescuento()))
+            .totalConDescuento(c.getTotalConDescuento())
+            .items(items)
+            .pago(boleta != null ? mapToPagoDTO(boleta) : null)
+            .entrega(entrega != null ? mapToEntregaDTO(entrega) : null)
+            .boleta(boleta != null ? mapToBoletaDTO(boleta) : null)
+            .build();
+    }
+
+    private PagoInfoDTO mapToPagoDTO(Boleta b) {
+        return PagoInfoDTO.builder()
+            .metodoPago(b.getMetodoDePago().getPasarela())
+            .ultimos4Digitos(b.getUltimos4Digitos())
+            .pasarela(b.getPasarelaDePago())
+            .monto(b.getTotal())
+            .fechaPago(b.getCreadoEl())
+            .estado("aprobado")
+            .build();
+    }
+
+    private EntregaInfoDTO mapToEntregaDTO(Entrega e) {
+        return EntregaInfoDTO.builder()
+            .idEntrega(e.getIdEntrega())
+            .estado(e.getEstado())
+            .direccion(e.getPuntoDeEntrega().getIdDistrito().toString()) // TODO: dirección real
+            .latitud(e.getPuntoDeEntrega().getLatitud())
+            .longitud(e.getPuntoDeEntrega().getLongitud())
+            .fechaAsignado(e.getAsignadoEl())
+            .fechaRecogido(e.getRecogidoEl())
+            .fechaEntregado(e.getEntregadoEl())
+            .build();
+    }
+
+    private BoletaInfoDTO mapToBoletaDTO(Boleta b) {
+        return BoletaInfoDTO.builder()
+            .idBoleta(b.getIdBoleta())
+            .numeroBoleta("B-" + String.format("%06d", b.getIdBoleta()))
+            .cliente(b.getCliente())
+            .rucTienda(b.getRucDeLaTienda())
+            .total(b.getTotal())
+            .fechaEmision(b.getCreadoEl())
+            .build();
+    }
+    */
+}

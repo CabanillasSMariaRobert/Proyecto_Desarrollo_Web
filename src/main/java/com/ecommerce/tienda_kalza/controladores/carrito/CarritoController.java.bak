@@ -1,0 +1,128 @@
+package com.ecommerce.tienda_kalza.controladores.carrito;
+
+import com.ecommerce.tienda_kalza.dtos.carrito.*;
+import com.ecommerce.tienda_kalza.servicios.carrito.CarritoService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * CONTROLADOR CARRITO - Endpoints para gestión del carrito
+ * 
+ * BASE PATH: /api/carrito
+ * AUTENTICACIÓN: Requiere JWT (ROLE_USER o ROLE_ADMIN)
+ * Usuario se obtiene de SecurityContext via @AuthenticationPrincipal
+ * 
+ * ENDPOINTS:
+ * 
+ * GET    /api/carrito                    -> Ver carrito actual
+ * POST   /api/carrito/items              -> Agregar item
+ * PUT    /api/carrito/items/{idVariante} -> Actualizar cantidad
+ * DELETE /api/carrito/items/{idVariante} -> Eliminar item
+ * DELETE /api/carrito                    -> Vaciar carrito
+ * POST   /api/carrito/validar            -> Validar stock antes de checkout
+ * POST   /api/carrito/checkout           -> Preparar checkout (bloquea stock)
+ * 
+ * EJEMPLOS:
+ * 
+ * Ver carrito:
+ * GET /api/carrito
+ * Header: Authorization: Bearer <token>
+ * 
+ * Agregar item:
+ * POST /api/carrito/items
+ * Header: Authorization: Bearer <token>
+ * Body: { "idVariante": 15, "cantidad": 2 }
+ * 
+ * Actualizar cantidad:
+ * PUT /api/carrito/items/15
+ * Body: { "cantidad": 3 }
+ * 
+ * Validar:
+ * POST /api/carrito/validar
+ * 
+ * Checkout:
+ * POST /api/carrito/checkout
+ * Response: Compra con estado="pendiente" lista para pago
+ */
+
+@RestController
+@RequestMapping("/api/carrito")
+public class CarritoController {
+
+    //private final CarritoService carritoService;
+
+    /*
+    @GetMapping
+    public ResponseEntity<CarritoResponseDTO> verCarrito(@AuthenticationPrincipal UserDetails userDetails) {
+        Integer usuarioId = obtenerUsuarioId(userDetails);
+        return ResponseEntity.ok(carritoService.verCarrito(usuarioId));
+    }
+
+    @PostMapping("/items")
+    public ResponseEntity<CarritoResponseDTO> agregarItem(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody CarritoItemRequestDTO request) {
+        Integer usuarioId = obtenerUsuarioId(userDetails);
+        return ResponseEntity.ok(carritoService.agregarItem(usuarioId, request));
+    }
+
+    @PutMapping("/items/{idVariante}")
+    public ResponseEntity<CarritoResponseDTO> actualizarCantidad(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Integer idVariante,
+            @RequestBody ActualizarCantidadRequest request) {
+        Integer usuarioId = obtenerUsuarioId(userDetails);
+        return ResponseEntity.ok(carritoService.actualizarCantidad(usuarioId, idVariante, request.getCantidad()));
+    }
+
+    @DeleteMapping("/items/{idVariante}")
+    public ResponseEntity<CarritoResponseDTO> eliminarItem(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Integer idVariante) {
+        Integer usuarioId = obtenerUsuarioId(userDetails);
+        return ResponseEntity.ok(carritoService.eliminarItem(usuarioId, idVariante));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> vaciarCarrito(@AuthenticationPrincipal UserDetails userDetails) {
+        Integer usuarioId = obtenerUsuarioId(userDetails);
+        carritoService.vaciarCarrito(usuarioId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/validar")
+    public ResponseEntity<ValidarCarritoDTO> validarCarrito(@AuthenticationPrincipal UserDetails userDetails) {
+        Integer usuarioId = obtenerUsuarioId(userDetails);
+        return ResponseEntity.ok(carritoService.validarCarrito(usuarioId));
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<CompraCheckoutResponseDTO> prepararCheckout(@AuthenticationPrincipal UserDetails userDetails) {
+        Integer usuarioId = obtenerUsuarioId(userDetails);
+        Compra compra = carritoService.prepararCheckout(usuarioId);
+        
+        // Retornar datos necesarios para pasarela de pago
+        return ResponseEntity.ok(CompraCheckoutResponseDTO.builder()
+            .idCompra(compra.getIdCompra())
+            .total(compra.getTotalConDescuento())
+            .build());
+    }
+
+    private Integer obtenerUsuarioId(UserDetails userDetails) {
+        // El UserDetails es nuestra entidad Usuario (implementa UserDetails)
+        return ((Usuario) userDetails).getIdUsuario();
+    }
+
+    // DTOs internos
+    public record ActualizarCantidadRequest(Integer cantidad) {}
+    
+    @Data @Builder @NoArgsConstructor @AllArgsConstructor
+    public static class CompraCheckoutResponseDTO {
+        private Integer idCompra;
+        private BigDecimal total;
+    }
+    */
+}
