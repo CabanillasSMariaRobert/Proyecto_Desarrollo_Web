@@ -47,7 +47,7 @@
                             <p class="text-muted mb-0">Inicia sesión para acceder a tu cuenta.</p>
                         </div>
 
-                        <form th:action="@{/api/auth/login}" method="post" th:object="${loginRequest}">
+                        <form th:action="@{/login}" method="post" th:object="${loginRequest}">
                             <div class="mb-3">
                                 <label for="correo" class="form-label fw-semibold">Correo electrónico</label>
                                 <input type="email" id="correo" name="correo" class="form-control" placeholder="ejemplo@gmail.com" th:field="*{correo}" required />

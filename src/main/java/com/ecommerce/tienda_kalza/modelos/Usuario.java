@@ -167,7 +167,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return estaActivo && estaVerificado;
+        return estaActivo;
     }
 
     public String getNombreCompleto() {

@@ -37,8 +37,8 @@ public class AuthService {
 
         Usuario usuario = (Usuario) authentication.getPrincipal();
 
-        if (!usuario.getEstaActivo() || !usuario.getEstaVerificado()) {
-            throw new IllegalStateException("Cuenta no verificada o desactivada");
+        if (!usuario.getEstaActivo()) {
+            throw new IllegalStateException("Cuenta desactivada");
         }
 
         String token = jwtUtil.generateToken(usuario);
@@ -79,59 +79,5 @@ public class AuthService {
         response.setExpiraEn(jwtUtil.extractExpiration(token).getTime() - System.currentTimeMillis());
         response.setUsuario(AuthResponse.UsuarioDTO.fromEntity(usuario));
         return response;
-    }
-
-    @Transactional(readOnly = true)
-    public Usuario validarTokenYObtenerUsuario(String token) {
-        String correo = jwtUtil.extractUsername(token);
-        Usuario usuario = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
-
-        if (!jwtUtil.validateToken(token, usuario)) {
-            throw new BadCredentialsException("Token inválido o expirado");
-        }
-
-        return usuario;
-    }
-
-    public AuthResponse refreshToken(String token) {
-        Usuario usuario = validarTokenYObtenerUsuario(token);
-        String nuevoToken = jwtUtil.generateToken(usuario);
-
-        AuthResponse response = new AuthResponse();
-        response.setToken(nuevoToken);
-        response.setExpiraEn(jwtUtil.extractExpiration(nuevoToken).getTime() - System.currentTimeMillis());
-        response.setUsuario(AuthResponse.UsuarioDTO.fromEntity(usuario));
-        return response;
-    }
-
-    @Transactional
-    public void cambiarClave(Integer usuarioId, String claveActual, String claveNueva) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-
-        if (!passwordEncoder.matches(claveActual, usuario.getClave())) {
-            throw new BadCredentialsException("Contraseña actual incorrecta");
-        }
-
-        usuario.setClave(passwordEncoder.encode(claveNueva));
-        usuarioRepository.save(usuario);
-    }
-
-    @Transactional
-    public void solicitarResetClave(String correo) {
-        Usuario usuario = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-
-        // TODO: Generar token de reset (TokenDeUnSoloUso tipo "RESET_PASSWORD")
-        // TODO: Enviar email con enlace /reset-password?token=xxx
-    }
-
-    @Transactional
-    public void resetearClave(String token, String claveNueva) {
-        // TODO: Validar token (TokenDeUnSoloUso tipo "RESET_PASSWORD", no usado, no expirado)
-        // TODO: Obtener usuario del token
-        // TODO: Actualizar clave
-        // TODO: Marcar token como usado
     }
 }
