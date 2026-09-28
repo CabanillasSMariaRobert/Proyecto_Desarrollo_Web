@@ -1,3 +1,5 @@
-<header class="admin-topbar" th:fragment="topbar(userName)">
-    <span class="user-name" th:text="${userName}">Admin</span>
+<header class="admin-topbar" th:fragment="topbar">
+    <!-- TODO SEGURIDAD: reemplazar por ${#authentication.name} cuando exista
+         autenticación y la entidad Usuario. Hoy no hay sesión que lo provea. -->
+    <span class="user-name">Aldhair Salazar Manrique</span>
 </header>

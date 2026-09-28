@@ -43,6 +43,9 @@
     </ul>
 
     <div class="sidebar-logout">
-        <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+        <!-- TODO SEGURIDAD: convertir en <form method="post" th:action="@{/logout}">
+             con el input hidden de _csrf. Spring exige POST para cerrar sesión;
+             este enlace GET a /login no la cierra, solo vuelve a la pantalla de login. -->
+        <a th:href="@{/login}"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
     </div>
 </nav>

@@ -1,50 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="assets/icons/KALZA icon 1.png">
-    <title>KALZA | Detalle de Producto</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-    <link rel="stylesheet" href="assets/css/styles.css">
-</head>
-
+<html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
 <body>
 
+<div th:fragment="content">
     <!-- ============ HEADER ============ -->
-    <header class="site-header">
-        <div class="header-inner">
-            <a href="index.html" class="brand">KAL<span class="accent">ZA</span></a>
-            <nav class="main-nav">
-                <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Zapatillas</a>
-                <a href="publicidad.html">Ofertas</a>
-                <a href="contacto.html">Contacto</a>
-            </nav>
-            <div class="header-actions">
-                <a href="carrito.html" class="icon-btn" aria-label="Carrito">
-                    <i class="bi bi-cart3"></i>
-                    <span class="cart-badge"></span>
-                </a>
-                <a href="perfil.html" class="icon-btn" aria-label="Mi cuenta">
-                    <i class="bi bi-person-circle"></i>
-                </a>
-            </div>
-        </div>
-    </header>
-
     <!-- ============ CONTENIDO ============ -->
-    <main class="py-5">
         <div class="container">
 
             <!-- PRODUCTO -->
@@ -53,20 +13,20 @@
                 <div class="col-lg-7">
                     <div class="position-relative rounded-3 overflow-hidden mb-3"
                         style="aspect-ratio: 4/3; background:#f5f5f5;">
-                        <img src="assets/img/productos/zapatillas footwear loui.jpg"
+                        <img th:src="@{/img/productos/zapatillas footwear loui.jpg}"
                             class="w-100 h-100 object-fit-cover" alt="Footwear Loui">
                         <span class="badge bg-dark position-absolute top-0 start-0 m-3 text-uppercase">Nuevo</span>
                     </div>
                     <div class="row g-3">
                         <div class="col-6">
                             <div class="rounded-3 overflow-hidden" style="aspect-ratio: 1/1; background:#f5f5f5;">
-                                <img src="assets/img/productos/zapatillas footwear loui.jpg"
+                                <img th:src="@{/img/productos/zapatillas footwear loui.jpg}"
                                     class="w-100 h-100 object-fit-cover" alt="Vista de la suela">
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="rounded-3 overflow-hidden" style="aspect-ratio: 1/1; background:#f5f5f5;">
-                                <img src="assets/img/productos/zapatillas footwear loui.jpg"
+                                <img th:src="@{/img/productos/zapatillas footwear loui.jpg}"
                                     class="w-100 h-100 object-fit-cover" alt="Vista lateral">
                             </div>
                         </div>
@@ -119,13 +79,13 @@
                     <div class="col-6 col-md-3">
                         <div class="card border-0 shadow-sm h-100 card-hover">
                             <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
-                                <a href="producto.html">
-                                    <img src="assets/img/productos/nike Dunk Low.jpg"
+                                <a th:href="@{/producto}">
+                                    <img th:src="@{/img/productos/nike Dunk Low.jpg}"
                                         class="w-100 h-100 object-fit-cover" alt="Nike Dunk Low">
                                 </a>
                             </div>
                             <div class="card-body">
-                                <a href="producto.html" class="text-decoration-none text-dark">
+                                <a th:href="@{/producto}" class="text-decoration-none text-dark">
                                     <h3 class="h6 fw-bold">Nike Dunk Low</h3>
                                 </a>
                                 <p class="mb-0 text-muted">S/ 299.90</p>
@@ -135,13 +95,13 @@
                     <div class="col-6 col-md-3">
                         <div class="card border-0 shadow-sm h-100 card-hover">
                             <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
-                                <a href="producto.html">
-                                    <img src="assets/img/productos/Court Classic Low.webp"
+                                <a th:href="@{/producto}">
+                                    <img th:src="@{/img/productos/Court Classic Low.webp}"
                                         class="w-100 h-100 object-fit-cover" alt="Court Classic Low">
                                 </a>
                             </div>
                             <div class="card-body">
-                                <a href="producto.html" class="text-decoration-none text-dark">
+                                <a th:href="@{/producto}" class="text-decoration-none text-dark">
                                     <h3 class="h6 fw-bold">Court Classic Low</h3>
                                 </a>
                                 <p class="mb-0 text-muted">S/ 229.00</p>
@@ -151,13 +111,13 @@
                     <div class="col-6 col-md-3">
                         <div class="card border-0 shadow-sm h-100 card-hover">
                             <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
-                                <a href="producto.html">
-                                    <img src="assets/img/productos/nike Air Force 1.webp"
+                                <a th:href="@{/producto}">
+                                    <img th:src="@{/img/productos/nike Air Force 1.webp}"
                                         class="w-100 h-100 object-fit-cover" alt="Nike Air Force 1">
                                 </a>
                             </div>
                             <div class="card-body">
-                                <a href="producto.html" class="text-decoration-none text-dark">
+                                <a th:href="@{/producto}" class="text-decoration-none text-dark">
                                     <h3 class="h6 fw-bold">Nike Air Force 1</h3>
                                 </a>
                                 <p class="mb-0 text-muted">S/ 149.90</p>
@@ -167,13 +127,13 @@
                     <div class="col-6 col-md-3">
                         <div class="card border-0 shadow-sm h-100 card-hover">
                             <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
-                                <a href="producto.html">
-                                    <img src="assets/img/productos/adidas Forum Low.jpg"
+                                <a th:href="@{/producto}">
+                                    <img th:src="@{/img/productos/adidas Forum Low.jpg}"
                                         class="w-100 h-100 object-fit-cover" alt="Adidas Forum Low">
                                 </a>
                             </div>
                             <div class="card-body">
-                                <a href="producto.html" class="text-decoration-none text-dark">
+                                <a th:href="@{/producto}" class="text-decoration-none text-dark">
                                     <h3 class="h6 fw-bold">Adidas Forum Low</h3>
                                 </a>
                                 <p class="mb-0 text-muted">S/ 439.90</p>
@@ -183,45 +143,7 @@
                 </div>
             </section>
         </div>
-    </main>
-
     <!-- ============ FOOTER ============ -->
-    <footer class="site-footer">
-        <div class="footer-grid">
-            <div>
-                <p class="footer-brand">KALZA</p>
-                <p class="footer-desc">Tu tienda online de zapatillas y sneakers. Camina a tu manera.</p>
-            </div>
-            <div class="footer-col">
-                <h4>Compañía</h4>
-                <a href="contacto.html">Sobre nosotros</a>
-                <a href="contacto.html#privacidad">Política de privacidad</a>
-            </div>
-            <div class="footer-col">
-                <h4>Soporte</h4>
-                <a href="contacto.html">Contacto</a>
-                <a href="contacto.html#terminos">Términos de servicio</a>
-            </div>
-            <div class="footer-col">
-                <h4>Enlaces</h4>
-                <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Zapatillas</a>
-                <a href="publicidad.html">Ofertas</a>
-                <a href="producto.html">Productos</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="footer-bottom-inner">
-                <p>&copy; 2026 KALZA. Todos los derechos reservados.</p>
-                <div class="social">
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
-                    <a href="#">TikTok</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <!-- MODAL GUIA DE TALLAS -->
     <div class="modal fade" id="guiaTallasModal" tabindex="-1" aria-labelledby="guiaTallasLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -316,10 +238,7 @@
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
 </body>
-
 </html>

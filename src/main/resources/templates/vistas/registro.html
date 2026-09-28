@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<body>
+
+<div th:fragment="content">
+    <!-- ============ HEADER ============ -->
+    <!-- ============ CONTENIDO (Bootstrap) ============ -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-5">
+                    <div class="card border rounded-4 shadow-sm p-4 p-md-5">
+                        <div class="text-center mb-4">
+                            <h1 class="fs-2 fw-bold mb-1">Crea tu cuenta</h1>
+                            <p class="text-muted mb-0">Únete a KALZA hoy mismo.</p>
+                        </div>
+
+                        <form action="#" method="post">
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-semibold">Nombre completo</label>
+                                <input type="text" id="name" name="name" class="form-control"
+                                    placeholder="John Doe" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-semibold">Correo electrónico</label>
+                                <input type="email" id="email" name="email" class="form-control"
+                                    placeholder="ejemplo@gmail.com" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-semibold">Contraseña</label>
+                                <input type="password" id="password" name="password" class="form-control"
+                                    placeholder="••••••••" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="confirm_password" class="form-label fw-semibold">Confirmar contraseña</label>
+                                <input type="password" id="confirm_password" name="confirm_password"
+                                    class="form-control" placeholder="••••••••" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-blue w-100 py-2">Crear cuenta</button>
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted mb-0">
+                                ¿Ya tienes una cuenta?
+                                <a th:href="@{/login}" class="fw-semibold">Inicia sesión</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- ============ FOOTER ============ -->
+</div>
+
+</body>
+</html>
