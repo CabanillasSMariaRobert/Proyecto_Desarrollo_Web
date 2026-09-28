@@ -1,0 +1,48 @@
+<nav class="admin-sidebar" th:fragment="sidebar(currentPage)">
+    <div class="sidebar-brand">
+        <div class="sidebar-avatar">
+            <img th:src="@{/icons/KALZA icon 1.png}" alt="Admin" />
+        </div>
+        <div>
+            <h1>KALZA Admin</h1>
+            <p>Panel de gestión</p>
+        </div>
+    </div>
+
+    <ul class="sidebar-nav list-unstyled mb-0">
+        <li>
+            <a th:href="@{/admin}" th:classappend="${currentPage == 'metricas'} ? 'active' : ''">
+                <i class="bi bi-speedometer2"></i> Panel general
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/productos}" th:classappend="${currentPage == 'productos'} ? 'active' : ''">
+                <i class="bi bi-box-seam"></i> Productos
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/categorias}" th:classappend="${currentPage == 'categorias'} ? 'active' : ''">
+                <i class="bi bi-tags"></i> Categorías
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/pedidos}" th:classappend="${currentPage == 'pedidos'} ? 'active' : ''">
+                <i class="bi bi-bag"></i> Pedidos
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/usuarios}" th:classappend="${currentPage == 'usuarios'} ? 'active' : ''">
+                <i class="bi bi-people"></i> Usuarios
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/publicidad}" th:classappend="${currentPage == 'publicidad'} ? 'active' : ''">
+                <i class="bi bi-megaphone"></i> Publicidad
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar-logout">
+        <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+    </div>
+</nav>

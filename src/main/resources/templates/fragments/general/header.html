@@ -1,0 +1,22 @@
+<header class="site-header" th:fragment="header(currentPage)">
+    <div class="header-inner">
+        <a th:href="@{/}" class="brand">KAL<span class="accent">ZA</span></a>
+
+        <nav class="main-nav">
+            <a th:href="@{/}" th:classappend="${currentPage == 'inicio'} ? 'active' : ''">Inicio</a>
+            <a th:href="@{/catalogo}" th:classappend="${currentPage == 'catalogo'} ? 'active' : ''">Zapatillas</a>
+            <a th:href="@{/publicidad}" th:classappend="${currentPage == 'ofertas'} ? 'active' : ''">Ofertas</a>
+            <a th:href="@{/contacto}" th:classappend="${currentPage == 'contacto'} ? 'active' : ''">Contacto</a>
+        </nav>
+
+        <div class="header-actions">
+            <a th:href="@{/carrito}" class="icon-btn" aria-label="Carrito">
+                <i class="bi bi-cart3"></i>
+                <span class="cart-badge"></span>
+            </a>
+            <a th:href="@{/perfil}" class="icon-btn" aria-label="Mi cuenta">
+                <i class="bi bi-person-circle"></i>
+            </a>
+        </div>
+    </div>
+</header>
