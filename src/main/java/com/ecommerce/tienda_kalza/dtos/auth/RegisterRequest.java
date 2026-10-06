@@ -3,7 +3,15 @@ package com.ecommerce.tienda_kalza.dtos.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterRequest {
 
     @NotBlank(message = "Los nombres son obligatorios")
@@ -25,29 +33,4 @@ public class RegisterRequest {
 
     @NotBlank(message = "La confirmación de contraseña es obligatoria")
     private String confirmarClave;
-
-    public RegisterRequest() {}
-
-    public RegisterRequest(String nombres, String apellidos, String correo, String clave, String confirmarClave) {
-        this.nombres = nombres;
-        this.apellidos = apellidos;
-        this.correo = correo;
-        this.clave = clave;
-        this.confirmarClave = confirmarClave;
-    }
-
-    public String getNombres() { return nombres; }
-    public void setNombres(String nombres) { this.nombres = nombres; }
-
-    public String getApellidos() { return apellidos; }
-    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
-
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
-
-    public String getClave() { return clave; }
-    public void setClave(String clave) { this.clave = clave; }
-
-    public String getConfirmarClave() { return confirmarClave; }
-    public void setConfirmarClave(String confirmarClave) { this.confirmarClave = confirmarClave; }
 }

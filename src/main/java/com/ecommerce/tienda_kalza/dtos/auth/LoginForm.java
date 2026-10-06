@@ -3,6 +3,9 @@ package com.ecommerce.tienda_kalza.dtos.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Formulario de inicio de sesion.
@@ -11,6 +14,9 @@ import jakarta.validation.constraints.Size;
  * JSON no la necesita: ahi el cliente decide que hacer con el token. En la
  * pantalla si forma parte del formulario, asi que vive aca.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class LoginForm {
 
     @NotBlank(message = "El correo es obligatorio")
@@ -23,15 +29,4 @@ public class LoginForm {
     private String clave;
 
     private boolean recordar;
-
-    public LoginForm() {}
-
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
-
-    public String getClave() { return clave; }
-    public void setClave(String clave) { this.clave = clave; }
-
-    public boolean isRecordar() { return recordar; }
-    public void setRecordar(boolean recordar) { this.recordar = recordar; }
 }

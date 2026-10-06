@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +17,9 @@ import java.time.LocalDateTime;
 @Table(name = "VariantesDeZapato",
     uniqueConstraints = @UniqueConstraint(name = "uq_variante_unica", columnNames = {"id_zapato", "talla", "color"}),
     indexes = @Index(name = "idx_variantes_zapato", columnList = "id_zapato"))
+@Getter
+@Setter
+@NoArgsConstructor
 public class VarianteDeZapato {
 
     @Id
@@ -49,27 +55,4 @@ public class VarianteDeZapato {
     @UpdateTimestamp
     @Column(name = "actualizado_el", nullable = false)
     private LocalDateTime actualizadoEl;
-
-    public VarianteDeZapato() {}
-
-    public Integer getIdVarianteDeZapato() { return idVarianteDeZapato; }
-    public void setIdVarianteDeZapato(Integer idVarianteDeZapato) { this.idVarianteDeZapato = idVarianteDeZapato; }
-
-    public Integer getTalla() { return talla; }
-    public void setTalla(Integer talla) { this.talla = talla; }
-
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
-
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
-
-    public Zapato getZapato() { return zapato; }
-    public void setZapato(Zapato zapato) { this.zapato = zapato; }
-
-    public LocalDateTime getCreadoEl() { return creadoEl; }
-    public void setCreadoEl(LocalDateTime creadoEl) { this.creadoEl = creadoEl; }
-
-    public LocalDateTime getActualizadoEl() { return actualizadoEl; }
-    public void setActualizadoEl(LocalDateTime actualizadoEl) { this.actualizadoEl = actualizadoEl; }
 }

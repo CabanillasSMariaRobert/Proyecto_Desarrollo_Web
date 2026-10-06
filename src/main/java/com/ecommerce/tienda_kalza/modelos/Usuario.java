@@ -2,6 +2,10 @@ package com.ecommerce.tienda_kalza.modelos;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +19,10 @@ import java.util.List;
 @Entity
 @Table(name = "Usuarios",
     uniqueConstraints = @UniqueConstraint(name = "uk_usuarios_correo", columnNames = "correo"))
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario implements UserDetails {
 
     @Id
@@ -73,67 +81,6 @@ public class Usuario implements UserDetails {
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MetodoDePago> metodosDePago = List.of();
-
-    public Usuario() {}
-
-    public Usuario(Integer idUsuario, String nombres, String apellidos, String correo, String clave, String rol, Boolean estaVerificado, Boolean estaActivo, Boolean estaBaneado, String razonDeBaneo, LocalDateTime creadoEl, List<TokenDeUnSoloUso> tokens, List<Compra> compras, List<MetodoDePago> metodosDePago) {
-        this.idUsuario = idUsuario;
-        this.nombres = nombres;
-        this.apellidos = apellidos;
-        this.correo = correo;
-        this.clave = clave;
-        this.rol = rol;
-        this.estaVerificado = estaVerificado;
-        this.estaActivo = estaActivo;
-        this.estaBaneado = estaBaneado;
-        this.razonDeBaneo = razonDeBaneo;
-        this.creadoEl = creadoEl;
-        this.tokens = tokens;
-        this.compras = compras;
-        this.metodosDePago = metodosDePago;
-    }
-
-    public Integer getIdUsuario() { return idUsuario; }
-    public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
-
-    public String getNombres() { return nombres; }
-    public void setNombres(String nombres) { this.nombres = nombres; }
-
-    public String getApellidos() { return apellidos; }
-    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
-
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
-
-    public String getClave() { return clave; }
-    public void setClave(String clave) { this.clave = clave; }
-
-    public String getRol() { return rol; }
-    public void setRol(String rol) { this.rol = rol; }
-
-    public Boolean getEstaVerificado() { return estaVerificado; }
-    public void setEstaVerificado(Boolean estaVerificado) { this.estaVerificado = estaVerificado; }
-
-    public Boolean getEstaActivo() { return estaActivo; }
-    public void setEstaActivo(Boolean estaActivo) { this.estaActivo = estaActivo; }
-
-    public Boolean getEstaBaneado() { return estaBaneado; }
-    public void setEstaBaneado(Boolean estaBaneado) { this.estaBaneado = estaBaneado; }
-
-    public String getRazonDeBaneo() { return razonDeBaneo; }
-    public void setRazonDeBaneo(String razonDeBaneo) { this.razonDeBaneo = razonDeBaneo; }
-
-    public LocalDateTime getCreadoEl() { return creadoEl; }
-    public void setCreadoEl(LocalDateTime creadoEl) { this.creadoEl = creadoEl; }
-
-    public List<TokenDeUnSoloUso> getTokens() { return tokens; }
-    public void setTokens(List<TokenDeUnSoloUso> tokens) { this.tokens = tokens; }
-
-    public List<Compra> getCompras() { return compras; }
-    public void setCompras(List<Compra> compras) { this.compras = compras; }
-
-    public List<MetodoDePago> getMetodosDePago() { return metodosDePago; }
-    public void setMetodosDePago(List<MetodoDePago> metodosDePago) { this.metodosDePago = metodosDePago; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

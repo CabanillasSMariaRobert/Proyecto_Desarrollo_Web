@@ -2,6 +2,9 @@ package com.ecommerce.tienda_kalza.modelos;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -12,6 +15,9 @@ import java.util.List;
 @Entity
 @Table(name = "Compras",
     indexes = @Index(name = "idx_compras_cliente", columnList = "id_cliente"))
+@Getter
+@Setter
+@NoArgsConstructor
 public class Compra {
 
     @Id
@@ -52,33 +58,4 @@ public class Compra {
 
     @OneToOne(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Entrega entrega;
-
-    public Compra() {}
-
-    public Integer getIdCompra() { return idCompra; }
-    public void setIdCompra(Integer idCompra) { this.idCompra = idCompra; }
-
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-
-    public BigDecimal getTotalConDescuento() { return totalConDescuento; }
-    public void setTotalConDescuento(BigDecimal totalConDescuento) { this.totalConDescuento = totalConDescuento; }
-
-    public BigDecimal getTotalSinDescuento() { return totalSinDescuento; }
-    public void setTotalSinDescuento(BigDecimal totalSinDescuento) { this.totalSinDescuento = totalSinDescuento; }
-
-    public LocalDateTime getFechaDeCompra() { return fechaDeCompra; }
-    public void setFechaDeCompra(LocalDateTime fechaDeCompra) { this.fechaDeCompra = fechaDeCompra; }
-
-    public Usuario getCliente() { return cliente; }
-    public void setCliente(Usuario cliente) { this.cliente = cliente; }
-
-    public List<DetalleDeCompra> getDetalles() { return detalles; }
-    public void setDetalles(List<DetalleDeCompra> detalles) { this.detalles = detalles; }
-
-    public Boleta getBoleta() { return boleta; }
-    public void setBoleta(Boleta boleta) { this.boleta = boleta; }
-
-    public Entrega getEntrega() { return entrega; }
-    public void setEntrega(Entrega entrega) { this.entrega = entrega; }
 }

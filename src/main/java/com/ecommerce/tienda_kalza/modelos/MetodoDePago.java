@@ -2,12 +2,18 @@ package com.ecommerce.tienda_kalza.modelos;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "MetodosDePago")
+@Getter
+@Setter
+@NoArgsConstructor
 public class MetodoDePago {
 
     @Id
@@ -55,35 +61,6 @@ public class MetodoDePago {
     @CreationTimestamp
     @Column(name = "creado_el", nullable = false, updatable = false)
     private LocalDateTime creadoEl;
-
-    public MetodoDePago() {}
-
-    public Integer getIdMetodoDePago() { return idMetodoDePago; }
-    public void setIdMetodoDePago(Integer idMetodoDePago) { this.idMetodoDePago = idMetodoDePago; }
-
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
-
-    public String getPasarela() { return pasarela; }
-    public void setPasarela(String pasarela) { this.pasarela = pasarela; }
-
-    public String getRedUsada() { return redUsada; }
-    public void setRedUsada(String redUsada) { this.redUsada = redUsada; }
-
-    public String getUltimos4Digitos() { return ultimos4Digitos; }
-    public void setUltimos4Digitos(String ultimos4Digitos) { this.ultimos4Digitos = ultimos4Digitos; }
-
-    public Integer getExpiraElMes() { return expiraElMes; }
-    public void setExpiraElMes(Integer expiraElMes) { this.expiraElMes = expiraElMes; }
-
-    public Integer getExpiraElAnio() { return expiraElAnio; }
-    public void setExpiraElAnio(Integer expiraElAnio) { this.expiraElAnio = expiraElAnio; }
-
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
-
-    public LocalDateTime getCreadoEl() { return creadoEl; }
-    public void setCreadoEl(LocalDateTime creadoEl) { this.creadoEl = creadoEl; }
 
     public boolean estaExpirado() {
         LocalDateTime now = LocalDateTime.now();

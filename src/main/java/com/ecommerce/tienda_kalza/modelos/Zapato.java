@@ -2,6 +2,9 @@ package com.ecommerce.tienda_kalza.modelos;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,6 +14,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Zapatos")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Zapato {
 
     @Id
@@ -42,24 +48,4 @@ public class Zapato {
     @UpdateTimestamp
     @Column(name = "actualizado_el", nullable = false)
     private LocalDateTime actualizadoEl;
-
-    public Zapato() {}
-
-    public Integer getIdZapato() { return idZapato; }
-    public void setIdZapato(Integer idZapato) { this.idZapato = idZapato; }
-
-    public Producto getProducto() { return producto; }
-    public void setProducto(Producto producto) { this.producto = producto; }
-
-    public Set<VarianteDeZapato> getVariantes() { return variantes; }
-    public void setVariantes(Set<VarianteDeZapato> variantes) { this.variantes = variantes; }
-
-    public Set<Material> getMateriales() { return materiales; }
-    public void setMateriales(Set<Material> materiales) { this.materiales = materiales; }
-
-    public LocalDateTime getCreadoEl() { return creadoEl; }
-    public void setCreadoEl(LocalDateTime creadoEl) { this.creadoEl = creadoEl; }
-
-    public LocalDateTime getActualizadoEl() { return actualizadoEl; }
-    public void setActualizadoEl(LocalDateTime actualizadoEl) { this.actualizadoEl = actualizadoEl; }
 }

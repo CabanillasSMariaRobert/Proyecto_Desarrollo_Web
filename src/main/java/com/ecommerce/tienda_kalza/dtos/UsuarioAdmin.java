@@ -1,5 +1,10 @@
 package com.ecommerce.tienda_kalza.dtos;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
 /**
@@ -8,6 +13,10 @@ import java.time.LocalDate;
  * El texto de la fecha ("02 ene, 2026") se arma aca y no en la vista para que
  * el mock no dependa del locale con el que corra la aplicacion.
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UsuarioAdmin {
 
     private static final String[] MESES = {
@@ -22,76 +31,6 @@ public class UsuarioAdmin {
     private Integer pedidos;
     private EstadoUsuario estado;
     private String colorClase;
-
-    public UsuarioAdmin() {
-    }
-
-    public UsuarioAdmin(Long id, String nombre, String correo, LocalDate fechaRegistro,
-                        Integer pedidos, EstadoUsuario estado, String colorClase) {
-        this.id = id;
-        this.nombre = nombre;
-        this.correo = correo;
-        this.fechaRegistro = fechaRegistro;
-        this.pedidos = pedidos;
-        this.estado = estado;
-        this.colorClase = colorClase;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public LocalDate getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(LocalDate fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
-
-    public Integer getPedidos() {
-        return pedidos;
-    }
-
-    public void setPedidos(Integer pedidos) {
-        this.pedidos = pedidos;
-    }
-
-    public EstadoUsuario getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoUsuario estado) {
-        this.estado = estado;
-    }
-
-    public String getColorClase() {
-        return colorClase;
-    }
-
-    public void setColorClase(String colorClase) {
-        this.colorClase = colorClase;
-    }
 
     /** Iniciales para el avatar: primera letra del nombre y del apellido. */
     public String getIniciales() {

@@ -6,20 +6,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Categoria tal como la muestra el panel de administracion.
+ * Banner tal como lo muestra el panel de publicidad.
  *
- * imagen puede venir null: en la vista, una categoria sin imagen se reemplaza
- * por un placeholder de Bootstrap Icons.
+ * imagen puede venir null: un banner todavia no publicado se dibuja con un
+ * placeholder en lugar de una foto.
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoriaAdmin {
+public class BannerAdmin {
 
     private Long id;
-    private String nombre;
-    private Integer cantidadProductos;
+    private String titulo;
+    private String descripcion;
     private boolean activo;
     private String imagen;
 }

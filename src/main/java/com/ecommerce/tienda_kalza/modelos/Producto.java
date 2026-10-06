@@ -2,6 +2,9 @@ package com.ecommerce.tienda_kalza.modelos;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +17,9 @@ import java.util.Set;
 @Table(name = "Productos", indexes = {
     @Index(name = "idx_productos_marca", columnList = "id_marca")
 })
+@Getter
+@Setter
+@NoArgsConstructor
 public class Producto {
 
     @Id
@@ -72,8 +78,6 @@ public class Producto {
     )
     private Set<Categoria> categorias = new HashSet<>();
 
-    public Producto() {}
-
     @PrePersist
     @PreUpdate
     protected void calcularPrecioConDescuento() {
@@ -81,41 +85,4 @@ public class Producto {
             this.precioConDescuento = precioOriginal.subtract(precioOriginal.multiply(descuento));
         }
     }
-
-    // Getters and Setters
-    public Integer getIdProducto() { return idProducto; }
-    public void setIdProducto(Integer idProducto) { this.idProducto = idProducto; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-
-    public String getUrlImagen() { return urlImagen; }
-    public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
-
-    public BigDecimal getPrecioOriginal() { return precioOriginal; }
-    public void setPrecioOriginal(BigDecimal precioOriginal) { this.precioOriginal = precioOriginal; }
-
-    public BigDecimal getDescuento() { return descuento; }
-    public void setDescuento(BigDecimal descuento) { this.descuento = descuento; }
-
-    public BigDecimal getPrecioConDescuento() { return precioConDescuento; }
-    public void setPrecioConDescuento(BigDecimal precioConDescuento) { this.precioConDescuento = precioConDescuento; }
-
-    public LocalDateTime getCreadoEl() { return creadoEl; }
-    public void setCreadoEl(LocalDateTime creadoEl) { this.creadoEl = creadoEl; }
-
-    public LocalDateTime getActualizadoEl() { return actualizadoEl; }
-    public void setActualizadoEl(LocalDateTime actualizadoEl) { this.actualizadoEl = actualizadoEl; }
-
-    public Marca getMarca() { return marca; }
-    public void setMarca(Marca marca) { this.marca = marca; }
-
-    public Zapato getZapato() { return zapato; }
-    public void setZapato(Zapato zapato) { this.zapato = zapato; }
-
-    public Set<Categoria> getCategorias() { return categorias; }
-    public void setCategorias(Set<Categoria> categorias) { this.categorias = categorias; }
 }

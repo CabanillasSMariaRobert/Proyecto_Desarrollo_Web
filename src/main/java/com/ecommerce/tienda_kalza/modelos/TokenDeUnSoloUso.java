@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,6 +15,9 @@ import java.time.LocalDateTime;
 @Table(name = "TokensDeUnSoloUso",
     uniqueConstraints = @UniqueConstraint(name = "uk_tokens_token", columnNames = "token"),
     indexes = @Index(name = "idx_tokens_usuario", columnList = "id_usuario"))
+@Getter
+@Setter
+@NoArgsConstructor
 public class TokenDeUnSoloUso {
 
     @Id
@@ -45,29 +51,6 @@ public class TokenDeUnSoloUso {
     @CreationTimestamp
     @Column(name = "creado_el", nullable = false, updatable = false)
     private LocalDateTime creadoEl;
-
-    public TokenDeUnSoloUso() {}
-
-    public Integer getIdToken() { return idToken; }
-    public void setIdToken(Integer idToken) { this.idToken = idToken; }
-
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
-
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
-
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
-
-    public LocalDateTime getExpiraEl() { return expiraEl; }
-    public void setExpiraEl(LocalDateTime expiraEl) { this.expiraEl = expiraEl; }
-
-    public LocalDateTime getUsadoEl() { return usadoEl; }
-    public void setUsadoEl(LocalDateTime usadoEl) { this.usadoEl = usadoEl; }
-
-    public LocalDateTime getCreadoEl() { return creadoEl; }
-    public void setCreadoEl(LocalDateTime creadoEl) { this.creadoEl = creadoEl; }
 
     public boolean estaUsado() {
         return usadoEl != null;

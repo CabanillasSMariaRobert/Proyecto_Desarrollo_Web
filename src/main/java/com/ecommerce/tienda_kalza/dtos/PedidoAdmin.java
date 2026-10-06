@@ -1,5 +1,9 @@
 package com.ecommerce.tienda_kalza.dtos;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,6 +15,9 @@ import java.util.List;
  * id es el identificador real, sin formato. Que en pantalla aparezca como
  * "#ORD-" + id es decision de la vista, no del dato.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class PedidoAdmin {
 
     private Long id;
@@ -20,63 +27,12 @@ public class PedidoAdmin {
     private EstadoPedido estado;
     private List<ItemPedido> items = new ArrayList<>();
 
-    public PedidoAdmin() {
-    }
-
     public PedidoAdmin(Long id, String cliente, LocalDate fecha, BigDecimal total, EstadoPedido estado) {
         this.id = id;
         this.cliente = cliente;
         this.fecha = fecha;
         this.total = total;
         this.estado = estado;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
-    public BigDecimal getTotal() {
-        return total;
-    }
-
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-
-    public EstadoPedido getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoPedido estado) {
-        this.estado = estado;
-    }
-
-    public List<ItemPedido> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ItemPedido> items) {
-        this.items = items;
     }
 
     public int getCantidadItems() {

@@ -2,6 +2,9 @@ package com.ecommerce.tienda_kalza.modelos;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -11,6 +14,9 @@ import java.time.LocalDateTime;
 @Table(name = "DetalleDeCompra",
     indexes = @Index(name = "idx_detalle_compra_variante", columnList = "id_variante_de_zapato"))
 @IdClass(DetalleDeCompraId.class)
+@Getter
+@Setter
+@NoArgsConstructor
 public class DetalleDeCompra {
 
     @Id
@@ -58,8 +64,6 @@ public class DetalleDeCompra {
     @Column(name = "creado_el", nullable = false, updatable = false)
     private LocalDateTime creadoEl;
 
-    public DetalleDeCompra() {}
-
     @PrePersist
     @PreUpdate
     protected void calcularTotales() {
@@ -72,32 +76,4 @@ public class DetalleDeCompra {
             }
         }
     }
-
-    // Getters and Setters
-    public Compra getCompra() { return compra; }
-    public void setCompra(Compra compra) { this.compra = compra; }
-
-    public VarianteDeZapato getVarianteDeZapato() { return varianteDeZapato; }
-    public void setVarianteDeZapato(VarianteDeZapato varianteDeZapato) { this.varianteDeZapato = varianteDeZapato; }
-
-    public String getNombreDelProducto() { return nombreDelProducto; }
-    public void setNombreDelProducto(String nombreDelProducto) { this.nombreDelProducto = nombreDelProducto; }
-
-    public BigDecimal getPrecioOriginalXUnidad() { return precioOriginalXUnidad; }
-    public void setPrecioOriginalXUnidad(BigDecimal precioOriginalXUnidad) { this.precioOriginalXUnidad = precioOriginalXUnidad; }
-
-    public Integer getCantidad() { return cantidad; }
-    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
-
-    public BigDecimal getDescuentoXUnidad() { return descuentoXUnidad; }
-    public void setDescuentoXUnidad(BigDecimal descuentoXUnidad) { this.descuentoXUnidad = descuentoXUnidad; }
-
-    public BigDecimal getPrecioConDescuento() { return precioConDescuento; }
-    public void setPrecioConDescuento(BigDecimal precioConDescuento) { this.precioConDescuento = precioConDescuento; }
-
-    public BigDecimal getPrecioSinDescuento() { return precioSinDescuento; }
-    public void setPrecioSinDescuento(BigDecimal precioSinDescuento) { this.precioSinDescuento = precioSinDescuento; }
-
-    public LocalDateTime getCreadoEl() { return creadoEl; }
-    public void setCreadoEl(LocalDateTime creadoEl) { this.creadoEl = creadoEl; }
 }
