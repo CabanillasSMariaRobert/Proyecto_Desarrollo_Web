@@ -17,17 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-/**
- * Envio de los formularios de login y registro.
- *
- * Vive separado de {@link ViewController} porque ese solo renderiza: aca entra
- * la peticion, se valida, se arma el request del API y se decide que hacer con
- * la sesion.
- *
- * Los formularios se re-renderizan en vez de redirigir cuando hay error, porque
- * {@link BindingResult} no sobrevive un redirect. El precio es que la URL
- * queda en POST y un F5 reenvia, algo aceptable en una pantalla de formulario.
- */
 @Controller
 public class AuthViewController {
 

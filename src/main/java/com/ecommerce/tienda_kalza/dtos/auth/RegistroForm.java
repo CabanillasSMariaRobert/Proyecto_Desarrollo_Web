@@ -4,15 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/**
- * Formulario de creacion de cuenta.
- *
- * No es lo mismo que {@link RegisterRequest}: ese es el contrato JSON de
- * {@code /api/auth/register} y exige nombres y apellidos por separado, mientras
- * que la pantalla pide un unico campo "Nombre completo". El corte se hace en el
- * controlador despues de validar, porque si se validara el request de API
- * faltaria el apellido y la pantalla rechazaria el formulario.
- */
 public class RegistroForm {
 
     @NotBlank(message = "El nombre es obligatorio")
