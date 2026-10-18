@@ -1,4 +1,4 @@
-package com.ecommerce.tienda_kalza.config;
+package com.ecommerce.tienda_kalza.adapter.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
