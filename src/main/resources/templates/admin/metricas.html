@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
+  <body>
+    <div class="admin-content-inner d-flex flex-column gap-4" th:fragment="content">
+      <!-- CABECERA -->
+      <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3"
+      >
+        <div>
+          <h2 class="fs-3 fw-bold mb-1">Panel general</h2>
+          <p class="text-muted mb-0">Métricas clave y actividad reciente.</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-dark">Exportar reporte</button>
+          <button class="btn btn-dark">Agregar widget</button>
+        </div>
+      </div>
+
+      <!-- TARJETAS INDICADORAS DE RENDIMIENTO (VENTAS, USUARIOS, PEDIDOS y ALERTAS DE STOCK) -->
+      <div class="row g-3">
+        <div class="col-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="small text-muted text-uppercase">Ventas del día</span>
+              <i class="bi bi-cash-stack text-primary"></i>
+            </div>
+            <div
+              class="fs-4 fw-bold"
+              th:text="'S/ ' + ${#numbers.formatDecimal(metricas.ventasHoy, 1, 'COMMA', 2, 'POINT')}"
+            >
+              —
+            </div>
+            <div class="small text-success">
+              <i class="bi bi-arrow-up-right"></i>
+              <span th:text="${metricas.variacionVentas}">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="small text-muted text-uppercase">Pedidos pendientes</span>
+              <i class="bi bi-truck"></i>
+            </div>
+            <div class="fs-4 fw-bold" th:text="${metricas.pedidosPendientes}">
+              —
+            </div>
+            <div class="small text-muted">Requieren atención</div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="small text-muted text-uppercase">Usuarios activos</span>
+              <i class="bi bi-people"></i>
+            </div>
+            <div
+              class="fs-4 fw-bold"
+              th:text="${#numbers.formatInteger(metricas.usuariosActivos, 1, 'COMMA')}"
+            >
+              —
+            </div>
+            <div class="small text-success">
+              <i class="bi bi-arrow-up-right"></i>
+              <span th:text="${metricas.variacionUsuarios}">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card h-100 p-3 text-bg-danger border-0">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="small text-uppercase">Alertas de stock</span>
+              <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <div class="fs-4 fw-bold" th:text="${metricas.alertasStock} + ' items'">
+              —
+            </div>
+            <div class="small text-decoration-underline">Revisar inventario</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRÁFICOS -->
+      <div class="row g-3">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="h6 fw-bold mb-0">Resumen de ingresos</h3>
+              <!-- TODO: el selector de período es visual. La serie del modelo
+                   siempre son 7 días; falta el parámetro de período en el
+                   controlador cuando se conecte la base de datos. -->
+              <select class="form-select form-select-sm w-auto">
+                <option>Últimos 30 días</option>
+                <option>Este trimestre</option>
+                <option>Este año</option>
+              </select>
+            </div>
+            <!-- Gráfico de barras: la altura sale del modelo, no del HTML -->
+            <div class="d-flex align-items-end gap-2" style="height: 220px">
+              <div
+                th:each="punto : ${metricas.ingresos}"
+                class="flex-grow-1 rounded-top"
+                th:classappend="${punto.destacado} ? 'text-bg-primary' : 'bg-secondary-subtle'"
+                th:style="'height:' + ${punto.porcentaje} + '%'"
+                th:title="${punto.etiqueta} + ': S/ ' + ${#numbers.formatDecimal(punto.monto, 1, 'COMMA', 2, 'POINT')}"
+                th:attr="aria-label=${punto.etiqueta}"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOP PRODUCTOS MÁS VENDIDOS -->
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm h-100 p-4">
+            <h3 class="h6 fw-bold mb-4">Más vendidos</h3>
+            <ul class="list-unstyled d-flex flex-column gap-3">
+              <li
+                th:each="producto, iter : ${metricas.topProductos}"
+                class="d-flex align-items-center gap-3"
+                th:classappend="${iter.last} ? '' : 'border-bottom pb-3'"
+              >
+                <img
+                  th:src="@{'/img/productos/' + ${producto.imagen}}"
+                  width="48"
+                  height="48"
+                  class="rounded-3 object-fit-cover"
+                  alt="Producto"
+                />
+                <div class="flex-grow-1">
+                  <div class="fw-bold small" th:text="${producto.nombre}">—</div>
+                  <div class="small text-muted">
+                    <span th:text="${producto.unidades}">—</span> unidades
+                  </div>
+                </div>
+                <span
+                  class="fw-bold small"
+                  th:text="'S/ ' + ${#numbers.formatDecimal(producto.total, 1, 'COMMA', 2, 'POINT')}"
+                  >—</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PEDIDOS RECIENTES -->
+      <div class="card border-0 shadow-sm p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="h6 fw-bold mb-0">Pedidos recientes</h3>
+          <a th:href="@{/admin/pedidos}" class="small text-primary">Ver todos</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th class="text-end">Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="pedido : ${metricas.pedidosRecientes}">
+                <td class="fw-semibold" th:text="'#ORD-' + ${pedido.id}">—</td>
+                <td th:text="${pedido.cliente}">—</td>
+                <td
+                  class="text-muted"
+                  th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy')}"
+                  >—</td
+                >
+                <td>
+                  <span
+                    class="badge text-uppercase"
+                    th:classappend="${pedido.estado.claseCss()}"
+                    th:text="${pedido.estado}"
+                    >—</span
+                  >
+                </td>
+                <td
+                  class="text-end fw-semibold"
+                  th:text="'S/ ' + ${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"
+                  >—</td
+                >
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

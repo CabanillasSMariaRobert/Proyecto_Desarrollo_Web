@@ -1,0 +1,285 @@
+/* =========================================================
+   KALZA Admin - admin.css
+   Estilos del panel de administracion: barra lateral,
+   barra superior y componentes de las tablas de datos.
+   ========================================================= */
+
+:root {
+  --kalza-black: #000000;
+  --kalza-charcoal: #1b1b1b;
+  --kalza-blue: #0035c6;
+  --kalza-border: #e2e2e2;
+  --kalza-surface: #f9f9f9;
+  --kalza-muted: #4c4546;
+  --kalza-white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  background-color: var(--kalza-surface);
+  color: #1a1c1c;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* =========================================================
+   BARRA LATERAL (sidebar)
+   ========================================================= */
+.admin-sidebar {
+  background-color: var(--kalza-charcoal);
+  color: var(--kalza-white);
+  width: 240px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px;
+  margin-bottom: 24px;
+}
+
+.sidebar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e2e2e2;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar-brand h1 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--kalza-white);
+  line-height: 1.1;
+}
+
+.sidebar-brand p {
+  font-size: 0.75rem;
+  color: #848484;
+  margin: 2px 0 0;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0 8px;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #848484;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-nav a i {
+  font-size: 1.1rem;
+}
+
+.sidebar-nav a:hover {
+  background-color: #e2e2e2;
+  color: #1a1c1c;
+}
+
+.sidebar-nav a.active {
+  background-color: var(--kalza-blue);
+  color: var(--kalza-white);
+  border-left: 4px solid #0047ff;
+}
+
+.sidebar-logout {
+  padding: 12px 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logout a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #848484;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-logout a:hover {
+  background-color: #e2e2e2;
+  color: #1a1c1c;
+}
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+   ========================================================= */
+.admin-main {
+  margin-left: 240px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.admin-topbar {
+  background-color: #f3f3f3;
+  border-bottom: 1px solid var(--kalza-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.admin-topbar .user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1c1c;
+}
+
+.admin-topbar .logout-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--kalza-muted);
+  transition: color 0.15s ease;
+}
+
+.admin-topbar .logout-link:hover {
+  color: var(--kalza-blue);
+}
+
+.admin-content {
+  padding: 24px;
+  flex: 1;
+  max-width: 1440px;
+  width: 100%;
+}
+
+.admin-content-inner {
+  margin: 0 auto;
+}
+
+/* =========================================================
+   TABLAS DE DATOS
+   ========================================================= */
+.table {
+  background-color: var(--kalza-white);
+}
+
+.table thead th {
+  background-color: #f3f3f3;
+  border-bottom: 1px solid var(--kalza-border);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--kalza-muted);
+}
+
+.table tbody tr {
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid var(--kalza-border);
+}
+
+.table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Avatares de usuario en tablas */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 992px) {
+  .admin-sidebar {
+    width: 200px;
+  }
+
+  .admin-main {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 8px 16px;
+  }
+
+  .sidebar-brand {
+    margin: 0;
+    padding: 8px 0;
+  }
+
+  .sidebar-nav {
+    flex: none;
+    width: 100%;
+    order: 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sidebar-nav a {
+    margin: 0;
+  }
+
+  .sidebar-logout {
+    border-top: none;
+  }
+
+  .admin-main {
+    margin-left: 0;
+  }
+}

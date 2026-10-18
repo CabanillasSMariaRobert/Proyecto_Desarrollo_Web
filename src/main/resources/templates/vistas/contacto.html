@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<body>
+
+<div th:fragment="content">
+    <!-- ============ HEADER ============ -->
+    <!-- ============ CONTENIDO ============ -->
+        <div class="container">
+            <div class="row g-5">
+
+                <div class="col-lg-6">
+                    <h1 class="fs-2 fw-bold">Contacta con nosotros</h1>
+                    <p class="text-muted lead">
+                        Si tienes alguna pregunta, sugerencia o comentario, no dudes en ponerte en
+                        contacto con nosotros. Estamos aquí para ayudarte y asegurarnos de que tengas
+                        la mejor experiencia posible.
+                    </p>
+
+                    <ul class="list-unstyled mt-4">
+                        <li class="mb-3 d-flex align-items-start gap-3" th:each="canal : ${canales}">
+                            <i class="bi fs-4" th:class="'bi ' + ${canal.icono}"></i>
+                            <div>
+                                <h3 class="h6 mb-0" th:text="${canal.titulo}"></h3>
+                                <p class="mb-0 text-muted" th:text="${canal.valor}"></p>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3 class="h6 mt-4">Horario de atención</h3>
+                    <table class="table table-bordered w-auto">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Día</th>
+                                <th scope="col">Horario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="horario : ${horarios}">
+                                <td th:text="${horario.dia}"></td>
+                                <td th:text="${horario.horario}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-lg-6">
+                    <form class="p-4 border rounded-3 shadow-sm bg-white">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label fw-semibold">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo" class="form-label fw-semibold">Correo electrónico</label>
+                            <input type="email" id="correo" name="correo" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mensaje" class="form-label fw-semibold">Mensaje</label>
+                            <textarea id="mensaje" name="mensaje" rows="5" class="form-control" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-blue w-100 py-2">
+                            <i class="bi bi-send-fill me-2"></i>Enviar
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ============ POLÍTICA DE PRIVACIDAD ============ -->
+            <section id="privacidad" class="border-top pt-5 mt-5">
+                <h2 class="fs-2 fw-bold mb-3">Política de privacidad</h2>
+                <p class="text-muted">
+                    En KALZA nos tomamos muy en serio la protección de tus datos personales. Esta política
+                    explica qué información recopilamos, cómo la usamos y los derechos que tienes sobre ella.
+                </p>
+
+                <div class="row g-3 mt-1 mb-4">
+                    <div class="col-md-6" th:each="seccion : ${privacidad}">
+                        <h3 class="h6 fw-bold" th:text="${seccion.titulo}"></h3>
+                        <p class="text-muted mb-0" th:text="${seccion.descripcion}"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ TÉRMINOS DE SERVICIO ============ -->
+            <section id="terminos" class="border-top pt-5 mt-5">
+                <h2 class="fs-2 fw-bold mb-3">Términos de servicio</h2>
+                <p class="text-muted">
+                    Al utilizar el sitio web de KALZA aceptas los siguientes términos y condiciones. Te
+                    recomendamos leerlos antes de realizar una compra.
+                </p>
+
+                <div class="row g-3 mt-1 mb-4">
+                    <div class="col-md-6" th:each="seccion : ${terminos}">
+                        <h3 class="h6 fw-bold" th:text="${seccion.titulo}"></h3>
+                        <p class="text-muted mb-0" th:text="${seccion.descripcion}"></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    <!-- ============ FOOTER ============ -->
+</div>
+
+</body>
+</html>

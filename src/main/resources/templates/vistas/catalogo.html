@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<body>
+
+<div th:fragment="content">
+    <!-- HEADER -->
+    <!-- CONTENIDO-->
+      <div class="container">
+        <div class="row g-4 g-lg-5">
+          <!-- filto de busqueda -->
+          <aside class="col-lg-3">
+            <h3
+              class="text-uppercase fw-semibold small border-bottom pb-2 mb-3"
+            >
+              Categorías
+            </h3>
+            <div
+              class="form-check mb-2"
+              th:each="categoria : ${categoriasFiltro}"
+            >
+              <input
+                class="form-check-input"
+                type="checkbox"
+                th:id="${categoria.id}"
+                th:checked="${categoria.seleccionada}"
+              />
+              <label
+                class="form-check-label"
+                th:for="${categoria.id}"
+                th:text="${categoria.nombre}"
+              ></label>
+            </div>
+
+            <h3
+              class="text-uppercase fw-semibold small border-bottom pb-2 my-4"
+            >
+              Talla
+            </h3>
+            <div class="d-flex flex-wrap gap-2">
+              <button
+                th:each="talla : ${tallas}"
+                type="button"
+                th:class="|btn btn-sm size-btn ${talla.seleccionada ? 'btn-dark' : (talla.habilitada ? 'btn-outline-dark' : 'btn-outline-secondary disabled')}|"
+                th:text="${talla.etiqueta}"
+              ></button>
+            </div>
+
+            <h3
+              class="text-uppercase fw-semibold small border-bottom pb-2 my-4"
+            >
+              Precio
+            </h3>
+            <input
+              type="range"
+              class="form-range w-100"
+              th:min="${rangoPrecio.minimo}"
+              th:max="${rangoPrecio.maximo}"
+            />
+            <div class="d-flex justify-content-between small text-muted">
+              <span th:text="|S/ ${rangoPrecio.minimo}|"></span>
+              <span th:text="|S/ ${rangoPrecio.maximo}+|"></span>
+            </div>
+
+            <button class="btn btn-outline-dark w-100 mt-4">
+              Limpiar filtros
+            </button>
+          </aside>
+
+          <!-- Listado de los productos -->
+          <div class="col-lg-9">
+            <div
+              class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4"
+            >
+              <h1 class="fs-3 fw-bold mb-0">
+                Zapatillas
+                <span
+                  class="fs-6 text-muted fw-normal"
+                  th:text="|(${totalProductos} productos)|"
+                ></span>
+              </h1>
+              <div class="d-flex align-items-center gap-2">
+                <span class="small text-muted text-uppercase"
+                  >Ordenar por:</span
+                >
+                <select class="form-select form-select-sm w-auto fw-semibold">
+                  <option
+                    th:each="orden : ${ordenamientos}"
+                    th:value="${orden.etiqueta}"
+                    th:selected="${orden.seleccionado}"
+                    th:text="${orden.etiqueta}"
+                  ></option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-4">
+              <div
+                class="col-6 col-md-4"
+                th:each="producto : ${productos}"
+              >
+                <div
+                  class="card border-0 shadow-sm h-100"
+                  th:class="${producto.enStock} ? 'card-hover' : 'opacity-50'"
+                >
+                  <div
+                    class="position-relative overflow-hidden"
+                    style="aspect-ratio: 4/5; background: #f5f5f5"
+                  >
+                    <a th:href="@{/producto}">
+                      <img
+                        th:src="@{'/img/productos/' + ${producto.imagen}}"
+                        class="w-100 h-100 object-fit-cover"
+                        th:class="${producto.enStock} ? '' : 'grayscale'"
+                        th:alt="${producto.nombre}"
+                      />
+                    </a>
+                    <span
+                      th:if="${producto.enStock and producto.nuevo}"
+                      class="badge bg-dark position-absolute top-0 start-0 m-2 text-uppercase"
+                      >Nuevo</span
+                    >
+                    <span
+                      th:if="${!producto.enStock}"
+                      class="position-absolute top-50 start-50 translate-middle bg-white text-dark text-uppercase fw-semibold small border border-dark px-2 py-1"
+                      >Agotado</span
+                    >
+                  </div>
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-start"
+                    >
+                      <a
+                        th:href="@{/producto}"
+                        th:class="${producto.enStock} ? 'text-decoration-none text-dark' : 'text-decoration-none text-muted'"
+                      >
+                        <h2
+                          class="h6 fw-bold mb-0"
+                          th:class="${producto.enStock} ? '' : 'text-muted'"
+                          th:text="${producto.nombre}"
+                        ></h2>
+                      </a>
+                      <div class="text-end">
+                        <span
+                          class="fw-bold d-block"
+                          th:class="${producto.enStock} ? 'fw-bold d-block' : 'fw-bold d-block text-muted'"
+                          th:style="${producto.enStock} ? 'color: var(--kalza-blue)' : ''"
+                          th:text="|S/ ${producto.precio}|"
+                        ></span>
+                        <span
+                          th:if="${producto.precioAnterior != null}"
+                          class="text-decoration-line-through text-muted small"
+                          th:text="|S/ ${producto.precioAnterior}|"
+                        ></span>
+                      </div>
+                    </div>
+                    <p
+                      class="small text-muted mb-3"
+                      th:text="${producto.descripcion}"
+                    ></p>
+                    <div
+                      class="d-flex justify-content-between align-items-center small"
+                    >
+                      <span
+                        th:class="${producto.enStock} ? 'fw-semibold' : 'text-muted'"
+                        th:style="${producto.enStock} ? 'color: var(--kalza-blue)' : ''"
+                      >
+                        <i
+                          th:class="${producto.enStock} ? 'bi bi-circle-fill me-1' : 'bi bi-circle me-1'"
+                          style="font-size: 0.6rem"
+                        ></i
+                        ><span
+                          th:text="${producto.enStock} ? 'En stock' : 'Agotado'"
+                        ></span>
+                      </span>
+                      <span
+                        class="text-muted"
+                        th:text="|Tallas: ${producto.tallas}|"
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGINACIÓN -->
+            <nav
+              class="d-flex justify-content-center mt-5"
+              aria-label="Paginación"
+            >
+              <ul class="pagination">
+                <li
+                  th:each="pagina : ${paginacion}"
+                  th:class="${pagina.activa} ? 'page-item active' : (${pagina.habilitada} ? 'page-item' : 'page-item disabled')"
+                >
+                  <a
+                    th:if="${pagina.esSeparador}"
+                    class="page-link"
+                    href="#"
+                    th:text="${pagina.etiqueta}"
+                  ></a>
+                  <a
+                    th:if="${!pagina.esSeparador and pagina.numero != 0}"
+                    class="page-link"
+                    th:href="@{'/catalogo?pagina=' + ${pagina.numero}}"
+                    th:text="${pagina.etiqueta}"
+                  ></a>
+                  <a
+                    th:if="${!pagina.esSeparador and pagina.numero == 0}"
+                    class="page-link"
+                    th:href="@{'/catalogo?pagina=' + ${paginaActual}}"
+                    th:aria-label="${pagina.habilitada} ? 'Siguiente' : 'Anterior'"
+                  >
+                    <i
+                      th:class="${pagina.habilitada} ? 'bi bi-chevron-right' : 'bi bi-chevron-left'"
+                    ></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    <!--FOOTER -->
+    <!-- Filtro de talla  -->
+    <script>
+      document.querySelectorAll(".size-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          if (this.classList.contains("disabled")) return;
+          this.classList.toggle("btn-dark");
+          this.classList.toggle("btn-outline-dark");
+        });
+      });
+    </script>
+</div>
+
+</body>
+</html>

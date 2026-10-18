@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<body>
+
+<div th:fragment="content">
+    <!-- ============ HEADER ============ -->
+    <!-- ============ CONTENIDO ============ -->
+        <div class="container">
+            <h1 class="fs-2 fw-bold mb-4">Tu carrito</h1>
+
+            <div class="row g-4 g-lg-5">
+                <!-- ITEMS DEL CARRITO -->
+                <div class="col-lg-8">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="card border rounded-3 p-3" th:each="item : ${items}">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-4 col-sm-3 col-md-2">
+                                    <div class="rounded-3 overflow-hidden"
+                                        style="aspect-ratio:1/1; background:#f5f5f5;">
+                                        <img th:src="@{'/img/productos/' + ${item.imagen}}"
+                                            class="w-100 h-100 object-fit-cover" th:alt="${item.nombre}">
+                                    </div>
+                                </div>
+                                <div class="col-8 col-sm-9 col-md-10">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h3 class="h6 fw-bold mb-1" th:text="${item.nombre}"></h3>
+                                            <p class="small text-muted mb-2"
+                                               th:text="|Talla: ${item.talla}| + ' | Color: ' + ${item.color}"></p>
+                                        </div>
+                                        <span class="fw-bold" th:text="|S/ ${item.precioUnitario}|"></span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-3 mt-2">
+                                        <div class="input-group input-group-sm" style="width: 130px;">
+                                            <button class="btn btn-outline-secondary" type="button">-</button>
+                                            <span class="input-group-text fw-bold" th:text="${item.cantidad}"></span>
+                                            <button class="btn btn-outline-secondary" type="button">+</button>
+                                        </div>
+                                        <button class="btn btn-link text-danger p-0 small">
+                                            <i class="bi bi-trash me-1"></i>Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RESUMEN DEL PEDIDO -->
+                <div class="col-lg-4">
+                    <div class="card border rounded-3 p-4">
+                        <h2 class="h5 fw-bold border-bottom pb-2 mb-3">Resumen del pedido</h2>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted"
+                                th:text="|Subtotal (${resumen.totalItems} items)|"></span>
+                            <span class="fw-semibold" th:text="|S/ ${resumen.subtotal}|"></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Envío</span>
+                            <span class="fw-semibold" th:text="${resumen.envioTexto}"></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">IGV</span>
+                            <span class="fw-semibold" th:text="|S/ ${resumen.igv}|"></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-end border-top pt-3 mb-4">
+                            <span class="fw-bold">Total</span>
+                            <span class="fs-4 fw-bold" th:text="|S/ ${resumen.total}|"></span>
+                        </div>
+                        <a th:href="@{/checkout}" class="btn btn-blue w-100 py-2">
+                            Procesar pago
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- ============ FOOTER ============ -->
+</div>
+
+</body>
+</html>
