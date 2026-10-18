@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="\"Entregas\"")
@@ -18,12 +18,14 @@ public class EntregaEntity {
     @Id
     @Column(name="id_entrega")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
+    // Relacion con Compra: Columna
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_compra")
     private CompraEntity compra;
 
+    // Relacion con PuntoEntrega: Columna
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_punto_de_entrega", nullable = false)
     private PuntoEntregaEntity puntoDeEntrega;
@@ -35,36 +37,36 @@ public class EntregaEntity {
 
     //-------- COLUMNAS DE FECHAS DE TIEMPO --------
     @Column(name="asignado_el")
-    private LocalDate asignadoEl;
+    private LocalDateTime asignadoEl;
 
     @Column(name="recogido_el")
-    private LocalDate recogidoEl;
+    private LocalDateTime recogidoEl;
 
     @Column(name="entregado_el")
-    private LocalDate entregadoEl;
+    private LocalDateTime entregadoEl;
 
     // -------- FECHAS DE CREACION Y ACTUALIZACIÓN --------
     @CreationTimestamp
     @Column(name="creado_el", nullable = false, updatable = false)
-    private LocalDate creadoEl;
+    private LocalDateTime creadoEl;
 
     @UpdateTimestamp
     @Column(name="actualizado_el", nullable = false)
-    private LocalDate actualizadoEl;
+    private LocalDateTime actualizadoEl;
 
     public EntregaEntity(){}
 
     // Constructor completo
     public EntregaEntity(
-            Long id,
+            int id,
             CompraEntity compra,
             PuntoEntregaEntity puntoDeEntrega,
             EstadoEntrega estado,
-            LocalDate asignadoEl,
-            LocalDate recogidoEl,
-            LocalDate entregadoEl,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime asignadoEl,
+            LocalDateTime recogidoEl,
+            LocalDateTime entregadoEl,
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ){
         this.id = id;
         this.compra = compra;
@@ -82,11 +84,11 @@ public class EntregaEntity {
             CompraEntity compra,
             PuntoEntregaEntity puntoDeEntrega,
             EstadoEntrega estado,
-            LocalDate asignadoEl,
-            LocalDate recogidoEl,
-            LocalDate entregadoEl,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime asignadoEl,
+            LocalDateTime recogidoEl,
+            LocalDateTime entregadoEl,
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ) {
         this.compra = compra;
         this.puntoDeEntrega = puntoDeEntrega;
@@ -103,8 +105,8 @@ public class EntregaEntity {
             CompraEntity compra,
             PuntoEntregaEntity puntoDeEntrega,
             EstadoEntrega estado,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ) {
         this.compra = compra;
         this.puntoDeEntrega = puntoDeEntrega;
@@ -121,7 +123,7 @@ public class EntregaEntity {
             CompraEntity compra,
             PuntoEntregaEntity puntoDeEntrega,
             EstadoEntrega estado,
-            LocalDate creadoEl
+            LocalDateTime creadoEl
     ) {
         this.compra = compra;
         this.puntoDeEntrega = puntoDeEntrega;

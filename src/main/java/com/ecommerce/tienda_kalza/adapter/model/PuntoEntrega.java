@@ -3,13 +3,13 @@ package com.ecommerce.tienda_kalza.adapter.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class PuntoEntrega {
 
-    private Long id;
+    private int id;
 
     private String nombre;
     private String direccion;
@@ -20,22 +20,22 @@ public class PuntoEntrega {
 
     private boolean estaActivo;
 
-    private LocalDate creadoEl;
-    private LocalDate actualizadoEl;
+    private LocalDateTime creadoEl;
+    private LocalDateTime actualizadoEl;
 
     public PuntoEntrega(){}
 
     // Constructor completo
     public PuntoEntrega(
-            Long id,
+            int id,
             String nombre,
             String direccion,
             String referencia,
             double latitud,
             double longitud,
             boolean estaActivo,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ){
         this.id = id;
         this.nombre = nombre;
@@ -56,8 +56,8 @@ public class PuntoEntrega {
             double latitud,
             double longitud,
             boolean estaActivo,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ){
         this.nombre = nombre;
         this.direccion = direccion;
@@ -76,8 +76,8 @@ public class PuntoEntrega {
             String referencia,
             double latitud,
             double longitud,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ){
         this.nombre = nombre;
         this.direccion = direccion;
@@ -96,7 +96,7 @@ public class PuntoEntrega {
             String referencia,
             double latitud,
             double longitud,
-            LocalDate creadoEl
+            LocalDateTime creadoEl
     ){
         this.nombre = nombre;
         this.direccion = direccion;
@@ -105,7 +105,7 @@ public class PuntoEntrega {
         this.longitud = longitud;
         this.estaActivo = true;
         this.creadoEl = creadoEl;
-        this.actualizadoEl = LocalDate.now();
+        this.actualizadoEl = LocalDateTime.now();
     }
 
     // Constructor sin id, estaActivo, creado ni actualizado
@@ -122,8 +122,8 @@ public class PuntoEntrega {
         this.latitud = latitud;
         this.longitud = longitud;
         this.estaActivo = true;
-        this.creadoEl = LocalDate.now();
-        this.actualizadoEl = LocalDate.now();
+        this.creadoEl = LocalDateTime.now();
+        this.actualizadoEl = LocalDateTime.now();
     }
 
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="\"Puntos_de_entregas\"")
@@ -17,7 +18,7 @@ public class PuntoEntregaEntity {
     @Id
     @Column(name="id_punto_de_entrega")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(nullable = false)
     private String nombre;
@@ -36,24 +37,24 @@ public class PuntoEntregaEntity {
 
     @CreationTimestamp
     @Column(name="creado_el", nullable = false, updatable = false)
-    private LocalDate creadoEl;
+    private LocalDateTime creadoEl;
     @UpdateTimestamp
     @Column(name="actualizado_el", nullable = false)
-    private LocalDate actualizadoEl;
+    private LocalDateTime actualizadoEl;
 
     public PuntoEntregaEntity(){}
 
     // Constructor completo
     public PuntoEntregaEntity(
-            Long id,
+            int id,
             String nombre,
             String direccion,
             String referencia,
             double latitud,
             double longitud,
             boolean estaActivo,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ){
         this.id = id;
         this.nombre = nombre;
@@ -74,8 +75,8 @@ public class PuntoEntregaEntity {
             double latitud,
             double longitud,
             boolean estaActivo,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ){
         this.nombre = nombre;
         this.direccion = direccion;
@@ -94,8 +95,8 @@ public class PuntoEntregaEntity {
             String referencia,
             double latitud,
             double longitud,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ){
         this.nombre = nombre;
         this.direccion = direccion;
@@ -114,7 +115,7 @@ public class PuntoEntregaEntity {
             String referencia,
             double latitud,
             double longitud,
-            LocalDate creadoEl
+            LocalDateTime creadoEl
     ){
         this.nombre = nombre;
         this.direccion = direccion;

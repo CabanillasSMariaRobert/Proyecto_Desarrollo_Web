@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class Entrega {
-    private Long id;
+    private int id;
 
     private Compra compra;
     private PuntoEntrega puntoDeEntrega;
@@ -17,27 +18,27 @@ public class Entrega {
 
 
     //-------- COLUMNAS DE FECHAS DE TIEMPO --------
-    private LocalDate asignadoEl;
-    private LocalDate recogidoEl;
-    private LocalDate entregadoEl;
+    private LocalDateTime asignadoEl;
+    private LocalDateTime recogidoEl;
+    private LocalDateTime entregadoEl;
 
     // -------- FECHAS DE CREACION Y ACTUALIZACIÓN --------
-    private LocalDate creadoEl;
-    private LocalDate actualizadoEl;
+    private LocalDateTime creadoEl;
+    private LocalDateTime actualizadoEl;
 
     public Entrega(){}
 
     // Constructor completo
     public Entrega(
-            Long id,
+            int id,
             Compra compra,
             PuntoEntrega puntoDeEntrega,
             EstadoEntrega estado,
-            LocalDate asignadoEl,
-            LocalDate recogidoEl,
-            LocalDate entregadoEl,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime asignadoEl,
+            LocalDateTime recogidoEl,
+            LocalDateTime entregadoEl,
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ){
         this.id = id;
         this.compra = compra;
@@ -55,11 +56,11 @@ public class Entrega {
             Compra compra,
             PuntoEntrega puntoDeEntrega,
             EstadoEntrega estado,
-            LocalDate asignadoEl,
-            LocalDate recogidoEl,
-            LocalDate entregadoEl,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime asignadoEl,
+            LocalDateTime recogidoEl,
+            LocalDateTime entregadoEl,
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ) {
         this.compra = compra;
         this.puntoDeEntrega = puntoDeEntrega;
@@ -76,8 +77,8 @@ public class Entrega {
             Compra compra,
             PuntoEntrega puntoDeEntrega,
             EstadoEntrega estado,
-            LocalDate creadoEl,
-            LocalDate actualizadoEl
+            LocalDateTime creadoEl,
+            LocalDateTime actualizadoEl
     ) {
         this.compra = compra;
         this.puntoDeEntrega = puntoDeEntrega;
@@ -94,7 +95,7 @@ public class Entrega {
             Compra compra,
             PuntoEntrega puntoDeEntrega,
             EstadoEntrega estado,
-            LocalDate creadoEl
+            LocalDateTime creadoEl
     ) {
         this.compra = compra;
         this.puntoDeEntrega = puntoDeEntrega;
@@ -103,7 +104,7 @@ public class Entrega {
         this.recogidoEl = null;
         this.entregadoEl = null;
         this.creadoEl = creadoEl;
-        this.actualizadoEl = LocalDate.now();
+        this.actualizadoEl = LocalDateTime.now();
     }
 
     // Constructor de solo entrega sin fechas de reparto(asignado, recogido y entregado) ni de creacion o actualización
@@ -118,8 +119,8 @@ public class Entrega {
         this.asignadoEl = null;
         this.recogidoEl = null;
         this.entregadoEl = null;
-        this.creadoEl = LocalDate.now();
-        this.actualizadoEl = LocalDate.now();
+        this.creadoEl = LocalDateTime.now();
+        this.actualizadoEl = LocalDateTime.now();
     }
 
     // Constructor de solo entrega sin fechas de reparto(asignado, recogido y entregado) ni de creacion, actualización o estado
@@ -132,7 +133,7 @@ public class Entrega {
         this.asignadoEl = null;
         this.recogidoEl = null;
         this.entregadoEl = null;
-        this.creadoEl = LocalDate.now();
-        this.actualizadoEl = LocalDate.now();
+        this.creadoEl = LocalDateTime.now();
+        this.actualizadoEl = LocalDateTime.now();
     }
 }

@@ -4,7 +4,7 @@ import com.ecommerce.tienda_kalza.adapter.enums.TipoToken;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,9 +14,9 @@ public class Token {
     private String tipo;
     private TipoToken token;
 
-    private LocalDate creadoEl;
-    private LocalDate expiraEl;
-    private LocalDate usadoEl;
+    private LocalDateTime creadoEl;
+    private LocalDateTime expiraEl;
+    private LocalDateTime usadoEl;
 
     private Usuario usuario;
 
@@ -27,9 +27,9 @@ public class Token {
             Long id,
             String tipo,
             TipoToken token,
-            LocalDate creadoEl,
-            LocalDate expiraEl,
-            LocalDate usadoEl,
+            LocalDateTime creadoEl,
+            LocalDateTime expiraEl,
+            LocalDateTime usadoEl,
             Usuario usuario
     ){
         this.id = id;
@@ -45,9 +45,9 @@ public class Token {
     public Token(
             String tipo,
             TipoToken token,
-            LocalDate creadoEl,
-            LocalDate expiraEl,
-            LocalDate usadoEl,
+            LocalDateTime creadoEl,
+            LocalDateTime expiraEl,
+            LocalDateTime usadoEl,
             Usuario usuario
     ){
         this.tipo = tipo;
@@ -62,8 +62,8 @@ public class Token {
     public Token(
             String tipo,
             TipoToken token,
-            LocalDate creadoEl,
-            LocalDate expiraEl,
+            LocalDateTime creadoEl,
+            LocalDateTime expiraEl,
             Usuario usuario
     ){
         this.tipo = tipo;
@@ -78,13 +78,13 @@ public class Token {
     public Token(
             String tipo,
             TipoToken token,
-            LocalDate expiraEl,
+            LocalDateTime expiraEl,
             Usuario usuario
     ){
         this.tipo = tipo;
         this.token = token;
         this.expiraEl = expiraEl;
-        this.creadoEl = LocalDate.now();
+        this.creadoEl = LocalDateTime.now();
         this.usadoEl = null;
         this.usuario = usuario;
     }

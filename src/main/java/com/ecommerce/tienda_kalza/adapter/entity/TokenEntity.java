@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="\"Tokens_de_un_solo_uso\"")
@@ -16,7 +16,7 @@ public class TokenEntity {
     @Id
     @Column(name="id_token")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(nullable = false)
     private String tipo;
@@ -26,13 +26,14 @@ public class TokenEntity {
 
     @CreationTimestamp
     @Column(name="creado_el", nullable = false)
-    private LocalDate creadoEl;
+    private LocalDateTime creadoEl;
     @Column(name="expira_el", nullable = false)
-    private LocalDate expiraEl;
+    private LocalDateTime expiraEl;
     @Column(name="usado_el")
-    private LocalDate usadoEl;
+    private LocalDateTime usadoEl;
 
-    @ManyToOne
+    // Relacion con Usuario: Columna
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_usuario")
     private UsuarioEntity usuario;
 
@@ -40,12 +41,12 @@ public class TokenEntity {
 
     // Constructor completo
     public TokenEntity(
-            Long id,
+            int id,
             String tipo,
             TipoToken token,
-            LocalDate creadoEl,
-            LocalDate expiraEl,
-            LocalDate usadoEl,
+            LocalDateTime creadoEl,
+            LocalDateTime expiraEl,
+            LocalDateTime usadoEl,
             UsuarioEntity usuario
     ){
         this.id = id;
@@ -61,9 +62,9 @@ public class TokenEntity {
     public TokenEntity(
             String tipo,
             TipoToken token,
-            LocalDate creadoEl,
-            LocalDate expiraEl,
-            LocalDate usadoEl,
+            LocalDateTime creadoEl,
+            LocalDateTime expiraEl,
+            LocalDateTime usadoEl,
             UsuarioEntity usuario
     ){
         this.tipo = tipo;
@@ -78,8 +79,8 @@ public class TokenEntity {
     public TokenEntity(
             String tipo,
             TipoToken token,
-            LocalDate creadoEl,
-            LocalDate expiraEl,
+            LocalDateTime creadoEl,
+            LocalDateTime expiraEl,
             UsuarioEntity usuario
     ){
         this.tipo = tipo;
@@ -94,7 +95,7 @@ public class TokenEntity {
     public TokenEntity(
             String tipo,
             TipoToken token,
-            LocalDate expiraEl,
+            LocalDateTime expiraEl,
             UsuarioEntity usuario
     ){
         this.tipo = tipo;
