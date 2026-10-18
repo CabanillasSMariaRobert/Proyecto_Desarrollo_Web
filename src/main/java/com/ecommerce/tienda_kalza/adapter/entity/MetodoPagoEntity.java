@@ -3,6 +3,9 @@ package com.ecommerce.tienda_kalza.adapter.entity;
 import com.ecommerce.tienda_kalza.adapter.enums.RedUsada;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table (
