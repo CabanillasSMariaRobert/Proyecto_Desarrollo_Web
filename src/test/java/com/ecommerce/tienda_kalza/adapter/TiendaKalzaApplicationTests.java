@@ -1,4 +1,4 @@
-package com.ecommerce.tienda_kalza;
+package com.ecommerce.tienda_kalza.adapter;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
