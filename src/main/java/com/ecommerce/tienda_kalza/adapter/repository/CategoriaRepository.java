@@ -8,6 +8,6 @@ public interface CategoriaRepository extends JpaRepository<CategoriaEntity, Inte
     boolean existsByNombreIgnoreCase(String nombre);
     boolean existsByNombreIgnoreCaseAndIdCategoriaNot(String nombre, int idCategoria);
 
-    @Query(value = "SELECT COUNT(*) FROM \"Categorias_de_productos\" WHERE id_categoria = :id", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM Categorias_de_productos WHERE id_categoria = :id", nativeQuery = true)
     Integer contarProductos(@Param("id") Integer id);
 }
