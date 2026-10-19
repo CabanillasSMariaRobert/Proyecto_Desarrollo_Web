@@ -17,4 +17,8 @@ public class CategoriaEntity {
 
     @Column(name = "descripcion", length = 500)
     private String descripcion;
+
+    @Column(name = "esta_activo", nullable = false)
+    @Builder.Default
+    private Boolean estaActivo = true;
 }
