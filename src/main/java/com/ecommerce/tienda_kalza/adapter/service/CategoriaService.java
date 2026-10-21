@@ -91,6 +91,7 @@ public class CategoriaService {
         model.setIdCategoria(entity.getIdCategoria());
         model.setNombre(entity.getNombre());
         model.setDescripcion(entity.getDescripcion());
+        model.setEstaActivo(entity.getEstaActivo());
         model.setCantidadProductos(repository.contarProductos(entity.getIdCategoria()));
         return model;
     }
