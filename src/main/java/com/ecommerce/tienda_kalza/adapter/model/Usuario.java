@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Usuario {
-    private int idUsuario;
+    private Integer idUsuario;
     private String nombres;
     private String apellidos;
     private String correo;

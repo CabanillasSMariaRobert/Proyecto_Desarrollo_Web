@@ -25,7 +25,7 @@ public class UsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "id_usuario", nullable = false, updatable = false)
-    private int idUsuario;
+    private Integer idUsuario;
 
     @Column (name = "nombres", length = 150, nullable = false)
     private String nombres;
@@ -57,7 +57,7 @@ public class UsuarioEntity {
 
     @Column (name = "esta_activo", nullable = false)
     @Builder.Default
-    private boolean estaActivo = true;
+    private Boolean estaActivo = true;
 
     @Column (name = "esta_verificado", nullable = false)
     @Builder.Default
