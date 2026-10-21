@@ -42,7 +42,7 @@
             th:classappend="${estadoActivo != null and estadoActivo.name() == 'PENDIENTE'} ? 'btn-dark' : 'btn-outline-secondary'"
             >Pendientes</a
           >
-          <a
+<!--          <a
             th:href="@{/admin/pedidos(estado='PAGADO')}"
             class="btn btn-sm"
             th:classappend="${estadoActivo != null and estadoActivo.name() == 'PAGADO'} ? 'btn-dark' : 'btn-outline-secondary'"
@@ -53,7 +53,7 @@
             class="btn btn-sm"
             th:classappend="${estadoActivo != null and estadoActivo.name() == 'ENVIADO'} ? 'btn-dark' : 'btn-outline-secondary'"
             >Enviados</a
-          >
+          >-->
           <a
             th:href="@{/admin/pedidos(estado='ENTREGADO')}"
             class="btn btn-sm"
@@ -109,7 +109,7 @@
                   <td>
                     <span
                       class="badge text-uppercase"
-                      th:classappend="${pedido.estado.claseCss()}"
+                      th:classappend="${pedido.claseEstado}"
                       th:text="${pedido.estado}"
                       >—</span
                     >
@@ -124,10 +124,10 @@
                                data-cliente=${pedido.cliente},
                                data-fecha=${#temporals.format(pedido.fecha, 'dd/MM/yyyy')},
                                data-estado=${pedido.estado},
-                               data-estado-clase=${pedido.estado.claseCss()},
+                               data-estado-clase=${pedido.claseEstado},
                                data-items=${pedido.cantidadItems},
                                data-total=${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')},
-                               data-detalle=${pedido.resumenItems()}"
+                               data-detalle=${pedido.resumenProductos}"
                     >
                       <i class="bi bi-eye"></i>
                     </button>
