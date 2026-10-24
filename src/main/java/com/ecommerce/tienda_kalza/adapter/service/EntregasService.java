@@ -1,38 +1,87 @@
 package com.ecommerce.tienda_kalza.adapter.service;
 
-import com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega;
+import com.ecommerce.tienda_kalza.adapter.entity.CompraEntity;
+import com.ecommerce.tienda_kalza.adapter.entity.EntregaEntity;
+import com.ecommerce.tienda_kalza.adapter.entity.PuntoEntregaEntity;
 import com.ecommerce.tienda_kalza.adapter.model.*;
+import com.ecommerce.tienda_kalza.adapter.repository.EntregasRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class EntregasService {
-    public List<Entrega> listar(){
-        // ES SERVICIO NO ESTA USANDO EL REPOSITORIO DE ENTREGAS PORQUE
-        // NECESITA TENER LAS INTERFACES DE COMPRAS Y PUNTO DE ENTREGA COMPLETAS
-        // PARA TENER DATOS LOS CUALES MOSTRAR POR PANTALLA
-        Compra compra = new Compra();
-        Usuario cliente = new Usuario();
-        cliente.setNombres("Alfonso");
-        cliente.setNombres("Otarola");
-        compra.setCliente(cliente);
-        PuntoEntrega puntoDeEntrega = new PuntoEntrega("Central", "Av. Izaguirre", "MegaPlaza", 10.255, 20.555);
-        return List.of(
-                new Entrega(compra, puntoDeEntrega, EstadoEntrega.EN_CAMINO),
-                new Entrega(compra, puntoDeEntrega, EstadoEntrega.PENDIENTE)
+    /**
+     * Por ahora el servicio de entregas esta como transaccional readOnly=true
+     * porque por el momento solo lee datos
+     * */
+    private final EntregasRepository repository;
+
+    public EntregasService(EntregasRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<Entrega> listar() {
+        return repository.findAll().stream().map(this::aModel).toList();
+    }
+
+    public List<Entrega> listarPorUsuario(int idUsuario) {
+        return repository.findByCompra_Cliente_IdUsuario(idUsuario)
+                .stream().map(this::aModel).toList();
+    }
+
+    private Entrega aModel(EntregaEntity entity) {
+        return new Entrega(
+                entity.getId(), aCompra(entity.getCompra()), aPuntoEntrega(entity.getPuntoDeEntrega()),
+                entity.getEstado(), entity.getAsignadoEl(), entity.getRecogidoEl(),
+                entity.getEntregadoEl(), entity.getCreadoEl(), entity.getActualizadoEl()
         );
     }
 
-    public List<Entrega> listarPorUsuario(int idUsuario){
-        // ES SERVICIO NO ESTA USANDO EL REPOSITORIO DE ENTREGAS PORQUE
-        // NECESITA TENER LAS INTERFACES DE COMPRAS Y PUNTO DE ENTREGA COMPLETAS
-        // PARA TENER DATOS LOS CUALES MOSTRAR POR PANTALLA
+    // Copia los datos usados por Entregas sin recorrer relaciones circulares.
+    private Compra aCompra(CompraEntity entity) {
+        if (entity == null) {
+            return null;
+        }
         Compra compra = new Compra();
-        PuntoEntrega puntoDeEntrega = new PuntoEntrega("Central", "Av. Izaguirre", "MegaPlaza", 10.255, 20.555);
-        return List.of(
-                new Entrega(compra, puntoDeEntrega, EstadoEntrega.EN_CAMINO),
-                new Entrega(compra, puntoDeEntrega, EstadoEntrega.PENDIENTE)
+        compra.setIdCompra(entity.getIdCompra());
+        compra.setEstado(entity.getEstado());
+        compra.setTotalConDescuento(entity.getTotalConDescuento());
+        compra.setTotalSinDescuento(entity.getTotalSinDescuento());
+        compra.setFechaDeCompra(entity.getFechaDeCompra());
+        if (entity.getCliente() != null) {
+            Usuario cliente = new Usuario();
+            cliente.setIdUsuario(entity.getCliente().getIdUsuario());
+            cliente.setNombres(entity.getCliente().getNombres());
+            cliente.setApellidos(entity.getCliente().getApellidos());
+            cliente.setCorreo(entity.getCliente().getCorreo());
+            cliente.setTelefono(entity.getCliente().getTelefono());
+            compra.setCliente(cliente);
+        }
+        compra.setDetalles(entity.getDetalles().stream().map(detalle -> {
+            DetalleCompra model = new DetalleCompra();
+            model.setNombreDelProducto(detalle.getNombreDelProducto());
+            model.setPrecioOriginalXUnidad(detalle.getPrecioOriginalXUnidad());
+            model.setDescuentoXUnidad(detalle.getDescuentoXUnidad());
+            model.setCantidad(detalle.getCantidad());
+            model.setPrecioSinDescuento(detalle.getPrecioSinDescuento());
+            model.setPrecioConDescuento(detalle.getPrecioConDescuento());
+            model.setCreadoEl(detalle.getCreadoEl());
+            return model;
+        }).toList());
+        return compra;
+    }
+
+    private PuntoEntrega aPuntoEntrega(PuntoEntregaEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        return new PuntoEntrega(
+                entity.getId(), entity.getNombre(), entity.getDireccion(), entity.getReferencia(),
+                entity.getLatitud(), entity.getLongitud(), entity.isEstaActivo(),
+                entity.getCreadoEl(), entity.getActualizadoEl()
         );
     }
 }

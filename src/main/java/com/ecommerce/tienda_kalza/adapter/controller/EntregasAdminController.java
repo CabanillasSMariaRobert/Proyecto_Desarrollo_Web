@@ -1,6 +1,7 @@
 package com.ecommerce.tienda_kalza.adapter.controller;
 
 import com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega;
+import com.ecommerce.tienda_kalza.adapter.model.Entrega;
 import com.ecommerce.tienda_kalza.adapter.service.EntregasService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +34,10 @@ public class EntregasAdminController {
             String resumenProductos,
             String claseEstado,
             String estado,
-            double total,
+            BigDecimal total,
             int cantidadItems,
-            String linkHaciaDetalle
+            String linkHaciaDetalle,
+            Entrega entrega
     ){
         public static String obtenerClaseEstado(EstadoEntrega estado){
             return switch (estado) {
@@ -59,23 +62,25 @@ public class EntregasAdminController {
                 .stream()
                 .map(entrega -> new Pedido(
                         entrega.getId(),
-                        entrega.getCompra().getCliente().getNombres() + entrega.getCompra().getCliente().getApellidos(),
+                        entrega.getCompra().getCliente().getNombres() + " " + entrega.getCompra().getCliente().getApellidos(),
                         entrega.getCreadoEl().toLocalDate(),
                         List.of("adidas Forum Low.jpg"),
                         String.join(", ", entrega.getCompra().getDetalles().stream().map(detalle -> detalle.getNombreDelProducto()).toList()),
                         Pedido.obtenerClaseEstado(entrega.getEstado()),
                         entrega.getEstado().name(),
-                        81.57,
+                        entrega.getCompra().getTotalConDescuento(),
                         entrega.getCompra().getDetalles().stream()
                                 .map(detalle -> detalle.getCantidad())
                                 .reduce(0, (acc, valor) -> acc + valor),
-                        "admin/pedidos/" + entrega.getId()
+                        "admin/pedidos/" + entrega.getId(),
+                        entrega
                 ))
                 .toList();
         modelo.addAttribute("desde", 1);
         modelo.addAttribute("hasta", 5);
-        modelo.addAttribute("paginaActual", 1);
+        modelo.addAttribute("paginaActual", 0);
         modelo.addAttribute("totalPedidos", 10);
+        modelo.addAttribute("totalPaginas", 1);
         modelo.addAttribute("estadoActivo", estadoActivo);
         modelo.addAttribute("pedidos", pedidos);
         return "admin/pedidos";

@@ -40,6 +40,11 @@
                             <div class="text-end">Total</div>
                         </div>
 
+                        <div th:if="${#lists.isEmpty(pedidos)}" class="p-4 p-md-5 text-center text-muted">
+                            <i class="bi bi-box-seam fs-2 d-block mb-3" aria-hidden="true"></i>
+                            <p class="mb-0">No realizó ningún pedido hasta ahora</p>
+                        </div>
+
                         <div th:each="pedido : ${pedidos}" class="p-3 hover-bg border-bottom">
                             <div class="row g-3 align-items-center">
                                 <div class="col-12 col-md-2 fw-bold" th:text="${pedido.codigo}"></div>
