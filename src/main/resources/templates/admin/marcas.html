@@ -4,6 +4,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <h2 class="fs-3 fw-bold">Marcas</h2>
         <div class="d-flex gap-2"><a class="btn btn-outline-dark" th:href="@{/admin/productos}">Productos</a>
+            <a class="btn btn-outline-dark" th:href="@{/admin/categorias}">Categorías</a>
             <a class="btn btn-dark" th:href="@{/admin/marcas/nueva}">Agregar marca</a></div>
     </div>
     <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>

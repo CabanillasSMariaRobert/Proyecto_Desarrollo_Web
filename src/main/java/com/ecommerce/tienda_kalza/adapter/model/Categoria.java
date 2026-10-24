@@ -1,8 +1,13 @@
 package com.ecommerce.tienda_kalza.adapter.model;
 
+import jakarta.validation.constraints.*;
+
 public class Categoria {
     private Integer idCategoria;
+    @NotBlank(message = "El nombre de la categoría es obligatorio.")
+    @Size(max = 150, message = "El nombre admite hasta 150 caracteres.")
     private String nombre;
+    @Size(max = 500, message = "La descripción admite hasta 500 caracteres.")
     private String descripcion;
     private boolean estaActivo;
 

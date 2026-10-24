@@ -7,15 +7,19 @@ import org.springframework.data.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class CategoriaService {
     private final CategoriaRepository repository;
 
     // CREATE
     @Transactional
-    public void crear(Categoria model){
+    public void crear(@NotNull @Valid Categoria model){
         String nombre = model.getNombre().trim();
         boolean duplicado = repository.existsByNombreIgnoreCase(nombre);
         if (duplicado) throw new IllegalStateException(mensajeDuplicado(nombre));
@@ -41,7 +45,7 @@ public class CategoriaService {
 
     // UPDATE
     @Transactional
-    public void actualizar(Integer id, Categoria model){
+    public void actualizar(Integer id, @NotNull @Valid Categoria model){
         CategoriaEntity entity = buscar(id);
 
         String nombre = model.getNombre().trim();
