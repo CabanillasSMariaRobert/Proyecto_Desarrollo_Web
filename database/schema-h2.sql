@@ -111,8 +111,8 @@
         creado_el timestamp(6) not null,
         expira_el timestamp(6) not null,
         usado_el timestamp(6),
-        tipo varchar(255) not null,
-        token enum ('RESTABLECIMIENTO_CLAVE') not null,
+        tipo enum ('RESTABLECIMIENTO_CLAVE') not null,
+        token varchar(64) not null unique,
         primary key (id_token),
         constraint FK4bm073ixmi0pgnc74vevnewt6 foreign key (id_usuario) references "usuarios"
     );
