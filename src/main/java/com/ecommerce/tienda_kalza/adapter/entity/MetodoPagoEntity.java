@@ -8,8 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table (
-        name = "'Metodos_de_pago'",
+@Table(
+        name = "\"Metodos_de_pago\"",
         uniqueConstraints = {
                 @UniqueConstraint(name = "UQ_METODOSPAGO_TOKEN", columnNames = {"pasarela", "token"})
         },
@@ -19,18 +19,17 @@ import java.time.LocalDateTime;
 )
 @Getter
 @Setter
-@ToString (exclude = {"token","usuario"})
+@ToString(exclude = {"token", "usuario"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class MetodoPagoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "id_metodo_de_pago",nullable = false,updatable = false)
-    private int idMetodoDePago;
+    @Column(name = "id_metodo_de_pago", nullable = false, updatable = false)
+    private Integer idMetodoDePago;
 
-    // Relacion con (Entidad a la que llama): Columna
-    @ManyToOne (fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "id_usuario",
             nullable = false,
@@ -38,24 +37,24 @@ public class MetodoPagoEntity {
     )
     private UsuarioEntity usuario;
 
-    @Column (name = "pasarela", length = 50, nullable = false)
+    @Column(name = "pasarela", length = 50, nullable = false)
     private String pasarela;
 
-    @Enumerated (EnumType.STRING)
-    @Column (name = "red_usada", length = 15, nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "red_usada", length = 15, nullable = false)
     private RedUsada redUsada;
 
-    @Column (name = "token", length = 150, nullable = false)
+    @Column(name = "token", length = 150, nullable = false)
     private String token;
 
-    @Column (name = "ultimos_4_digitos", length = 4, nullable = false)
+    @Column(name = "ultimos_4_digitos", length = 4, nullable = false)
     private String ultimos4Digitos;
 
     @Column(name = "expira_el_mes", nullable = false)
-    private int expira_el_mes;
+    private Integer expira_el_mes;
 
     @Column(name = "expira_el_anio", nullable = false)
-    private int expira_el_anio;
+    private Integer expira_el_anio;
 
     @CreationTimestamp
     @Column(name = "creado_el", nullable = false, updatable = false)
