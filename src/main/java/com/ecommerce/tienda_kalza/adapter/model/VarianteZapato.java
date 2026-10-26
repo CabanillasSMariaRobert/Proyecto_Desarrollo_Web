@@ -16,6 +16,7 @@ public class VarianteZapato {
     private int stock;
     private Timestamp creadoEl;
     private Timestamp actualizadoEl;
+    private boolean estaActivo = true;
 
     public VarianteZapato(int idVariante, int idZapato, int talla, String color, int stock, Timestamp creadoEl, Timestamp actualizadoEl) {
         this.idVariante = idVariante;
@@ -59,4 +60,7 @@ public class VarianteZapato {
 
     public Timestamp getActualizadoEl() { return actualizadoEl; }
     public void setActualizadoEl(Timestamp actualizado_el) { this.actualizadoEl = actualizado_el; }
+
+    public boolean isEstaActivo() { return estaActivo; }
+    public void setEstaActivo(boolean estaActivo) { this.estaActivo = estaActivo; }
 }

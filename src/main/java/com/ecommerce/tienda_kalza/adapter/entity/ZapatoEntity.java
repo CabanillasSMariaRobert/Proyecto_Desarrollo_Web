@@ -13,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "\"Zapatos\"")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ZapatoEntity {
@@ -24,6 +25,10 @@ public class ZapatoEntity {
     @CreationTimestamp
     @Column(name = "creado_el", nullable = false, updatable = false)
     private LocalDate creadoEl;
+
+    @Column(name = "esta_activo", nullable = false)
+    @Builder.Default
+    private boolean estaActivo = true;
 
     @UpdateTimestamp
     @Column(name = "actualizado_el", nullable = false)

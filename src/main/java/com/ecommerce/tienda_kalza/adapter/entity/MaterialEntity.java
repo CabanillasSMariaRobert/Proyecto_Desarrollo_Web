@@ -24,6 +24,9 @@ public class MaterialEntity {
     @Column(name = "nombre", nullable = false, unique = true, length = 150)
     private String nombre;
 
+    @Column(name = "esta_activo", nullable = false)
+    private boolean estaActivo = true;
+
     // Relación con ZapatoMaterial: Referencial
     @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
     private List<ZapatoMaterialEntity> materiales = new ArrayList<>();

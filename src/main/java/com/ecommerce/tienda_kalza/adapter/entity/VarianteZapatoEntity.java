@@ -52,4 +52,8 @@ public class VarianteZapatoEntity {
     @UpdateTimestamp
     @Column(name = "actualizado_el", nullable = false)
     private Timestamp actualizadoEl;
+
+    @Column(name = "esta_activo", nullable = false)
+    @Builder.Default
+    private boolean estaActivo = true;
 }

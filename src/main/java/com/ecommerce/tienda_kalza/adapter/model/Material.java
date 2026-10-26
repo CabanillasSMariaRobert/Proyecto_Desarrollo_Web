@@ -7,6 +7,7 @@ public class Material {
     @NotBlank(message = "El nombre del material es obligatorio")
     @Size(max = 150, message = "El nombre no puede superar los 150 caracteres")
     private String nombre;
+    private boolean estaActivo = true;
 
     public Material(int idMaterial, String nombre) {
         this.idMaterial = idMaterial;
@@ -25,4 +26,7 @@ public class Material {
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public boolean isEstaActivo() { return estaActivo; }
+    public void setEstaActivo(boolean estaActivo) { this.estaActivo = estaActivo; }
 }
