@@ -101,6 +101,15 @@ public class ProductoService {
         Producto model = new Producto();
         model.setIdProducto(entity.getIdProducto());
         model.setEstaActivo(entity.isEstaActivo());
+        var preparacion = repository.consultarPreparacionVenta(entity.getIdProducto());
+        preparacion.ifPresent(p -> model.setIdZapato(p.getIdZapato()));
+        model.setDisponibleParaCarrito(entity.isEstaActivo() && preparacion.isPresent()
+                && preparacion.get().getActivo() && preparacion.get().getVariantesDisponibles() > 0);
+        if (!entity.isEstaActivo()) model.setPreparacionVenta("Producto inactivo");
+        else if (preparacion.isEmpty()) model.setPreparacionVenta("Falta registrar el calzado");
+        else if (!preparacion.get().getActivo()) model.setPreparacionVenta("Calzado inactivo");
+        else if (!model.isDisponibleParaCarrito()) model.setPreparacionVenta("Sin variantes activas con stock");
+        else model.setPreparacionVenta("Listo para agregar al carrito");
         model.setNombre(entity.getNombre());
         model.setDescripcion(entity.getDescripcion());
         model.setPrecioOriginal(entity.getPrecioOriginal());

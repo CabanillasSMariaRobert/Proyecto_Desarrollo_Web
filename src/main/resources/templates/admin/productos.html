@@ -5,6 +5,7 @@
         <div><h2 class="fs-3 fw-bold">Gestión de productos</h2><p class="text-muted">Catálogo base: marcas, precios y categorías.</p></div>
         <div class="d-flex gap-2"><a class="btn btn-outline-dark" th:href="@{/admin/marcas}">Marcas</a>
             <a class="btn btn-outline-dark" th:href="@{/admin/categorias}">Categorías</a>
+            <a class="btn btn-outline-dark" th:href="@{/admin/zapatos}">Calzado y variantes</a>
             <a class="btn btn-dark" th:href="@{/admin/productos/nuevo}">Agregar producto</a></div>
     </div>
     <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
@@ -46,7 +47,9 @@
                         <span th:text="|Conservar ${categoria.nombre} (inactiva)|"></span>
                     </label>
                 </div></div>
-            <fieldset class="col-12" disabled><legend class="fs-6">Inventario: integración pendiente con integrante 3</legend>
+            <div class="col-12 small text-muted">Registrar el producto base no crea calzado ni variantes.
+                Después de guardar, completa esos datos en <a th:href="@{/admin/zapatos}">Calzado y variantes</a> para habilitar su venta.</div>
+            <fieldset class="col-12" disabled><legend class="fs-6">Tallas y stock se administran en Calzado y variantes</legend>
                 <div class="row g-3"><div class="col-md-6"><label for="stock" class="form-label">Stock</label>
                     <input id="stock" type="number" class="form-control" placeholder="Gestionado por inventario"></div>
                     <div class="col-md-6"><label for="tallas" class="form-label">Tallas disponibles</label>
@@ -63,7 +66,7 @@
     <div class="card border-0 shadow-sm table-responsive">
         <table class="table table-striped align-middle mb-0"><thead><tr>
             <th>Imagen</th><th>Nombre</th><th>Marca</th><th>Categorías</th><th>Precio original</th>
-            <th>Descuento</th><th>Precio final</th><th>Tallas</th><th>Stock</th><th>Estado</th><th>Acciones</th>
+            <th>Descuento</th><th>Precio final</th><th>Tallas</th><th>Stock</th><th>Estado</th><th>Preparación para venta</th><th>Acciones</th>
         </tr></thead><tbody>
         <tr th:each="item : ${page.content}">
             <td><img th:if="${!#strings.isEmpty(item.urlImagen)}" th:src="${item.urlImagen}" th:alt="${item.nombre}" width="48" height="48" class="rounded-3 object-fit-cover"></td>
@@ -72,9 +75,16 @@
             <td th:text="|S/ ${#numbers.formatDecimal(item.precioOriginal, 1, 2)}|"></td>
             <td th:text="|${item.descuento * 100} %|"></td>
             <td th:text="|S/ ${#numbers.formatDecimal(item.precioConDescuento, 1, 2)}|"></td>
-            <td class="text-muted">Integración pendiente</td><td class="text-muted">Integración pendiente</td>
+            <td class="text-muted">Gestionadas en variantes</td><td class="text-muted">Gestionado en variantes</td>
             <td><span class="badge" th:classappend="${item.estaActivo} ? 'text-bg-success' : 'bg-light text-muted'"
                       th:text="${item.estaActivo} ? 'Activo' : 'Inactivo'"></span></td>
+            <td><span th:text="${item.preparacionVenta}"></span>
+                <a th:if="${item.idZapato == null}" class="d-block small" th:href="@{/admin/zapatos}">Completar calzado</a>
+                <a th:unless="${item.idZapato == null}" class="d-block small"
+                   th:href="@{/admin/zapatos/{id}(id=${item.idZapato})}">Ver calzado y variantes</a>
+                <a th:if="${item.disponibleParaCarrito}" class="d-block small"
+                   th:href="@{/catalogo/{id}(id=${item.idProducto})}">Ver en catálogo</a>
+            </td>
             <td><a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/productos/{id}/editar(id=${item.idProducto})}">Editar</a>
                 <form method="post" class="d-inline" th:action="@{/admin/productos/{id}/estado(id=${item.idProducto})}">
                     <input type="hidden" name="activo" th:value="${!item.estaActivo}">
@@ -82,7 +92,7 @@
                             th:text="${item.estaActivo} ? 'Desactivar' : 'Activar'"></button>
                 </form>
             </td>
-        </tr><tr th:if="${page.empty}"><td colspan="11" class="text-center py-4">No hay productos que coincidan con la búsqueda.</td></tr>
+        </tr><tr th:if="${page.empty}"><td colspan="12" class="text-center py-4">No hay productos que coincidan con la búsqueda.</td></tr>
         </tbody></table>
         <div class="d-flex justify-content-between p-3">
             <span th:text="|${page.totalElements} productos — página ${page.number + 1}|"></span><div>
