@@ -166,9 +166,9 @@ public class CompraService {
             throw new ReglaNegocioException("Una compra cancelada no puede cambiar de estado.");
         }
         if ("cancelado".equals(nuevo)) {
-            if (ORDEN.get(actual) >= 2) {
+            if (!"pendiente".equals(actual)) {
                 throw new ReglaNegocioException(
-                        "Solo se pueden cancelar compras que no hayan sido enviadas (estado actual: " + actual + ").");
+                        "Solo se pueden cancelar compras pendientes de pago (estado actual: " + actual + ").");
             }
             return;
         }
