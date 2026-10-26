@@ -101,6 +101,8 @@
                     <div class="alert alert-secondary small mb-0">
                         Agregar artículos al carrito no reserva existencias.
                     </div>
+                    <a th:href="@{/checkout}" class="btn btn-dark mt-3"
+                       th:classappend="${!resumen.disponible} ? 'disabled'">Continuar con la compra</a>
                 </div>
             </div>
         </div>

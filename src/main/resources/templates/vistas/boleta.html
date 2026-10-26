@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<body><section th:fragment="content" class="container py-5" style="max-width:900px">
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <article class="card card-body p-4 p-md-5">
+        <h1 class="h3">Boleta de compra <span th:text="|#${boleta.idBoleta}|"></span></h1>
+        <p class="text-muted">Comprobante de simulación académica</p>
+        <p class="mb-1" th:text="|Cliente: ${boleta.cliente}|"></p>
+        <p class="mb-1" th:text="|Compra: #${boleta.compra.idCompra}|"></p>
+        <p class="mb-1" th:text="|RUC de prueba: ${boleta.rucDeLaTienda}|"></p>
+        <p th:text="${#temporals.format(boleta.creadoEl, 'dd/MM/yyyy HH:mm')}"></p>
+        <div class="table-responsive">
+            <table class="table"><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio original</th><th>Descuento por unidad</th><th>Subtotal</th></tr></thead>
+                <tbody><tr th:each="detalle : ${boleta.compra.detalles}">
+                    <td th:text="${detalle.nombreDelProducto}"></td><td th:text="${detalle.cantidad}"></td>
+                    <td th:text="|S/ ${detalle.precioOriginalXUnidad}|"></td>
+                    <td th:text="|S/ ${detalle.descuentoXUnidad}|"></td>
+                    <td th:text="|S/ ${detalle.precioConDescuento}|"></td>
+                </tr></tbody></table>
+        </div>
+        <p th:text="|Pago simulado: ${boleta.redDeTarjeta} •••• ${boleta.ultimos4Digitos}|"></p>
+        <p class="fs-4 fw-bold text-end" th:text="|Total: S/ ${boleta.total}|"></p>
+        <div class="d-flex gap-3"><a class="btn btn-dark" th:href="@{/pedidos}">Ver mis compras</a>
+            <a class="btn btn-outline-dark" th:href="@{/catalogo}">Seguir comprando</a></div>
+    </article>
+</section></body></html>
