@@ -30,9 +30,8 @@ verifican que su identificador pertenezca al calzado indicado en la ruta.
 
 ## Limites de esta integracion
 
-La pantalla de pago y el flujo completo de checkout siguen pendientes. Las operaciones existentes
-de metodos de pago se conservan. La identificacion del propietario de esos metodos
-continua siendo la provisional del proyecto.
+El checkout utiliza pago simulado y puntos de recojo activos. Las tarjetas se consultan,
+registran y eliminan con el usuario de la sesion, sin recurrir a la primera cuenta de la BD.
 Las rutas administrativas conservan la configuracion de seguridad actual del curso
 (permitAll). Los permisos por rol corresponden a la integracion posterior de Spring Security.
 
@@ -78,9 +77,34 @@ la transaccion: ninguna linea pierde stock y la compra conserva su estado anteri
 Las variantes y cantidades de compras pagadas no se pueden editar. El ajuste de
 stock administrativo utiliza el mismo bloqueo de variante.
 
-Esta integracion no realiza cobros ni emite boletas. El checkout del modulo de ventas
-debe crear los detalles y llamar al servicio al confirmar el pago; no guardar el estado
-directamente mediante el repositorio. Las cancelaciones no reponen stock automaticamente.
+El checkout crea los detalles y utiliza este servicio al aprobar el pago simulado.
+No se realizan cobros reales. Las cancelaciones no reponen stock automaticamente.
+
+## FN30: compra con pago simulado
+
+1. En `/carrito`, agregar variantes y guardar una tarjeta de prueba con la cuenta conectada.
+2. Ir a `/checkout`, elegir una tarjeta propia, un punto de recojo activo y el resultado
+   del pago simulado: aprobado o rechazado.
+3. `CheckoutService.confirmar` valida cliente, carrito, propiedad y vencimiento de la
+   tarjeta y disponibilidad del punto. Calcula importes desde la BD y conserva nombres,
+   precios y descuentos en los detalles de la compra.
+4. Si se aprueba, registra la compra pagada, descuenta stock mediante `CompraService`,
+   genera la boleta y crea la entrega pendiente dentro de una misma transaccion.
+
+Si se rechaza el pago o falla una validacion, no se registra la venta ni se descuenta stock.
+El carrito se vacia solo cuando finaliza correctamente la transaccion. El controlador
+sincroniza la confirmacion por sesion para impedir dos confirmaciones simultaneas del
+mismo carrito. Los importes y el propietario no se reciben desde el formulario.
+
+La boleta se consulta en `/compras/{idCompra}/boleta`, limitada al propietario, y tambien
+desde Mis compras. Es un comprobante academico: el RUC predeterminado es `00000000000`
+y se puede configurar con `tienda.ruc`. No se genera un documento fiscal ni se integra
+una pasarela externa. Los datos de entrega consisten en el punto de recojo seleccionado;
+no se agregan domicilios particulares ni nuevas tablas.
+
+`CheckoutIntegrationTest` comprueba el flujo aprobado, el rechazado, importes reales,
+propiedad de tarjetas y boletas, puntos inactivos, vencimiento, cliente desactivado,
+reenvio del formulario y reversion completa ante un error al emitir la boleta.
 
 ## Selector del administrador
 
