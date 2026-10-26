@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,22 +32,59 @@ public class EntregasService {
         if (estado == null) {
             throw new ReglaNegocioException("Selecciona un estado de entrega.");
         }
-        EntregaEntity entrega = repository.findById(id)
+        EntregaEntity entrega = repository.buscarParaActualizar(id)
                 .orElseThrow(() -> new ReglaNegocioException("No se encontró el pedido solicitado."));
-        entrega.setEstado(estado);
-        repository.save(entrega);
+        EstadoEntrega anterior = entrega.getEstado();
+        if (anterior == estado) {
+            return; // Un reenvío del formulario no modifica las fechas ya registradas.
+        }
+        if (anterior == null || !anterior.permiteTransicionA(estado)) {
+            throw new ReglaNegocioException("No se permite cambiar la entrega de " + anterior + " a " + estado + ".");
+        }
 
+        LocalDateTime ahora = LocalDateTime.now(ZoneId.of("America/Lima"));
+        LocalDateTime asignado = entrega.getAsignadoEl();
+        LocalDateTime recogido = entrega.getRecogidoEl();
+        LocalDateTime entregado = entrega.getEntregadoEl();
+        if (estado == EstadoEntrega.ASIGNADO && asignado == null) asignado = ahora;
+        if (estado == EstadoEntrega.RECOGIDO && recogido == null) recogido = ahora;
+        if (estado == EstadoEntrega.ENTREGADO && entregado == null) entregado = ahora;
+        if (estado == EstadoEntrega.ASIGNADO || estado == EstadoEntrega.RECOGIDO
+                || estado == EstadoEntrega.EN_CAMINO || estado == EstadoEntrega.ENTREGADO) {
+            validarFecha(asignado, null, ahora, "asignación");
+        }
+        if (estado == EstadoEntrega.RECOGIDO || estado == EstadoEntrega.EN_CAMINO || estado == EstadoEntrega.ENTREGADO) {
+            validarFecha(recogido, asignado, ahora, "recojo");
+        }
+        if (estado == EstadoEntrega.ENTREGADO) {
+            validarFecha(entregado, recogido, ahora, "entrega");
+        }
 
+        // CompraService conserva sus propias reglas. Si rechaza el cambio, no se actualiza el seguimiento.
         if (entrega.getCompra() != null) {
             int idCompra = entrega.getCompra().getIdCompra();
             switch (estado) {
                 case EN_CAMINO -> compraService.cambiarEstado(idCompra, "enviado");
                 case ENTREGADO -> compraService.cambiarEstado(idCompra, "entregado");
-                case CANCELADO, FALLADO -> compraService.cambiarEstado(idCompra, "cancelado");
+                case CANCELADO -> compraService.cambiarEstado(idCompra, "cancelado");
                 default -> {
-                    // PENDIENTE, ASIGNADO, RECOGIDO no cambian el estado comercial por ahora
+                    // Un reparto FALLADO no equivale a cancelar o reembolsar una compra ya enviada.
                 }
             }
+        }
+        entrega.setEstado(estado);
+        entrega.setAsignadoEl(asignado);
+        entrega.setRecogidoEl(recogido);
+        entrega.setEntregadoEl(entregado);
+        repository.save(entrega);
+    }
+
+    private void validarFecha(LocalDateTime fecha, LocalDateTime anterior, LocalDateTime ahora, String evento) {
+        if (fecha == null) {
+            throw new ReglaNegocioException("Falta la fecha de " + evento + " de la entrega.");
+        }
+        if (fecha.isAfter(ahora) || (anterior != null && fecha.isBefore(anterior))) {
+            throw new ReglaNegocioException("La fecha de " + evento + " no respeta el orden del seguimiento de la entrega.");
         }
     }
 

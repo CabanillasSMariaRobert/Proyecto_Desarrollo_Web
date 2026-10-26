@@ -375,7 +375,7 @@
                 <button th:each="estado : ${T(com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega).values()}"
                         type="submit" name="nuevoEstado" th:value="${estado.name()}"
                         class="btn btn-sm btn-outline-secondary" th:text="${estado.name()}"
-                        th:disabled="${pedido.estado == estado.name()}"></button>
+                        th:disabled="${!pedido.entrega.estado.permiteTransicionA(estado)}"></button>
               </form>
               <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                 Cerrar

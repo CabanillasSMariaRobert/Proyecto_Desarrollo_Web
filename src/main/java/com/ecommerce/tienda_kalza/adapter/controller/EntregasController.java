@@ -2,6 +2,8 @@ package com.ecommerce.tienda_kalza.adapter.controller;
 
 import com.ecommerce.tienda_kalza.adapter.entity.CompraEntity;
 import com.ecommerce.tienda_kalza.adapter.entity.EntregaEntity;
+import com.ecommerce.tienda_kalza.adapter.entity.UsuarioEntity;
+import com.ecommerce.tienda_kalza.adapter.repository.UsuarioRepository;
 import com.ecommerce.tienda_kalza.adapter.service.CompraService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +25,12 @@ public class EntregasController {
     @GetMapping
     public String obtenerPedidosDelUsuarioActual(Model modelo, HttpSession session,
             @RequestParam(name = "pagina", defaultValue = "0") int pagina) {
-        // El propietario se obtiene de la sesión, nunca de parámetros del navegador.
-        if (!(session.getAttribute("idUsuario") instanceof Integer idUsuario)
-                || session.getAttribute("usuarioLogueado") == null) return "redirect:/login";
-        var historial = compras.listarPorCliente(idUsuario, pagina);
+        modelo.addAttribute("title", "Tus Pedidos | KALZA");
+
+        Integer idUsuarioActual = obtenerIdUsuarioActual(session);
+        if (idUsuarioActual == null) return "redirect:/login";
+
+        var historial = compras.listarPorCliente(idUsuarioActual, pagina);
         modelo.addAttribute("pedidos", historial.map(compra -> new Pedido(
                 compra.getIdCompra(), compra.getFechaDeCompra().toLocalDate(),
                 String.join(", ", compra.getDetalles().stream().map(d -> d.getNombreDelProducto()).toList()),
@@ -50,5 +54,10 @@ public class EntregasController {
             case "cancelado" -> "text-bg-danger";
             default -> "text-bg-warning";
         };
+    }
+
+    private Integer obtenerIdUsuarioActual(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) return null;
+        return (Integer) session.getAttribute("idUsuario");
     }
 }
