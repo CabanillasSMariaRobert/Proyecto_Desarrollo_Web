@@ -55,6 +55,21 @@ class CatalogoIntegrationTest {
         return productoRepository.findAll().get(0).getIdProducto();
     }
 
+    @Test void inicioMuestraProductosRealesYFuncionaConCatalogoVacio() throws Exception {
+        mvc.perform(get("/")).andExpect(status().isOk()).andExpect(view().name("vistas/index"));
+        int id = registrar();
+        var zapato = new ZapatoEntity();
+        zapato.setProducto(productoRepository.findById(id).orElseThrow());
+        em.persist(zapato);
+        em.flush();
+        mvc.perform(get("/index")).andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Producto real")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/catalogo/" + id)));
+        productos.cambiarEstado(id, false);
+        mvc.perform(get("/")).andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Producto real"))));
+    }
+
     @Test void registraRelacionesYPrecioGenerado() {
         int id = registrar();
         em.clear();

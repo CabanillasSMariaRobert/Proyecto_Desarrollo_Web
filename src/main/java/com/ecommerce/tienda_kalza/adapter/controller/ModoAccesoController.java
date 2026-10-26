@@ -19,9 +19,6 @@ public class ModoAccesoController {
 
     public enum Modo { CLIENTE, ADMINISTRADOR }
 
-    @GetMapping("/")
-    public String inicio() { return "redirect:/catalogo"; }
-
     @GetMapping("/seleccionar-modo")
     public String mostrar(HttpSession session, Model model) {
         Usuario usuario = usuarioActual(session);
