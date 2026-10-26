@@ -38,6 +38,11 @@ public class ProductoAdminController {
         model.addAttribute("currentPage", "productos");
         model.addAttribute("marcas", marcas.opciones());
         model.addAttribute("categorias", service.opcionesCategorias());
+        if (model.getAttribute("producto") instanceof Producto producto && producto.getIdProducto() > 0) {
+            model.addAttribute("categoriasConservadas", service.categoriasInactivasAsociadas(producto.getIdProducto()));
+        } else {
+            model.addAttribute("categoriasConservadas", java.util.List.of());
+        }
         return "admin/productos";
     }
 

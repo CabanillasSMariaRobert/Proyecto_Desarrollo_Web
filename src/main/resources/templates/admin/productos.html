@@ -36,8 +36,16 @@
                 <input type="hidden" name="_idsCategorias" value="on">
                 <select id="idsCategorias" th:field="*{idsCategorias}" multiple class="form-select" size="5">
                     <option th:each="categoria : ${categorias}" th:value="${categoria.idCategoria}"
-                            th:text="${categoria.nombre + (categoria.estaActivo ? '' : ' (inactiva)')}"></option>
-                </select><small class="text-muted">Usa Ctrl o Cmd para seleccionar varias. Esta selección no cambia el estado de las categorías.</small></div>
+                            th:text="${categoria.nombre}"></option>
+                </select><small class="text-muted">Solo categorías activas para nuevas asignaciones. Usa Ctrl o Cmd para seleccionar varias.</small>
+                <div th:if="${!#lists.isEmpty(categoriasConservadas)}" class="mt-2">
+                    <p class="small text-muted">Clasificaciones inactivas existentes: puedes conservarlas o retirarlas; una vez retiradas no podrás reasignarlas mientras sigan inactivas.</p>
+                    <label th:each="categoria : ${categoriasConservadas}" class="form-check">
+                        <input type="checkbox" class="form-check-input" name="idsCategorias" th:value="${categoria.idCategoria}"
+                               th:checked="${#lists.contains(producto.idsCategorias, categoria.idCategoria)}">
+                        <span th:text="|Conservar ${categoria.nombre} (inactiva)|"></span>
+                    </label>
+                </div></div>
             <fieldset class="col-12" disabled><legend class="fs-6">Inventario: integración pendiente con integrante 3</legend>
                 <div class="row g-3"><div class="col-md-6"><label for="stock" class="form-label">Stock</label>
                     <input id="stock" type="number" class="form-control" placeholder="Gestionado por inventario"></div>

@@ -49,7 +49,12 @@ public class ProductoService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoriaEntity> opcionesCategorias() { return categorias.findAll(Sort.by("nombre")); }
+    public List<CategoriaEntity> opcionesCategorias() { return categorias.findByEstaActivoTrueOrderByNombreAsc(); }
+
+    @Transactional(readOnly = true)
+    public List<CategoriaEntity> categoriasInactivasAsociadas(int idProducto) {
+        return categorias.encontrarInactivasAsociadas(idProducto);
+    }
 
     @Transactional
     public void guardar(Integer id, @NotNull @Valid Producto model) {
@@ -64,6 +69,14 @@ public class ProductoService {
         if (seleccionadas.size() != ids.size()) {
             throw new IllegalArgumentException("Alguna categoría seleccionada no existe.");
         }
+        Set<Integer> actuales = new HashSet<>();
+        entity.getCategorias().forEach(rel -> actuales.add(rel.getCategoria().getIdCategoria()));
+        for (CategoriaEntity categoria : seleccionadas) {
+            if (!Boolean.TRUE.equals(categoria.getEstaActivo()) && !actuales.contains(categoria.getIdCategoria())) {
+                throw new IllegalArgumentException("La categoría \"" + categoria.getNombre()
+                        + "\" está inactiva y no admite nuevas asignaciones.");
+            }
+        }
         entity.setNombre(model.getNombre().trim());
         entity.setDescripcion(model.getDescripcion() == null ? null : model.getDescripcion().trim());
         entity.setPrecioOriginal(model.getPrecioOriginal());
@@ -72,8 +85,6 @@ public class ProductoService {
         entity.setMarca(marca);
         // Conserva las asociaciones existentes para no reinsertar claves compuestas.
         entity.getCategorias().removeIf(rel -> !ids.contains(rel.getCategoria().getIdCategoria()));
-        Set<Integer> actuales = new HashSet<>();
-        entity.getCategorias().forEach(rel -> actuales.add(rel.getCategoria().getIdCategoria()));
         for (CategoriaEntity categoria : seleccionadas) {
             if (!actuales.contains(categoria.getIdCategoria())) {
                 entity.getCategorias().add(CategoriaProductoEntity.builder().producto(entity).categoria(categoria).build());
