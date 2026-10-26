@@ -1,9 +1,7 @@
 package com.ecommerce.tienda_kalza.adapter.controller;
 
-import com.ecommerce.tienda_kalza.adapter.entity.UsuarioEntity;
 import com.ecommerce.tienda_kalza.adapter.model.Entrega;
 import com.ecommerce.tienda_kalza.adapter.model.Usuario;
-import com.ecommerce.tienda_kalza.adapter.repository.UsuarioRepository;
 import com.ecommerce.tienda_kalza.adapter.service.EntregasService;
 import com.ecommerce.tienda_kalza.adapter.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
@@ -26,7 +24,6 @@ import java.util.List;
 public class PerfilController {
 
     private final UsuarioService usuarioService;
-    private final UsuarioRepository usuarioRepository;
     private final EntregasService entregasService;
 
     public record PedidoReciente(
@@ -42,17 +39,18 @@ public class PerfilController {
 
     @GetMapping
     public String verPerfil(Model model, HttpSession session) {
-        // Obtener el ID del usuario en sesión
-        Integer idUsuario = obtenerIdUsuarioActual(session);
+        // 1. Obtener ID del usuario autenticado en la sesión
+        Integer idUsuario = (session != null) ? (Integer) session.getAttribute("idUsuario") : null;
         if (idUsuario == null) {
             return "redirect:/login";
         }
 
-        // Obtener datos del usuario
+        // 2. Obtener datos reales de ese usuario
         Usuario usuario;
         try {
             usuario = usuarioService.obtener(idUsuario);
         } catch (Exception e) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -60,7 +58,7 @@ public class PerfilController {
         model.addAttribute("title", "Mi Perfil | KALZA");
         model.addAttribute("currentPage", "perfil");
 
-        // Cargar pedidos recientes del usuario
+        // 3. Cargar compras/pedidos del usuario logueado
         List<PedidoReciente> pedidosRecientes = new ArrayList<>();
         try {
             Page<Entrega> entregas = entregasService.listarPorUsuario(idUsuario, 0, 4);
@@ -94,11 +92,9 @@ public class PerfilController {
                 }
             }
         } catch (Exception ignored) {
-            // Si ocurre algún fallo consultando entregas, no bloqueamos la vista
         }
 
         model.addAttribute("pedidosRecientes", pedidosRecientes);
-
         return "vistas/perfil";
     }
 
@@ -111,7 +107,7 @@ public class PerfilController {
             HttpSession session,
             RedirectAttributes flash) {
 
-        Integer idUsuario = obtenerIdUsuarioActual(session);
+        Integer idUsuario = (session != null) ? (Integer) session.getAttribute("idUsuario") : null;
         if (idUsuario == null) {
             return "redirect:/login";
         }
@@ -125,7 +121,7 @@ public class PerfilController {
 
             usuarioService.actualizar(idUsuario, model);
 
-            // Actualizar la sesion HTTP con los nuevos nombres
+            // Refrescar los datos actualizados en la sesión
             session.setAttribute("usuarioLogueado", model);
             session.setAttribute("nombreCompleto", nombres.trim() + " " + apellidos.trim());
 
@@ -135,16 +131,5 @@ public class PerfilController {
         }
 
         return "redirect:/perfil";
-    }
-
-    private Integer obtenerIdUsuarioActual(HttpSession session) {
-        if (session != null && session.getAttribute("idUsuario") != null) {
-            return (Integer) session.getAttribute("idUsuario");
-        }
-        // Respaldo para poder probar directamente en el navegador si no te has logueado
-        return usuarioRepository.findAll().stream()
-                .findFirst()
-                .map(UsuarioEntity::getIdUsuario)
-                .orElse(null);
     }
 }
