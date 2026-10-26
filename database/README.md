@@ -28,10 +28,12 @@ son comportamientos de Java/Hibernate y no equivalen a DEFAULT SQL.
 
 ## Diferencias detectadas frente a la propuesta documental
 
-- MetodoPagoEntity utiliza `@Table(name = "'Metodos_de_pago'")`: los apostrofos
-  forman parte literal del nombre resultante `"'metodos_de_pago'"`.
-  El script lo conserva para corresponder al codigo. Normalizar ese nombre
-  requiere corregir la entidad y planificar el cambio de la base existente.
+- MetodoPagoEntity y el script utilizan `"metodos_de_pago"`, sin apostrofos.
+  Algunas bases antiguas conservan una tabla distinta llamada `"'metodos_de_pago'"`.
+  Si la FK de boletas apunta a esa tabla antigua, revisar que no haya boletas sin
+  metodo correspondiente en la tabla actual y respaldar la base. Luego ejecutar
+  `migrations/corregir-fk-boleta-metodo-pago.sql`. La migracion solo corrige la FK;
+  no elimina tablas ni registros.
 - ProductoEntity, ZapatoEntity, VarianteZapatoEntity y MaterialEntity tienen esta_activo.
 - TokenEntity declara tipo como String y token como el enum TipoToken.
   Esto limita token al valor RESTABLECIMIENTO_CLAVE; debe revisarse antes
