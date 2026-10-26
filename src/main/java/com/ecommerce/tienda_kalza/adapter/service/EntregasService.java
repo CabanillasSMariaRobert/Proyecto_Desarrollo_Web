@@ -18,9 +18,11 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class EntregasService {
     private final EntregasRepository repository;
+    private final CompraService compraService;
 
-    public EntregasService(EntregasRepository repository) {
+    public EntregasService(EntregasRepository repository,CompraService compraService) {
         this.repository = repository;
+        this.compraService=compraService;
     }
 
     @Transactional
@@ -32,6 +34,19 @@ public class EntregasService {
                 .orElseThrow(() -> new ReglaNegocioException("No se encontró el pedido solicitado."));
         entrega.setEstado(estado);
         repository.save(entrega);
+
+
+        if (entrega.getCompra() != null) {
+            int idCompra = entrega.getCompra().getIdCompra();
+            switch (estado) {
+                case EN_CAMINO -> compraService.cambiarEstado(idCompra, "enviado");
+                case ENTREGADO -> compraService.cambiarEstado(idCompra, "entregado");
+                case CANCELADO, FALLADO -> compraService.cambiarEstado(idCompra, "cancelado");
+                default -> {
+                    // PENDIENTE, ASIGNADO, RECOGIDO no cambian el estado comercial por ahora
+                }
+            }
+        }
     }
 
     public List<Entrega> listar() {
