@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-5">
+                <div class="card border rounded-4 shadow-sm p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-envelope fs-1 text-primary" aria-hidden="true"></i>
+                        <h1 class="fs-2 fw-bold mt-2 mb-1">¿Olvidaste tu contraseña?</h1>
+                        <p class="text-muted mb-0">Ingresa el correo de tu cuenta y te enviaremos un enlace para reiniciarla.</p>
+                    </div>
+
+                    <div th:if="${errorGlobal}" class="alert alert-danger" role="alert" th:text="${errorGlobal}"></div>
+                    <div th:if="${mensaje}" class="alert alert-success" role="status" th:text="${mensaje}"></div>
+
+                    <form th:action="@{/olvide-mi-clave}" th:object="${olvideClaveForm}" method="post" novalidate>
+                        <div class="mb-4">
+                            <label for="correo" class="form-label fw-semibold">Correo electrónico</label>
+                            <input type="email" id="correo" th:field="*{correo}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('correo')} ? 'is-invalid' : ''"
+                                   placeholder="ejemplo@gmail.com" autocomplete="email" maxlength="255"
+                                   aria-describedby="correo-ayuda correo-error" required>
+                            <div id="correo-ayuda" class="form-text">Usa el mismo correo con el que te registraste.</div>
+                            <div id="correo-error" th:if="${#fields.hasErrors('correo')}" class="invalid-feedback d-block" th:errors="*{correo}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-blue w-100 py-2">Enviar enlace de recuperación</button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <a th:href="@{/login}" class="fw-semibold"><i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver a iniciar sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

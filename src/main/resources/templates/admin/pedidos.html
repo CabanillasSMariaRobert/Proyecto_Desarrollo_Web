@@ -7,6 +7,8 @@
   <body>
     <div th:fragment="content">
       <div class="admin-content-inner d-flex flex-column gap-4">
+        <div th:if="${mensaje != null}" class="alert alert-success" role="status" th:text="${mensaje}"></div>
+        <div th:if="${error != null}" class="alert alert-danger" role="alert" th:text="${error}"></div>
         <!-- CABECERA -->
         <div
           class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
@@ -42,7 +44,7 @@
             th:classappend="${estadoActivo != null and estadoActivo.name() == 'PENDIENTE'} ? 'btn-dark' : 'btn-outline-secondary'"
             >Pendientes</a
           >
-          <a
+<!--          <a
             th:href="@{/admin/pedidos(estado='PAGADO')}"
             class="btn btn-sm"
             th:classappend="${estadoActivo != null and estadoActivo.name() == 'PAGADO'} ? 'btn-dark' : 'btn-outline-secondary'"
@@ -53,7 +55,7 @@
             class="btn btn-sm"
             th:classappend="${estadoActivo != null and estadoActivo.name() == 'ENVIADO'} ? 'btn-dark' : 'btn-outline-secondary'"
             >Enviados</a
-          >
+          >-->
           <a
             th:href="@{/admin/pedidos(estado='ENTREGADO')}"
             class="btn btn-sm"
@@ -109,7 +111,7 @@
                   <td>
                     <span
                       class="badge text-uppercase"
-                      th:classappend="${pedido.estado.claseCss()}"
+                      th:classappend="${pedido.claseEstado}"
                       th:text="${pedido.estado}"
                       >—</span
                     >
@@ -119,15 +121,7 @@
                       class="btn btn-sm btn-outline-secondary me-1"
                       title="Ver detalle"
                       data-bs-toggle="modal"
-                      data-bs-target="#detailModal"
-                      th:attr="data-codigo=${'#ORD-' + pedido.id},
-                               data-cliente=${pedido.cliente},
-                               data-fecha=${#temporals.format(pedido.fecha, 'dd/MM/yyyy')},
-                               data-estado=${pedido.estado},
-                               data-estado-clase=${pedido.estado.claseCss()},
-                               data-items=${pedido.cantidadItems},
-                               data-total=${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')},
-                               data-detalle=${pedido.resumenItems()}"
+                      th:attr="data-bs-target=${'#detailModal-' + pedido.id}"
                     >
                       <i class="bi bi-eye"></i>
                     </button>
@@ -241,7 +235,7 @@
       </div>
 
       <!-- MODAL DETALLE DE PEDIDO -->
-      <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+      <div th:each="pedido : ${pedidos}" class="modal fade" th:id="${'detailModal-' + pedido.id}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
@@ -257,58 +251,135 @@
               <div class="row g-3 mb-4">
                 <div class="col-md-3">
                   <span class="small text-muted d-block">Nº de pedido</span>
-                  <span class="fw-bold text-primary" id="dtId">#20241</span>
+                  <span class="fw-bold text-primary" th:text="${'#ORD-' + pedido.id}"></span>
                 </div>
                 <div class="col-md-3">
                   <span class="small text-muted d-block">Cliente</span>
-                  <span class="fw-semibold" id="dtCliente">John Doe</span>
+                  <span class="fw-semibold" th:text="${pedido.cliente}"></span>
                 </div>
                 <div class="col-md-3">
                   <span class="small text-muted d-block">Fecha</span>
-                  <span class="fw-semibold" id="dtFecha">12 may, 2026</span>
+                  <span class="fw-semibold" th:text="${#temporals.format(pedido.entrega.compra.fechaDeCompra, 'dd/MM/yyyy HH:mm')}"></span>
                 </div>
                 <div class="col-md-3">
                   <span class="small text-muted d-block">Estado</span>
-                  <span id="dtEstado"></span>
+                  <span class="badge text-uppercase" th:classappend="${pedido.claseEstado}" th:text="${pedido.estado}"></span>
                 </div>
               </div>
 
+              <div class="row g-3 mb-4 small">
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Correo</span>
+                  <span th:text="${pedido.entrega.compra.cliente.correo ?: 'Sin registrar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Teléfono</span>
+                  <span th:text="${pedido.entrega.compra.cliente.telefono ?: 'Sin registrar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Nº de compra</span>
+                  <span th:text="${pedido.entrega.compra.idCompra}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Estado de compra</span>
+                  <span th:text="${pedido.entrega.compra.estado}"></span>
+                </div>
+                <div class="col-12" th:if="${pedido.entrega.puntoDeEntrega != null}">
+                  <span class="text-muted d-block">Punto de entrega</span>
+                  <span class="fw-semibold" th:text="${pedido.entrega.puntoDeEntrega.nombre}"></span>
+                  <span class="d-block" th:text="${pedido.entrega.puntoDeEntrega.direccion}"></span>
+                  <span class="text-muted" th:text="${pedido.entrega.puntoDeEntrega.referencia}"></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="text-muted d-block">Asignado</span>
+                  <span th:text="${pedido.entrega.asignadoEl != null ? #temporals.format(pedido.entrega.asignadoEl, 'dd/MM/yyyy HH:mm') : 'Sin asignar'}"></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="text-muted d-block">Recogido</span>
+                  <span th:text="${pedido.entrega.recogidoEl != null ? #temporals.format(pedido.entrega.recogidoEl, 'dd/MM/yyyy HH:mm') : 'Sin recoger'}"></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="text-muted d-block">Entregado</span>
+                  <span th:text="${pedido.entrega.entregadoEl != null ? #temporals.format(pedido.entrega.entregadoEl, 'dd/MM/yyyy HH:mm') : 'Sin entregar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Total sin descuento</span>
+                  <span th:text="${'S/ ' + #numbers.formatDecimal(pedido.entrega.compra.totalSinDescuento, 1, 'COMMA', 2, 'POINT')}"></span>
+                </div>
+              </div>
               <div class="table-responsive border rounded-3 mb-4">
                 <table class="table align-middle mb-0 small">
                   <thead class="table-light">
                     <tr>
                       <th>Producto</th>
                       <th>Cant.</th>
+                      <th class="text-end">Precio unitario</th>
+                      <th class="text-end">Descuento unitario</th>
                       <th class="text-end">Subtotal</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>Puma Caven 2.0 Greenside</td>
-                      <td>1</td>
-                      <td class="text-end">S/ 300.00</td>
+                    <tr th:each="detalle : ${pedido.entrega.compra.detalles}">
+                      <td th:text="${detalle.nombreDelProducto}"></td>
+                      <td th:text="${detalle.cantidad}"></td>
+                      <td class="text-end" th:text="${'S/ ' + #numbers.formatDecimal(detalle.precioOriginalXUnidad, 1, 'COMMA', 2, 'POINT')}"></td>
+                      <td class="text-end" th:text="${'S/ ' + #numbers.formatDecimal(detalle.descuentoXUnidad, 1, 'COMMA', 2, 'POINT')}"></td>
+                      <td class="text-end" th:text="${detalle.precioConDescuento != null ? 'S/ ' + #numbers.formatDecimal(detalle.precioConDescuento, 1, 'COMMA', 2, 'POINT') : 'Sin registrar'}"></td>
                     </tr>
-                    <tr>
-                      <td>Nike Court Vision Low</td>
-                      <td>2</td>
-                      <td class="text-end">S/ 149.00</td>
+                    <tr th:if="${#lists.isEmpty(pedido.entrega.compra.detalles)}">
+                      <td colspan="5" class="text-center text-muted py-3">Sin productos registrados.</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
+              <!-- COMPROBANTE DE PAGO -->
+              <div class="mt-4" th:if="${pedido.entrega.compra.boleta != null}">
+                <h6 class="fw-bold mb-3">Comprobante de pago</h6>
+                <div class="row g-3 p-3 border rounded-3 bg-light-subtle">
+                  <div class="col-md-3">
+                    <span class="text-muted d-block small">Red de tarjeta</span>
+                    <span class="fw-semibold text-uppercase" th:text="${pedido.entrega.compra.boleta.redDeTarjeta}">VISA</span>
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-muted d-block small">Número de tarjeta</span>
+                    <span class="fw-semibold" th:text="'**** **** **** ' + ${pedido.entrega.compra.boleta.ultimosCuatroDigitos}">**** **** **** 1234</span>
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-muted d-block small">Monto pagado</span>
+                    <span class="fw-semibold" th:text="${'S/ ' + #numbers.formatDecimal(pedido.entrega.compra.boleta.monto, 1, 'COMMA', 2, 'POINT')}">S/ 0.00</span>
+                  </div>
+                  <div class="col-md-3">
+                    <span class="text-muted d-block small">Fecha de emisión</span>
+                    <span class="fw-semibold" th:text="${pedido.entrega.compra.boleta.fechaEmision != null ? #temporals.format(pedido.entrega.compra.boleta.fechaEmision, 'dd/MM/yyyy HH:mm') : '-'}">-</span>
+                  </div>
+                </div>
+              </div>
+
               <div
-                class="d-flex justify-content-between align-items-center border-top pt-3"
+                class="d-flex justify-content-between align-items-center border-top pt-3 mt-4"
               >
                 <span
                   ><span class="text-muted small">Artículos: </span
-                  ><span class="fw-semibold" id="dtItems">3</span></span
+                  ><span class="fw-semibold" th:text="${pedido.cantidadItems}"></span></span
                 >
-                <span class="fs-5 fw-bold" id="dtTotal">S/ 449.00</span>
+                <span class="fs-5 fw-bold" th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"></span>
               </div>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-light" data-bs-dismiss="modal">
+              <form method="post" th:action="@{/admin/pedidos/{id}/estado(id=${pedido.id})}"
+                    class="d-flex flex-wrap align-items-center gap-2 me-auto">
+                <input type="hidden" name="pagina" th:value="${paginaActual}" />
+                <input th:if="${estadoActivo != null}" type="hidden" name="estado" th:value="${estadoActivo}" />
+                <span class="small text-muted">Marcar como:</span>
+                <button th:each="estado : ${T(com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega).values()}"
+                        type="submit" name="nuevoEstado" th:value="${estado.name()}"
+                        class="btn btn-sm btn-outline-secondary" th:text="${estado.name()}"
+                        th:disabled="${!pedido.entrega.estado.permiteTransicionA(estado)
+                            or (estado.name() == 'CANCELADO' and pedido.entrega.compra.estado != 'pendiente')
+                            or (estado.name() != 'CANCELADO' and pedido.entrega.compra.estado != 'pagado' and pedido.entrega.compra.estado != 'enviado')}"></button>
+              </form>
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                 Cerrar
               </button>
             </div>

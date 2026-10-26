@@ -20,9 +20,16 @@
                 <i class="bi bi-box-seam"></i> Productos
             </a>
         </li>
+        <li><a th:href="@{/admin/zapatos}" th:classappend="${currentPage == 'zapatos'} ? 'active' : ''"><i class="bi bi-grid"></i> Calzados y variantes</a></li>
+        <li><a th:href="@{/admin/materiales}" th:classappend="${currentPage == 'materiales'} ? 'active' : ''"><i class="bi bi-layers"></i> Materiales</a></li>
         <li>
             <a th:href="@{/admin/categorias}" th:classappend="${currentPage == 'categorias'} ? 'active' : ''">
                 <i class="bi bi-tags"></i> Categorías
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/compras}" th:classappend="${currentPage == 'compras'} ? 'active' : ''">
+                <i class="bi bi-receipt"></i> Compras
             </a>
         </li>
         <li>
@@ -38,9 +45,6 @@
     </ul>
 
     <div class="sidebar-logout">
-        <!-- TODO SEGURIDAD: convertir en <form method="post" th:action="@{/logout}">
-             con el input hidden de _csrf. Spring exige POST para cerrar sesión;
-             este enlace GET a /login no la cierra, solo vuelve a la pantalla de login. -->
-        <a th:href="@{/login}"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+        <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
     </div>
 </nav>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
+<body><div th:fragment="content" class="admin-content-inner d-flex flex-column gap-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="fs-3 fw-bold">Marcas</h2>
+        <div class="d-flex gap-2"><a class="btn btn-outline-dark" th:href="@{/admin/productos}">Productos</a>
+            <a class="btn btn-outline-dark" th:href="@{/admin/categorias}">Categorías</a>
+            <a class="btn btn-dark" th:href="@{/admin/marcas/nueva}">Agregar marca</a></div>
+    </div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <form th:if="${marca != null}" th:object="${marca}" method="post"
+          th:action="${marca.idMarca == 0} ? @{/admin/marcas/crear} : @{/admin/marcas/{id}/actualizar(id=${marca.idMarca})}"
+          class="card card-body border-0 shadow-sm">
+        <h3 class="h5" th:text="${marca.idMarca == 0} ? 'Nueva marca' : 'Editar marca'"></h3>
+        <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger" role="alert">
+            <p th:each="err : ${#fields.allErrors()}" th:text="${err}" class="mb-1"></p>
+        </div>
+        <label for="nombre" class="form-label">Nombre</label>
+        <input id="nombre" th:field="*{nombre}" class="form-control mb-3" required maxlength="150">
+        <label for="descripcion" class="form-label">Descripción (opcional)</label>
+        <textarea id="descripcion" th:field="*{descripcion}" class="form-control mb-3" maxlength="500"></textarea>
+        <div><button class="btn btn-dark" type="submit">Guardar</button>
+            <a class="btn btn-light" th:href="@{/admin/marcas}">Cancelar</a></div>
+    </form>
+    <div class="card border-0 shadow-sm table-responsive">
+        <table class="table align-middle"><thead><tr><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody><tr th:each="item : ${page.content}"><td th:text="${item.nombre}"></td>
+                <td th:text="${item.descripcion}"></td>
+                <td><span class="badge" th:classappend="${item.estaActivo} ? 'text-bg-success' : 'text-bg-secondary'"
+                          th:text="${item.estaActivo} ? 'Activa' : 'Inactiva'"></span></td>
+                <td><a class="btn btn-sm btn-outline-secondary"
+                th:href="@{/admin/marcas/{id}/editar(id=${item.idMarca})}">Editar</a>
+                    <form method="post" class="d-inline" th:action="@{/admin/marcas/{id}/estado(id=${item.idMarca})}">
+                        <input type="hidden" name="activo" th:value="${!item.estaActivo}">
+                        <button class="btn btn-sm btn-outline-dark" type="submit"
+                                th:text="${item.estaActivo} ? 'Desactivar' : 'Activar'"></button>
+                    </form>
+                </td></tr>
+            <tr th:if="${page.empty}"><td colspan="4">No hay marcas registradas.</td></tr></tbody></table>
+        <div class="d-flex justify-content-between p-3">
+            <span th:text="|${page.totalElements} marcas|"></span><div>
+            <a class="btn btn-sm btn-outline-secondary" th:classappend="${page.first} ? 'disabled'"
+               th:href="@{/admin/marcas(pagina=${page.number - 1})}">Anterior</a>
+            <a class="btn btn-sm btn-outline-secondary" th:classappend="${!page.hasNext()} ? 'disabled'"
+               th:href="@{/admin/marcas(pagina=${page.number + 1})}">Siguiente</a></div>
+        </div>
+    </div>
+</div></body></html>

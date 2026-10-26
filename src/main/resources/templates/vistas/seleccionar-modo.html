@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<body><section th:fragment="content" class="container py-5">
+    <div class="text-center mx-auto mb-5" style="max-width:650px">
+        <span class="badge text-bg-dark mb-3">Cuenta de administrador</span>
+        <h1 class="fw-bold" th:text="|Hola, ${nombreUsuario}. ¿Cómo quieres ingresar?|"></h1>
+        <p class="lead text-muted mt-3">Elige comprar para ti o gestionar tu tienda. Puedes cambiar de modo cuando lo necesites.</p>
+    </div>
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <article class="card border rounded-4 shadow-sm h-100 p-4 p-lg-5">
+                <i class="bi bi-bag display-4 mb-4" aria-hidden="true"></i>
+                <h2 class="h3 fw-bold">Comprar como cliente</h2>
+                <p class="text-muted flex-grow-1">Explora el catálogo, elige tallas y colores y prepara tu carrito con tu cuenta.</p>
+                <form method="post" th:action="@{/seleccionar-modo}">
+                    <input type="hidden" name="modo" value="CLIENTE">
+                    <button class="btn btn-outline-dark w-100 py-3" type="submit">Ir al catálogo</button>
+                </form>
+            </article>
+        </div>
+        <div class="col-md-6 col-lg-5">
+            <article class="card border-0 rounded-4 shadow-sm h-100 p-4 p-lg-5 bg-dark text-white">
+                <i class="bi bi-grid display-4 mb-4" aria-hidden="true"></i>
+                <h2 class="h3 fw-bold">Administrar tienda</h2>
+                <p class="text-white-50 flex-grow-1">Gestiona el catálogo, las variantes y las existencias. Consulta pedidos e indicadores.</p>
+                <form method="post" th:action="@{/seleccionar-modo}">
+                    <input type="hidden" name="modo" value="ADMINISTRADOR">
+                    <button class="btn btn-light w-100 py-3" type="submit">Ir al panel administrativo</button>
+                </form>
+            </article>
+        </div>
+    </div>
+</section></body></html>

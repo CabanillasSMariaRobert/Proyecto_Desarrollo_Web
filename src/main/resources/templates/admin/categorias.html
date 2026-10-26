@@ -3,83 +3,103 @@
 <body>
 
 <div th:fragment="content">
-        <div class="admin-content-inner d-flex flex-column gap-4">
+    <div class="admin-content-inner d-flex flex-column gap-4">
 
-            <!--CABECERA-->
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                <div>
-                    <h2 class="fs-3 fw-bold mb-1">Categorías de productos</h2>
-                    <p class="text-muted mb-0">Administra las clasificaciones y la jerarquía.</p>
-                </div>
-                <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addModal">
-                    <i class="bi bi-plus-lg me-1"></i>Agregar categoría
-                </button>
+        <!--CABECERA-->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h2 class="fs-3 fw-bold mb-1">Categorías de productos</h2>
+                <p class="text-muted mb-0">Administra las clasificaciones de la tienda.</p>
             </div>
+            <div class="d-flex gap-2">
+            <a class="btn btn-outline-dark" th:href="@{/admin/productos}">Productos</a>
+            <a class="btn btn-outline-dark" th:href="@{/admin/marcas}">Marcas</a>
+            <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addModal">
+                <i class="bi bi-plus-lg me-1"></i>Agregar categoría
+            </button>
+            </div>
+        </div>
 
-            <!--TABLA DE CATEGORÍAS-->
-            <div class="card border-0 shadow-sm overflow-hidden">
-                <div class="table-responsive">
-                    <table class="table align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>Nombre de la categoría</th>
-                                <th>Nº de productos</th>
-                                <th>Estado</th>
-                                <th class="text-end">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="categoria : ${categorias}">
-                                <td class="fw-semibold d-flex align-items-center gap-3">
-                                    <img th:if="${categoria.imagen != null}"
-                                        th:src="@{'/img/productos/' + ${categoria.imagen}}" width="40" height="40"
-                                        class="rounded-3 object-fit-cover" alt="Categoría">
-                                    <div th:unless="${categoria.imagen != null}"
-                                        class="d-flex align-items-center justify-content-center text-muted"
-                                        style="width:40px;height:40px;background:#e2e2e2;border-radius:8px;">
-                                        <i class="bi bi-image"></i>
-                                    </div>
-                                    <span th:text="${categoria.nombre}">Nombre</span>
-                                </td>
-                                <td class="text-muted"
-                                    th:text="${#numbers.formatInteger(categoria.cantidadProductos, 1, 'COMMA')}">0</td>
-                                <td>
-                                    <span th:if="${categoria.activo}" class="badge text-bg-success text-uppercase">Activo</span>
-                                    <span th:unless="${categoria.activo}" class="badge bg-light text-muted text-uppercase">Inactivo</span>
-                                </td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-secondary me-1" title="Editar"
-                                        data-bs-toggle="modal" data-bs-target="#editModal">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button th:if="${categoria.activo}" class="btn btn-sm btn-outline-secondary"
-                                        title="Desactivar">
-                                        <i class="bi bi-ban"></i>
-                                    </button>
-                                    <button th:unless="${categoria.activo}" class="btn btn-sm btn-outline-primary"
-                                        title="Activar">
-                                        <i class="bi bi-check-circle"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!--PAGINACIÓN-->
-                <div class="d-flex justify-content-between align-items-center p-3 border-top small text-muted">
-                    <span th:text="|Mostrando ${desde} a ${hasta} de ${#numbers.formatInteger(totalCategorias, 1, 'COMMA')} categorías|">Mostrando</span>
-                    <div class="btn-group">
-                        <a class="btn btn-sm btn-outline-secondary"
-                           th:classappend="${paginaActual == 0} ? 'disabled' : ''"
-                           th:href="@{/admin/categorias(pagina=${paginaActual - 1})}">Anterior</a>
-                        <a class="btn btn-sm btn-outline-secondary"
-                           th:classappend="${paginaActual + 1 >= totalPaginas} ? 'disabled' : ''"
-                           th:href="@{/admin/categorias(pagina=${paginaActual + 1})}">Siguiente</a>
-                    </div>
+        <!--MENSAJES-->
+        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show mb-0" role="alert">
+            <span th:text="${mensaje}">Operación correcta</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
+            <span th:text="${error}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+
+        <!--TABLA DE CATEGORÍAS-->
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Nombre de la categoría</th>
+                        <th>Descripción</th>
+                        <th>Nº de productos</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="categoria : ${categorias}">
+                        <td class="fw-semibold" th:text="${categoria.nombre}">Nombre</td>
+                        <td class="text-muted" th:text="${categoria.descripcion}">Descripción</td>
+                        <td class="text-muted"
+                            th:text="${#numbers.formatInteger(categoria.cantidadProductos, 1, 'COMMA')}">0</td>
+                        <td>
+                            <span th:if="${categoria.estaActivo}" class="badge text-bg-success text-uppercase">Activo</span>
+                            <span th:unless="${categoria.estaActivo}" class="badge bg-light text-muted text-uppercase">Inactivo</span>
+                        </td>
+                        <td class="text-end">
+                            <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Editar"
+                                    data-bs-toggle="modal" data-bs-target="#editModal"
+                                    th:data-id="${categoria.idCategoria}"
+                                    th:data-nombre="${categoria.nombre}"
+                                    th:data-descripcion="${categoria.descripcion}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <form th:if="${categoria.estaActivo}"
+                                  th:action="@{/admin/categorias/{id}/estado(id=${categoria.idCategoria})}"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Desactivar esta categoría?');">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" title="Desactivar">
+                                    <i class="bi bi-ban"></i>
+                                </button>
+                            </form>
+                            <form th:unless="${categoria.estaActivo}"
+                                  th:action="@{/admin/categorias/{id}/estado(id=${categoria.idCategoria})}"
+                                  method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Activar">
+                                    <i class="bi bi-check-circle"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(categorias)}">
+                        <td colspan="5" class="text-center text-muted py-4">No hay categorías registradas.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--PAGINACIÓN-->
+            <div class="d-flex justify-content-between align-items-center p-3 border-top small text-muted">
+                <span th:text="|Mostrando ${desde} a ${hasta} de ${#numbers.formatInteger(totalCategorias, 1, 'COMMA')} categorías|">Mostrando</span>
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-outline-secondary"
+                       th:classappend="${paginaActual == 0} ? 'disabled' : ''"
+                       th:href="@{/admin/categorias(pagina=${paginaActual - 1})}">Anterior</a>
+                    <a class="btn btn-sm btn-outline-secondary"
+                       th:classappend="${paginaActual + 1 >= totalPaginas} ? 'disabled' : ''"
+                       th:href="@{/admin/categorias(pagina=${paginaActual + 1})}">Siguiente</a>
                 </div>
             </div>
         </div>
-    <!--MODAL AGREGAR CATEGORÍA-->
+    </div>
+
+    <!--MODAL AGREGAR CATEGORÍA (CREAR)-->
     <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -87,41 +107,29 @@
                     <h3 class="modal-title fs-5 fw-bold">Agregar nueva categoría</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Nombre de la categoría</label>
-                        <input type="text" class="form-control" placeholder="Ej: Hombre Deportivo" id="addCatNombre">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Categoría padre (opcional)</label>
-                        <select class="form-select">
-                            <option value="">Ninguna (nivel superior)</option>
-                            <option>Hombre</option>
-                            <option>Mujer</option>
-                            <option>Niños</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold d-block">Estado</label>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="estado" id="activo" checked>
-                            <label class="form-check-label" for="activo">Activo</label>
+                <form th:action="@{/admin/categorias/crear}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="addCatNombre">Nombre de la categoría</label>
+                            <input type="text" class="form-control" name="nombre" id="addCatNombre"
+                                   placeholder="Ej: Hombre Deportivo" maxlength="150" required>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="estado" id="inactivo">
-                            <label class="form-check-label" for="inactivo">Inactivo</label>
+                        <div class="mb-0">
+                            <label class="form-label fw-semibold" for="addCatDescripcion">Descripción (opcional)</label>
+                            <textarea class="form-control" name="descripcion" id="addCatDescripcion"
+                                      rows="3" maxlength="500"></textarea>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button class="btn btn-dark">Guardar categoría</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-dark">Guardar categoría</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- MODAL EDITAR CATEGORÍA -->
+    <!-- MODAL EDITAR CATEGORÍA (ACTUALIZAR) -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -129,39 +137,39 @@
                     <h3 class="modal-title fs-5 fw-bold">Editar categoría</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Nombre de la categoría</label>
-                        <input type="text" class="form-control" id="editCatNombre" placeholder="Ej: Hombre Deportivo">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Categoría padre (opcional)</label>
-                        <select class="form-select">
-                            <option value="">Ninguna (nivel superior)</option>
-                            <option>Hombre</option>
-                            <option>Mujer</option>
-                            <option>Niños</option>
-                        </select>
-                    </div>
-                    <div class="mb-0">
-                        <label class="form-label fw-semibold d-block">Estado</label>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="editEstado" id="editCatActivo" checked>
-                            <label class="form-check-label" for="editCatActivo">Activo</label>
+                <!-- El action se completa con JS: /admin/categorias/{id}/actualizar -->
+                <form id="editForm" th:action="@{/admin/categorias}" th:data-base="@{/admin/categorias}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="editCatNombre">Nombre de la categoría</label>
+                            <input type="text" class="form-control" name="nombre" id="editCatNombre"
+                                   maxlength="150" required>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="editEstado" id="editCatInactivo">
-                            <label class="form-check-label" for="editCatInactivo">Inactivo</label>
+                        <div class="mb-0">
+                            <label class="form-label fw-semibold" for="editCatDescripcion">Descripción (opcional)</label>
+                            <textarea class="form-control" name="descripcion" id="editCatDescripcion"
+                                      rows="3" maxlength="500"></textarea>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button class="btn btn-dark">Guardar cambios</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-dark">Guardar cambios</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <script>
+        // Rellena el modal de edición con los datos de la fila seleccionada
+        document.getElementById('editModal').addEventListener('show.bs.modal', function (event) {
+            var boton = event.relatedTarget;
+            var form = document.getElementById('editForm');
+            form.action = form.dataset.base + '/' + boton.dataset.id + '/actualizar';
+            document.getElementById('editCatNombre').value = boton.dataset.nombre || '';
+            document.getElementById('editCatDescripcion').value = boton.dataset.descripcion || '';
+        });
+    </script>
 </div>
 
 </body>

@@ -1,121 +1,56 @@
 <!DOCTYPE html>
 <html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
-<body>
-
-<div th:fragment="content">
-    <!-- ============ HEADER ============ -->
-    <!-- ============ CONTENIDO ============ -->
-        <div class="container">
-            <div class="mb-4">
-                <h1 class="page-title">Checkout</h1>
-                <p class="text-muted mb-0">Completa tu pedido de forma segura.</p>
-            </div>
-
-            <div class="row g-5">
-                <!-- DATOS DE ENVÍO -->
-                <div class="col-md-7 col-lg-8">
-                    <div class="card border-0 shadow-sm p-4">
-                        <h4 class="mb-4 fw-bold">
-                            <span class="badge bg-dark rounded-circle me-2">1</span>
-                            Dirección de entrega
-                        </h4>
-
-                        <form>
-                            <div class="mb-3">
-                                <label for="email" class="form-label fw-semibold">Correo electrónico</label>
-                                <input type="email" class="form-control" id="email" placeholder="john.doe@example.com">
-                            </div>
-
-                            <div class="row g-3 mb-3">
-                                <div class="col-sm-6">
-                                    <label for="firstName" class="form-label fw-semibold">Nombre</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="John">
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="lastName" class="form-label fw-semibold">Apellido</label>
-                                    <input type="text" class="form-control" id="lastName" placeholder="Doe">
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="address" class="form-label fw-semibold">Dirección</label>
-                                <input type="text" class="form-control" id="address" placeholder="Av. Principal 123">
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-sm-6">
-                                    <label for="city" class="form-label fw-semibold">Ciudad</label>
-                                    <input type="text" class="form-control" id="city" placeholder="Lima">
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="zip" class="form-label fw-semibold">Código postal</label>
-                                    <input type="text" class="form-control" id="zip" placeholder="15001">
-                                </div>
-                            </div>
-
-                            <button type="button" class="btn btn-blue px-4 py-2 fw-bold">
-                                Continuar al pago
-                            </button>
-                        </form>
-                    </div>
+<body><section th:fragment="content" class="container py-5">
+    <h1 class="fw-bold mb-2">Confirmar compra</h1>
+    <p class="text-muted">Elige dónde recoger tu pedido y prueba el pago simulado. No se realizan cobros.</p>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <form method="post" th:action="@{/checkout/confirmar}" class="card card-body p-4 gap-3">
+                <h2 class="h5">Entrega y pago</h2>
+                <div>
+                    <label for="punto" class="form-label">Punto de entrega</label>
+                    <select id="punto" name="idPuntoEntrega" class="form-select" required>
+                        <option value="">Selecciona dónde recoger tu compra</option>
+                        <option th:each="punto : ${puntos}" th:value="${punto.id}"
+                                th:text="|${punto.nombre} — ${punto.direccion}|"></option>
+                    </select>
+                    <p th:if="${#lists.isEmpty(puntos)}" class="text-danger small mt-2">No hay puntos de entrega disponibles.</p>
                 </div>
-
-                <!-- RESUMEN DEL PEDIDO -->
-                <div class="col-md-5 col-lg-4">
-                    <div class="card border-0 shadow-sm p-4">
-                        <h4 class="mb-4 fw-bold">Resumen del pedido</h4>
-
-                        <ul class="list-group list-group-flush mb-3">
-                            <li th:each="item : ${resumen.items}"
-                                class="list-group-item d-flex justify-content-between align-items-center lh-sm px-0">
-                                <div class="d-flex gap-3">
-                                    <img th:src="@{'/img/productos/' + ${item.imagen}}" alt="Producto"
-                                        class="rounded-3" style="width: 60px; height: 60px; object-fit: cover;">
-                                    <div>
-                                        <h6 class="my-0 fw-bold" style="font-size: 0.9rem;" th:text="${item.nombre}"></h6>
-                                        <small class="text-muted"
-                                            th:text="|${item.color} / Talla ${item.talla}|"></small>
-                                    </div>
-                                </div>
-                                <span class="fw-bold" style="font-size: 0.9rem;"
-                                      th:text="|S/ ${item.precioUnitario * item.cantidad}|"></span>
-                            </li>
-                        </ul>
-
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Subtotal</span>
-                            <strong th:text="|S/ ${resumen.subtotal}|"></strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Envío</span>
-                            <span class="text-muted" th:text="${resumen.envioTexto}"></span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="text-muted">IGV</span>
-                            <strong th:text="|S/ ${resumen.igv}|"></strong>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="fw-bold">Total</span>
-                            <strong class="fs-5" th:text="|S/ ${resumen.total}|"></strong>
-                        </div>
-
-                        <button type="button" class="btn btn-primary w-100 py-2 fw-bold">
-                            Confirmar pedido
-                        </button>
-                        <div class="text-center mt-2">
-                            <small class="text-muted" style="font-size: 0.75rem;">
-                                Al confirmar, aceptas nuestros términos de servicio.
-                            </small>
-                        </div>
-                    </div>
+                <div>
+                    <label for="metodo" class="form-label">Método de pago guardado</label>
+                    <select id="metodo" name="idMetodoPago" class="form-select" required>
+                        <option value="">Selecciona una tarjeta de prueba</option>
+                        <option th:each="metodo : ${metodos}" th:value="${metodo.idMetodoDePago}"
+                                th:text="|${metodo.redUsada} •••• ${metodo.ultimos4Digitos}|"></option>
+                    </select>
+                    <a th:href="@{/carrito}" class="small">Administrar mis métodos de pago en el carrito</a>
                 </div>
+                <div>
+                    <label for="resultado" class="form-label">Resultado del pago simulado</label>
+                    <select id="resultado" name="pagoAprobado" class="form-select" required>
+                        <option value="true">Aprobado</option>
+                        <option value="false">Rechazado</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-dark"
+                        th:disabled="${!resumen.disponible or #lists.isEmpty(metodos) or #lists.isEmpty(puntos)}">Confirmar pago simulado</button>
+                <a th:href="@{/carrito}" class="text-center">Volver al carrito</a>
+            </form>
+        </div>
+        <div class="col-lg-5">
+            <div class="card card-body p-4">
+                <h2 class="h5">Tu compra</h2>
+                <div th:each="item : ${resumen.items}" class="border-bottom py-3">
+                    <strong th:text="${item.nombre}"></strong>
+                    <p class="small text-muted mb-1" th:text="|Talla ${item.talla} · ${item.color} · Cantidad: ${item.cantidad}|"></p>
+                    <span th:text="|S/ ${item.subtotal}|"></span>
+                    <p th:if="${!item.disponible}" class="text-danger small" th:text="${item.aviso}"></p>
+                </div>
+                <p th:if="${#lists.isEmpty(resumen.items)}" class="text-muted">Tu carrito está vacío.</p>
+                <div class="d-flex justify-content-between fw-bold pt-3"><span>Total</span><span th:text="|S/ ${resumen.total}|"></span></div>
+                <p class="small text-muted mt-3 mb-0">Las existencias se verifican nuevamente al confirmar.</p>
             </div>
         </div>
-    <!-- ============ FOOTER ============ -->
-</div>
-
-</body>
-</html>
+    </div>
+</section></body></html>

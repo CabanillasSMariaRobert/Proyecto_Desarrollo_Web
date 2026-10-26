@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
+<body><div th:fragment="content" class="container py-4 d-flex flex-column gap-4">
+<h1 class="h3" th:text="${nombre}"></h1><div class="d-flex gap-2 flex-wrap"><a class="btn btn-outline-dark" th:href="@{/admin/productos}">Productos</a><a class="btn btn-outline-dark" th:href="@{/admin/zapatos}">Calzados</a><a class="btn btn-outline-dark" th:href="@{/admin/materiales}">Materiales</a><a class="btn btn-outline-dark" th:href="@{/catalogo}">Ver catálogo</a></div><div th:if="${mensaje}" class="alert alert-success" role="status" th:text="${mensaje}"></div>
+<div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+<div th:if="${!zapato.estaActivo}" class="alert alert-warning">Este calzado está desactivado. Su información se conserva.</div>
+<section><h2 class="h4">Tallas, colores y existencias</h2>
+<form th:object="${variante}" method="post" class="card card-body gap-2 mb-3"
+ th:action="${variante.idVariante == 0} ? @{/admin/zapatos/{id}/variantes/crear(id=${zapato.idZapato})} : @{/admin/zapatos/{id}/variantes/{v}/actualizar(id=${zapato.idZapato},v=${variante.idVariante})}">
+<h3 class="h5" th:text="${variante.idVariante == 0} ? 'Nueva variante' : 'Editar existencias'"></h3><div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger"><p th:each="e : ${#fields.allErrors()}" th:text="${e}" class="mb-1"></p></div>
+<input type="hidden" th:field="*{idZapato}">
+<div class="row g-3"><div class="col-md-3"><label for="talla">Talla europea (entera)</label><input id="talla" type="number" min="1" th:field="*{talla}" th:readonly="${variante.idVariante != 0}" required class="form-control"></div>
+<div class="col-md-5"><label for="color">Color</label><input id="color" th:field="*{color}" th:readonly="${variante.idVariante != 0}" maxlength="100" required class="form-control"></div>
+<div class="col-md-4"><label for="stock">Existencias (pares)</label><input id="stock" type="number" min="0" th:field="*{stock}" required class="form-control"></div></div>
+<p class="small text-muted">La talla y el color identifican la variante. Para otra combinación, registra una nueva.</p>
+<div><button class="btn btn-dark" th:disabled="${!zapato.estaActivo}">Guardar</button> <a class="btn btn-light" th:href="@{/admin/zapatos/{id}(id=${zapato.idZapato})}">Cancelar</a></div></form>
+<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Talla</th><th>Color</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+<tr th:each="v : ${variantes}"><td th:text="${v.talla}"></td><td th:text="${v.color}"></td><td th:text="${v.stock}"></td><td th:text="${v.estaActivo} ? 'Activa' : 'Inactiva'"></td><td>
+<a th:if="${zapato.estaActivo}" class="btn btn-sm btn-outline-dark" th:href="@{/admin/zapatos/{id}/variantes/{v}/editar(id=${zapato.idZapato},v=${v.idVariante})}">Editar stock</a>
+<form class="d-inline" method="post" th:action="@{/admin/zapatos/{id}/variantes/{v}/estado(id=${zapato.idZapato},v=${v.idVariante})}">
+<input type="hidden" name="activo" th:value="${!v.estaActivo}"><button class="btn btn-sm btn-outline-secondary" th:disabled="${!v.estaActivo and !zapato.estaActivo}" th:text="${v.estaActivo} ? 'Desactivar' : 'Activar'"></button></form>
+</td></tr><tr th:if="${#lists.isEmpty(variantes)}"><td colspan="5">Todavía no hay variantes.</td></tr></tbody></table></div></section>
+<section><h2 class="h4">Materiales del calzado</h2>
+<form method="post" th:action="@{/admin/zapatos/{id}/materiales/asignar(id=${zapato.idZapato})}" class="d-flex gap-2 mb-3">
+<label for="material" class="visually-hidden">Material</label><select id="material" name="idMaterial" required class="form-select"><option value="">Selecciona un material activo</option><option th:each="m : ${materiales}" th:value="${m.id}" th:text="${m.nombre}"></option></select>
+<button class="btn btn-dark" th:disabled="${!zapato.estaActivo or #lists.isEmpty(materiales)}">Asignar</button></form>
+<ul class="list-group"><li th:each="m : ${composicion}" class="list-group-item d-flex justify-content-between align-items-center"><span><span th:text="${m.nombre}"></span><small th:if="${!m.activo}" class="text-muted"> (inactivo; asociación conservada)</small></span>
+<form method="post" th:action="@{/admin/zapatos/{id}/materiales/{m}/retirar(id=${zapato.idZapato},m=${m.idMaterial})}"><button class="btn btn-sm btn-outline-danger">Retirar asociación</button></form></li><li th:if="${#lists.isEmpty(composicion)}" class="list-group-item">No hay materiales asociados.</li></ul></section>
+</div></body></html>

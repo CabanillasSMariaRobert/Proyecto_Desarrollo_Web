@@ -9,7 +9,7 @@
             <div class="border-bottom pb-3 mb-4">
                 <div>
                     <h1 class="fs-2 fw-bold mb-1">Historial de pedidos</h1>
-                    <p class="text-muted mb-0">Consulta y administra tus compras recientes.</p>
+                    <p class="text-muted mb-0">Consulta tus compras y su seguimiento de entrega.</p>
                 </div>
             </div>
 
@@ -24,7 +24,7 @@
                         <a th:href="@{/pedidos}" class="nav-link fw-semibold active bg-light border-start border-2 border-dark">
                             <i class="bi bi-box-seam me-2"></i>Historial de pedidos
                         </a>
-                        <a th:href="@{/login}" class="nav-link text-muted mt-3">
+                        <a th:href="@{/logout}" class="nav-link text-muted mt-3">
                             <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
                         </a>
                     </nav>
@@ -40,28 +40,174 @@
                             <div class="text-end">Total</div>
                         </div>
 
+                        <div th:if="${#lists.isEmpty(pedidos)}" class="p-4 p-md-5 text-center text-muted">
+                            <i class="bi bi-box-seam fs-2 d-block mb-3" aria-hidden="true"></i>
+                            <p class="mb-0" th:text="${totalPedidos == 0} ? 'No realizó ningún pedido hasta ahora' : 'No hay pedidos en esta página'"></p>
+                        </div>
+
                         <div th:each="pedido : ${pedidos}" class="p-3 hover-bg border-bottom">
                             <div class="row g-3 align-items-center">
                                 <div class="col-12 col-md-2 fw-bold" th:text="${pedido.codigo}"></div>
                                 <div class="col-6 col-md-2 text-muted" th:text="${pedido.fecha}"></div>
                                 <div class="col-12 col-md-4 d-flex align-items-center gap-3">
-                                    <img th:src="@{'/img/productos/' + ${pedido.imagen}}" alt="Producto" width="48" height="48"
-                                        class="rounded-3 object-fit-cover">
+                                    <i class="bi bi-bag fs-3 text-muted" aria-hidden="true"></i>
                                     <span th:text="${pedido.resumenProductos}"></span>
                                 </div>
                                 <div class="col-6 col-md-2">
                                     <span th:class="|badge text-uppercase ${pedido.claseEstado}|" th:text="${pedido.estado}"></span>
                                 </div>
                                 <div class="col-12 col-md-2 d-flex justify-content-between align-items-center md:justify-end">
-                                    <span class="fw-bold" th:text="|S/ ${pedido.total}|"></span>
-                                    <a th:href="${pedido.accion}" class="btn btn-sm btn-outline-dark" th:text="${pedido.textoAccion}"></a>
+                                    <span class="fw-bold" th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"></span>
+                                    <button type="button" class="btn btn-sm btn-outline-dark"
+                                            data-bs-toggle="modal" th:attr="data-bs-target=${'#detailModal-' + pedido.codigo}">Ver detalle</button>
                                 </div>
                             </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center p-3 border-top small text-muted">
+                            <span th:text="'Mostrando ' + ${desde} + ' a ' + ${hasta} + ' de ' + ${totalPedidos} + ' pedidos'"></span>
+                            <nav class="btn-group" aria-label="Paginación de pedidos">
+                                <a th:href="@{/pedidos(pagina=${paginaActual > 0 ? paginaActual - 1 : 0})}"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   th:classappend="${paginaActual == 0} ? 'disabled' : ''"
+                                   th:attr="aria-disabled=${paginaActual == 0}">Anterior</a>
+                                <span class="btn btn-sm btn-outline-secondary disabled"
+                                      th:text="${paginaActual + 1} + ' / ' + ${totalPaginas}"></span>
+                                <a th:href="@{/pedidos(pagina=${paginaActual + 1})}"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   th:classappend="${paginaActual >= totalPaginas - 1} ? 'disabled' : ''"
+                                   th:attr="aria-disabled=${paginaActual >= totalPaginas - 1}">Siguiente</a>
+                            </nav>
                         </div>
                     </div>
                 </section>
             </div>
         </div>
+      <!-- MODAL DETALLE DE PEDIDO -->
+      <div th:each="pedido : ${pedidos}" class="modal fade" th:id="${'detailModal-' + pedido.codigo}" tabindex="-1" aria-hidden="true" th:attr="aria-labelledby=${'detailModalLabel-' + pedido.codigo}">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title fs-5 fw-bold" th:id="${'detailModalLabel-' + pedido.codigo}">Detalle del pedido</h3>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Cerrar"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                  <span class="small text-muted d-block">Nº de pedido</span>
+                  <span class="fw-bold text-primary" th:text="${'#ORD-' + pedido.codigo}"></span>
+                </div>
+                <div class="col-md-3">
+                  <span class="small text-muted d-block">Cliente</span>
+                  <span class="fw-semibold" th:text="${pedido.compra.cliente.nombres + ' ' + pedido.compra.cliente.apellidos}"></span>
+                </div>
+                <div class="col-md-3">
+                  <span class="small text-muted d-block">Fecha</span>
+                  <span class="fw-semibold" th:text="${#temporals.format(pedido.compra.fechaDeCompra, 'dd/MM/yyyy HH:mm')}"></span>
+                </div>
+                <div class="col-md-3">
+                  <span class="small text-muted d-block">Estado</span>
+                  <span class="badge text-uppercase" th:classappend="${pedido.claseEstado}" th:text="${pedido.estado}"></span>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-4 small">
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Correo</span>
+                  <span th:text="${pedido.compra.cliente.correo ?: 'Sin registrar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Teléfono</span>
+                  <span th:text="${pedido.compra.cliente.telefono ?: 'Sin registrar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Nº de compra</span>
+                  <span th:text="${pedido.compra.idCompra}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Estado de compra</span>
+                  <span th:text="${pedido.compra.estado}"></span>
+                  <a th:if="${pedido.compra.boleta != null}" th:href="@{/compras/{id}/boleta(id=${pedido.codigo})}"
+                     class="d-block small">Ver boleta</a>
+                </div>
+                <div class="col-12" th:if="${pedido.entrega == null}">
+                  <span class="text-muted">Entrega aún no asignada.</span>
+                </div>
+                <div class="col-12" th:if="${pedido.entrega != null}">
+                  <span class="text-muted d-block">Estado de entrega</span>
+                  <span th:text="${pedido.entrega.estado}"></span>
+                </div>
+                <div class="col-12" th:if="${pedido.entrega != null and pedido.entrega.puntoDeEntrega != null}">
+                  <span class="text-muted d-block">Punto de entrega</span>
+                  <span class="fw-semibold" th:text="${pedido.entrega.puntoDeEntrega.nombre}"></span>
+                  <span class="d-block" th:text="${pedido.entrega.puntoDeEntrega.direccion}"></span>
+                  <span class="text-muted" th:text="${pedido.entrega.puntoDeEntrega.referencia}"></span>
+                </div>
+                <div class="col-md-4" th:if="${pedido.entrega != null}">
+                  <span class="text-muted d-block">Asignado</span>
+                  <span th:text="${pedido.entrega.asignadoEl != null ? #temporals.format(pedido.entrega.asignadoEl, 'dd/MM/yyyy HH:mm') : 'Sin asignar'}"></span>
+                </div>
+                <div class="col-md-4" th:if="${pedido.entrega != null}">
+                  <span class="text-muted d-block">Recogido</span>
+                  <span th:text="${pedido.entrega.recogidoEl != null ? #temporals.format(pedido.entrega.recogidoEl, 'dd/MM/yyyy HH:mm') : 'Sin recoger'}"></span>
+                </div>
+                <div class="col-md-4" th:if="${pedido.entrega != null}">
+                  <span class="text-muted d-block">Entregado</span>
+                  <span th:text="${pedido.entrega.entregadoEl != null ? #temporals.format(pedido.entrega.entregadoEl, 'dd/MM/yyyy HH:mm') : 'Sin entregar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Total sin descuento</span>
+                  <span th:text="${'S/ ' + #numbers.formatDecimal(pedido.compra.totalSinDescuento, 1, 'COMMA', 2, 'POINT')}"></span>
+                </div>
+              </div>
+              <div class="table-responsive border rounded-3 mb-4">
+                <table class="table align-middle mb-0 small">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Producto</th>
+                      <th>Cant.</th>
+                      <th class="text-end">Precio unitario</th>
+                      <th class="text-end">Descuento unitario</th>
+                      <th class="text-end">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="detalle : ${pedido.compra.detalles}">
+                      <td th:text="${detalle.nombreDelProducto}"></td>
+                      <td th:text="${detalle.cantidad}"></td>
+                      <td class="text-end" th:text="${'S/ ' + #numbers.formatDecimal(detalle.precioOriginalXUnidad, 1, 'COMMA', 2, 'POINT')}"></td>
+                      <td class="text-end" th:text="${'S/ ' + #numbers.formatDecimal(detalle.descuentoXUnidad, 1, 'COMMA', 2, 'POINT')}"></td>
+                      <td class="text-end" th:text="${detalle.precioConDescuento != null ? 'S/ ' + #numbers.formatDecimal(detalle.precioConDescuento, 1, 'COMMA', 2, 'POINT') : 'Sin registrar'}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(pedido.compra.detalles)}">
+                      <td colspan="5" class="text-center text-muted py-3">Sin productos registrados.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div
+                class="d-flex justify-content-between align-items-center border-top pt-3"
+              >
+                <span
+                  ><span class="text-muted small">Artículos: </span
+                  ><span class="fw-semibold" th:text="${pedido.cantidadItems}"></span></span
+                >
+                <span class="fs-5 fw-bold" th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"></span>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-light" data-bs-dismiss="modal">
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     <!-- ============ FOOTER ============ -->
 </div>
 

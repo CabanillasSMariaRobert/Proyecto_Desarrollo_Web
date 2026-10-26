@@ -1,5 +1,7 @@
 <header class="admin-topbar" th:fragment="topbar">
-    <!-- TODO SEGURIDAD: reemplazar por ${#authentication.name} cuando exista
-         autenticación y la entidad Usuario. Hoy no hay sesión que lo provea. -->
-    <span class="user-name">Aldhair Salazar Manrique</span>
+    <a th:if="${session.rolUsuario == 'ADMINISTRADOR'}" th:href="@{/seleccionar-modo}"
+       class="btn btn-sm btn-outline-dark me-3">Cambiar modo</a>
+    <span class="user-name" th:text="${session.nombreCompleto != null ? session.nombreCompleto : 'Administrador'}">
+        Aldhair Salazar Manrique
+    </span>
 </header>
