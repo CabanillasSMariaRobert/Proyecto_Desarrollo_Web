@@ -33,6 +33,9 @@
             </a>
         </li>
         <li>
+            <a th:href="@{/admin/puntos-de-entregas}" th:classappend="${currentPage == 'puntos-de-entregas'} ? 'active' : ''"><i class="bi bi-geo-alt"></i> Puntos de entrega</a>
+        </li>
+        <li>
             <a th:href="@{/admin/pedidos}" th:classappend="${currentPage == 'pedidos'} ? 'active' : ''">
                 <i class="bi bi-bag"></i> Pedidos
             </a>

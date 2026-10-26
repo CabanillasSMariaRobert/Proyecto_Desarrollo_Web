@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content" class="admin-content-inner d-flex flex-column gap-4">
+    <header class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div><h2 class="fs-3 fw-bold mb-1">Puntos de entrega</h2><p class="text-muted mb-0">Administra las ubicaciones donde los clientes pueden recoger sus pedidos.</p></div>
+        <button type="button" class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#crearPuntoModal"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nuevo punto de entrega</button>
+    </header>
+    <div th:if="${mensaje}" class="alert alert-success mb-0" role="status" th:text="${mensaje}"></div>
+    <div th:if="${erroresFormulario != null}" class="alert alert-danger mb-0" role="alert">
+        <p class="fw-semibold mb-1">No se guardaron los cambios.</p><ul class="mb-0"><li th:each="error : ${erroresFormulario}" th:text="${error}"></li></ul>
+    </div>
+    <section class="card border-0 shadow-sm overflow-hidden" aria-label="Listado de puntos de entrega">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom"><h3 class="h6 fw-bold mb-0">Ubicaciones registradas</h3><span class="badge bg-secondary-subtle text-dark" th:text="${totalPuntos} + ' puntos'"></span></div>
+        <div class="table-responsive"><table class="table align-middle mb-0">
+            <thead><tr><th scope="col">Código</th><th scope="col">Punto de entrega</th><th scope="col">Dirección</th><th scope="col">Estado</th><th scope="col" class="text-end">Acciones</th></tr></thead>
+            <tbody>
+                <tr th:each="punto : ${puntos}">
+                    <td class="text-muted text-nowrap" th:text="'#PE-' + ${punto.id}"></td>
+                    <td class="fw-semibold" th:text="${punto.nombre}"></td>
+                    <td><span class="d-block" th:text="${punto.direccion}"></span><span class="small text-muted" th:text="${punto.referencia}"></span></td>
+                    <td><span class="badge" th:classappend="${punto.estaActivo} ? 'text-bg-success' : 'text-bg-secondary'" th:text="${punto.estaActivo} ? 'Activo' : 'Inactivo'"></span></td>
+                    <td class="text-end text-nowrap">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" th:attr="data-bs-target=${'#detallePunto-' + punto.id},aria-label=${'Ver detalles de ' + punto.nombre}"><i class="bi bi-eye me-1" aria-hidden="true"></i>Ver detalle</button>
+                        <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" th:attr="data-bs-target=${'#editarPunto-' + punto.id},aria-label=${'Editar ' + punto.nombre}"><i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar</button>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(puntos)}"><td colspan="5" class="text-center text-muted py-5"><i class="bi bi-geo-alt fs-2 d-block mb-2" aria-hidden="true"></i><p class="fw-semibold mb-1">No hay puntos de entrega registrados.</p><span>Agrega la primera ubicación con el botón «Nuevo punto de entrega».</span></td></tr>
+            </tbody>
+        </table></div>
+        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center p-3 border-top small text-muted">
+            <span th:text="|Mostrando ${desde} a ${hasta} de ${totalPuntos} puntos|"></span>
+            <nav class="btn-group" aria-label="Paginación de puntos de entrega">
+                <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/puntos-de-entregas(pagina=${paginaActual > 0 ? paginaActual - 1 : 0})}" th:classappend="${paginaActual == 0} ? 'disabled' : ''" th:attr="aria-disabled=${paginaActual == 0}">Anterior</a>
+                <span class="btn btn-sm btn-outline-secondary disabled" th:text="|${paginaActual + 1} / ${totalPaginas}|"></span>
+                <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/puntos-de-entregas(pagina=${paginaActual + 1})}" th:classappend="${paginaActual >= totalPaginas - 1} ? 'disabled' : ''" th:attr="aria-disabled=${paginaActual >= totalPaginas - 1}">Siguiente</a>
+            </nav>
+        </div>
+    </section>
+
+    <div class="modal fade" id="crearPuntoModal" tabindex="-1" aria-labelledby="crearPuntoTitulo" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+            <div class="modal-header"><h3 id="crearPuntoTitulo" class="modal-title fs-5 fw-bold">Nuevo punto de entrega</h3><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <form method="post" class="d-flex flex-column overflow-hidden" th:action="@{/admin/puntos-de-entregas/crear}">
+                <input type="hidden" name="pagina" th:value="${paginaActual}">
+                <div class="modal-body"><div th:replace="~{::erroresModal(${abrirModal == 'crearPuntoModal'})}"></div><div th:replace="~{::campos(${nuevoPunto}, 'nuevo')}"></div></div>
+                <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-dark">Crear punto de entrega</button></div>
+            </form>
+        </div></div>
+    </div>
+
+    <th:block th:each="punto : ${puntos}">
+        <div class="modal fade" th:id="${'editarPunto-' + punto.id}" tabindex="-1" th:attr="aria-labelledby=${'editarPuntoTitulo-' + punto.id}" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+                <div class="modal-header"><h3 class="modal-title fs-5 fw-bold" th:id="${'editarPuntoTitulo-' + punto.id}">Editar punto de entrega</h3><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+                <form method="post" class="d-flex flex-column overflow-hidden" th:action="@{/admin/puntos-de-entregas/{id}/actualizar(id=${punto.id})}">
+                    <input type="hidden" name="pagina" th:value="${paginaActual}">
+                    <div class="modal-body"><div th:replace="~{::erroresModal(${abrirModal == 'editarPunto-' + punto.id})}"></div><div th:replace="~{::campos(${idEdicion != null and idEdicion == punto.id ? puntoForm : punto}, ${'editar-' + punto.id})}"></div></div>
+                    <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-dark">Guardar cambios</button></div>
+                </form>
+            </div></div>
+        </div>
+        <div class="modal fade" th:id="${'detallePunto-' + punto.id}" tabindex="-1" th:attr="aria-labelledby=${'detallePuntoTitulo-' + punto.id}" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+                <div class="modal-header"><h3 class="modal-title fs-5 fw-bold" th:id="${'detallePuntoTitulo-' + punto.id}">Detalle del punto de entrega</h3><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+                <div class="modal-body">
+                    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4"><h4 class="h5 fw-bold mb-0" th:text="${punto.nombre}"></h4><span class="badge" th:classappend="${punto.estaActivo} ? 'text-bg-success' : 'text-bg-secondary'" th:text="${punto.estaActivo} ? 'Activo' : 'Inactivo'"></span></div>
+                    <dl class="row gy-3 mb-0">
+                        <div class="col-12"><dt class="small text-muted fw-normal">Código</dt><dd class="mb-0" th:text="'#PE-' + ${punto.id}"></dd></div>
+                        <div class="col-12"><dt class="small text-muted fw-normal">Dirección</dt><dd class="mb-0" th:text="${punto.direccion}"></dd></div>
+                        <div class="col-12"><dt class="small text-muted fw-normal">Referencia</dt><dd class="mb-0" th:text="${punto.referencia}"></dd></div>
+                        <div class="col-md-6"><dt class="small text-muted fw-normal">Latitud</dt><dd class="mb-0" th:text="${punto.latitud}"></dd></div>
+                        <div class="col-md-6"><dt class="small text-muted fw-normal">Longitud</dt><dd class="mb-0" th:text="${punto.longitud}"></dd></div>
+                        <div class="col-md-6"><dt class="small text-muted fw-normal">Fecha de creación</dt><dd class="mb-0" th:text="${punto.creadoEl != null ? #temporals.format(punto.creadoEl, 'dd/MM/yyyy HH:mm') : 'Sin registrar'}"></dd></div>
+                        <div class="col-md-6"><dt class="small text-muted fw-normal">Última actualización</dt><dd class="mb-0" th:text="${punto.actualizadoEl != null ? #temporals.format(punto.actualizadoEl, 'dd/MM/yyyy HH:mm') : 'Sin registrar'}"></dd></div>
+                    </dl>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button></div>
+            </div></div>
+        </div>
+    </th:block>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalId = /*[[${abrirModal}]]*/ null;
+            const modal = modalId ? document.getElementById(modalId) : null;
+            if (modal && typeof bootstrap !== 'undefined') new bootstrap.Modal(modal).show();
+        });
+    </script>
+</div>
+
+<div th:fragment="campos(datos, prefijo)" class="row g-3">
+    <div class="col-12"><label class="form-label fw-semibold" th:for="${prefijo + '-nombre'}">Nombre</label><input type="text" class="form-control" name="nombre" th:id="${prefijo + '-nombre'}" th:value="${datos.nombre}" maxlength="255" placeholder="Ej.: Punto Central Miraflores" required></div>
+    <div class="col-12"><label class="form-label fw-semibold" th:for="${prefijo + '-direccion'}">Dirección</label><input type="text" class="form-control" name="direccion" th:id="${prefijo + '-direccion'}" th:value="${datos.direccion}" maxlength="255" placeholder="Ej.: Av. Larco 123, Miraflores" required></div>
+    <div class="col-12"><label class="form-label fw-semibold" th:for="${prefijo + '-referencia'}">Referencia</label><textarea class="form-control" name="referencia" th:id="${prefijo + '-referencia'}" th:text="${datos.referencia}" rows="2" maxlength="255" placeholder="Ej.: Frente al parque, ingreso por la puerta principal" required></textarea></div>
+    <div class="col-md-6"><label class="form-label fw-semibold" th:for="${prefijo + '-latitud'}">Latitud</label><input type="number" class="form-control" name="latitud" th:id="${prefijo + '-latitud'}" th:value="${datos.latitud}" min="-90" max="90" step="any" placeholder="-12.0464" required><div class="form-text">Entre -90 y 90.</div></div>
+    <div class="col-md-6"><label class="form-label fw-semibold" th:for="${prefijo + '-longitud'}">Longitud</label><input type="number" class="form-control" name="longitud" th:id="${prefijo + '-longitud'}" th:value="${datos.longitud}" min="-180" max="180" step="any" placeholder="-77.0428" required><div class="form-text">Entre -180 y 180.</div></div>
+    <div class="col-12"><div class="form-check form-switch"><input type="hidden" name="_estaActivo" value="on"><input type="checkbox" class="form-check-input" role="switch" name="estaActivo" value="true" th:id="${prefijo + '-activo'}" th:checked="${datos.estaActivo}"><label class="form-check-label fw-semibold" th:for="${prefijo + '-activo'}">Punto activo</label></div><p class="small text-muted mt-1 mb-0">Los puntos activos están disponibles para nuevas entregas.</p></div>
+</div>
+<div th:fragment="erroresModal(mostrar)" th:if="${mostrar and erroresFormulario != null}" class="alert alert-danger" role="alert"><ul class="mb-0"><li th:each="error : ${erroresFormulario}" th:text="${error}"></li></ul></div>
+</body>
+</html>
