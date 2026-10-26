@@ -30,9 +30,9 @@ verifican que su identificador pertenezca al calzado indicado en la ruta.
 
 ## Limites de esta integracion
 
-El pago y la confirmacion del checkout siguen pendientes. Las operaciones existentes
+La pantalla de pago y el flujo completo de checkout siguen pendientes. Las operaciones existentes
 de metodos de pago se conservan. La identificacion del propietario de esos metodos
-continua siendo la provisional del proyecto; no se implementa autenticacion nueva.
+continua siendo la provisional del proyecto.
 Las rutas administrativas conservan la configuracion de seguridad actual del curso
 (permitAll). Los permisos por rol corresponden a la integracion posterior de Spring Security.
 
@@ -48,3 +48,37 @@ de carritos por sesion, con H2 en memoria y open-in-view desactivado.
 
 En este entorno se utiliza JBR 25 y la opcion Maven `-Dlombok.version=1.18.46`
 para verificar sin modificar la version declarada en el pom del equipo.
+
+## Confirmacion de inventario
+
+`CompraService.cambiarEstado(id, "pagado")` descuenta el stock de las variantes de
+la compra. Crear una compra ya pagada mediante `guardar` aplica las mismas reglas.
+Una compra pendiente no reserva ni descuenta existencias. Los avances posteriores
+a enviado o entregado no descuentan de nuevo; repetir pagado tampoco.
+
+La compra y sus variantes se bloquean durante la confirmacion. Las variantes se
+bloquean en orden de identificador para reducir conflictos entre compras simultaneas.
+Si alguna esta inactiva, no existe o no tiene stock suficiente, se revierte toda
+la transaccion: ninguna linea pierde stock y la compra conserva su estado anterior.
+Las variantes y cantidades de compras pagadas no se pueden editar. El ajuste de
+stock administrativo utiliza el mismo bloqueo de variante.
+
+Esta integracion no realiza cobros ni emite boletas. El checkout del modulo de ventas
+debe crear los detalles y llamar al servicio al confirmar el pago; no guardar el estado
+directamente mediante el repositorio. Las cancelaciones no reponen stock automaticamente.
+
+## Selector del administrador
+
+Al iniciar sesion, una cuenta ADMINISTRADOR llega a `/seleccionar-modo`.
+Puede elegir CLIENTE para ir a `/catalogo` o ADMINISTRADOR para ir a `/admin`.
+La eleccion se conserva en `modoAcceso` dentro de la sesion; el rol en la base de datos
+permanece igual. El enlace Cambiar modo aparece en ambas cabeceras para administradores.
+Una cuenta COMUN inicia directamente en el catalogo.
+
+El servidor comprueba que la cuenta siga activa, no baneada y tenga rol administrador
+antes de aceptar la seleccion. Este selector organiza la navegacion; la proteccion
+general de rutas administrativas mediante Spring Security sigue pendiente.
+
+`InventarioYModoIntegrationTest` verifica descuento unico, reversion completa por
+falta de stock, compras concurrentes por la ultima unidad, restricciones sobre compras
+pagadas, redireccion del login y acceso al selector segun cuenta y rol. Usa H2 en memoria.
