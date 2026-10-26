@@ -73,6 +73,10 @@ public class CarritoService {
                 !lineas.isEmpty() && lineas.stream().allMatch(Linea::disponible));
     }
 
+    public void vaciar(HttpSession session) {
+        session.removeAttribute(CLAVE);
+    }
+
     private void validar(int id, int cantidad) {
         if (cantidad < 1) throw new ReglaNegocioException("La cantidad debe ser al menos uno.");
         if (catalogo.articulo(id).stock() < cantidad) throw new ReglaNegocioException("No hay existencias suficientes.");

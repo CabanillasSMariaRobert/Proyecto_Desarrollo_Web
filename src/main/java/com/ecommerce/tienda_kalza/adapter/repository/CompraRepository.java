@@ -26,7 +26,7 @@ public interface CompraRepository extends JpaRepository<CompraEntity, Integer> {
 
     List<CompraEntity> findByEstado(String estado);
 
-    @EntityGraph(attributePaths = {"cliente", "entrega", "entrega.puntoDeEntrega"})
+    @EntityGraph(attributePaths = {"cliente", "entrega", "entrega.puntoDeEntrega", "boleta"})
     Page<CompraEntity> findByCliente_IdUsuario(int idUsuario, Pageable pageable);
 
     boolean existsByCliente_IdUsuario(Integer idUsuario);

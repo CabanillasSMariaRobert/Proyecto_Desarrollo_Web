@@ -1,9 +1,8 @@
 package com.ecommerce.tienda_kalza.adapter.controller;
 
-import com.ecommerce.tienda_kalza.adapter.entity.UsuarioEntity;
 import com.ecommerce.tienda_kalza.adapter.enums.RedUsada;
 import com.ecommerce.tienda_kalza.adapter.model.MetodoPago;
-import com.ecommerce.tienda_kalza.adapter.repository.UsuarioRepository;
+import jakarta.servlet.http.HttpSession;
 import com.ecommerce.tienda_kalza.adapter.service.MetodoPagoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,7 +20,6 @@ public class CarritoController {
     private static final String REDIRECT_CARRITO = "redirect:/carrito";
 
     private final MetodoPagoService metodoPagoService;
-    private final UsuarioRepository usuarioRepository;
     private final com.ecommerce.tienda_kalza.adapter.service.CarritoService carrito;
 
     @GetMapping
@@ -29,12 +27,11 @@ public class CarritoController {
         model.addAttribute("title", "Tu Carrito | KALZA");
         model.addAttribute("currentPage", "carrito");
 
-        // Obtener el usuario actual de forma segura (primer usuario disponible en la BD)
-        Integer idUsuarioActual = obtenerIdUsuarioActual();
+        Integer idUsuarioActual = obtenerIdUsuarioActual(session);
 
         // Cargar metodos de pago guardados
         try {
-            List<MetodoPago> metodosPago = metodoPagoService.listarPorUsuario(idUsuarioActual);
+            List<MetodoPago> metodosPago = idUsuarioActual == null ? List.of() : metodoPagoService.listarPorUsuario(idUsuarioActual);
             model.addAttribute("metodosPago", metodosPago != null ? metodosPago : List.of());
         } catch (Exception e) {
             model.addAttribute("metodosPago", List.of());
@@ -50,9 +47,11 @@ public class CarritoController {
 
     // Guardar nuevo metodo de pago
     @PostMapping("/metodo-pago/guardar")
-    public String guardarMetodoPago(@ModelAttribute("metodoPago") MetodoPago metodoPago, RedirectAttributes flash) {
+    public String guardarMetodoPago(@ModelAttribute("metodoPago") MetodoPago metodoPago,
+                                    HttpSession session, RedirectAttributes flash) {
+        Integer idUsuario = obtenerIdUsuarioActual(session);
+        if (idUsuario == null) return "redirect:/login";
         try {
-            Integer idUsuario = obtenerIdUsuarioActual();
             metodoPagoService.guardar(metodoPago, idUsuario);
             flash.addFlashAttribute("mensaje", "Método de pago guardado correctamente.");
         } catch (Exception e) {
@@ -63,9 +62,10 @@ public class CarritoController {
 
     // Eliminar metodo de pago
     @PostMapping("/metodo-pago/{id}/eliminar")
-    public String eliminarMetodoPago(@PathVariable Integer id, RedirectAttributes flash) {
+    public String eliminarMetodoPago(@PathVariable Integer id, HttpSession session, RedirectAttributes flash) {
+        Integer idUsuario = obtenerIdUsuarioActual(session);
+        if (idUsuario == null) return "redirect:/login";
         try {
-            Integer idUsuario = obtenerIdUsuarioActual();
             metodoPagoService.eliminar(id, idUsuario);
             flash.addFlashAttribute("mensaje", "Tarjeta eliminada correctamente.");
         } catch (Exception e) {
@@ -104,10 +104,8 @@ public class CarritoController {
         return REDIRECT_CARRITO;
     }
 
-    private Integer obtenerIdUsuarioActual() {
-        return usuarioRepository.findAll().stream()
-                .findFirst()
-                .map(UsuarioEntity::getIdUsuario)
-                .orElse(1);
+    private Integer obtenerIdUsuarioActual(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) return null;
+        return (Integer) session.getAttribute("idUsuario");
     }
 }
