@@ -1,7 +1,11 @@
 package com.ecommerce.tienda_kalza.adapter.model;
 
+import jakarta.validation.constraints.Min;
+
 public class ZapatoMaterial {
+    @Min(value = 1, message = "Debes seleccionar un calzado")
     private int idZapato;
+    @Min(value = 1, message = "Debes seleccionar un material")
     private int idMaterial;
 
     public ZapatoMaterial(int idZapato, int idMaterial) {

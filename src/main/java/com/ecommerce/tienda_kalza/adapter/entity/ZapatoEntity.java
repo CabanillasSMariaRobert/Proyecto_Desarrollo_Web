@@ -2,6 +2,7 @@ package com.ecommerce.tienda_kalza.adapter.entity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,9 +36,9 @@ public class ZapatoEntity {
 
     // Relación con VarianteZapato: Referencial
     @OneToMany(mappedBy = "zapato", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
-    private List<VarianteZapatoEntity> variantes;
+    private List<VarianteZapatoEntity> variantes = new ArrayList<>();
 
     // Relación con ZapatoMaterial: Referencial
     @OneToMany(mappedBy = "zapato", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ZapatoMaterialEntity> materiales;
+    private List<ZapatoMaterialEntity> materiales = new ArrayList<>();
 }

@@ -9,7 +9,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "\"Variantes_de_zapato\"")
+@Table(name = "\"Variantes_de_zapato\"",
+uniqueConstraints = {
+        @UniqueConstraint(
+                name = "UK_VARIANTE_ZAPATO_TALLA_COLOR",
+                columnNames = {"id_zapato","talla","color"}
+        )
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,13 +29,15 @@ public class VarianteZapatoEntity {
 
     // Relacion con Zapato: Columna
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="id_zapato")
+    @JoinColumn(name="id_zapato", nullable = false)
     private ZapatoEntity zapato;
 
     @Column(name = "talla", nullable = false)
     @Min(value = 1, message = "La talla debe ser al menos 1")
     private int talla;
 
+    @NotBlank(message = "El color es obligatorio")
+    @Size(max = 100, message = "El color no puede superar los 100 caracteres")
     @Column(name = "color", nullable = false, length = 100)
     private String color;
 

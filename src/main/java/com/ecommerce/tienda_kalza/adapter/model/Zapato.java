@@ -1,11 +1,13 @@
 package com.ecommerce.tienda_kalza.adapter.model;
 
 import java.time.LocalDate;
+import jakarta.validation.constraints.Min;
 
 public class Zapato {
     private int idZapato;
     private LocalDate creadoEl;
     private LocalDate actualizadoEl;
+    @Min(value = 1, message = "Debes seleccionar un producto")
     private int idProducto;
 
     public Zapato(int idZapato, LocalDate creadoEl, LocalDate actualizadoEl, int idProducto){

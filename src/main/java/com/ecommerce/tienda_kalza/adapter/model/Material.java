@@ -1,7 +1,11 @@
 package com.ecommerce.tienda_kalza.adapter.model;
 
+import jakarta.validation.constraints.*;
+
 public class Material {
     private int idMaterial;
+    @NotBlank(message = "El nombre del material es obligatorio")
+    @Size(max = 150, message = "El nombre no puede superar los 150 caracteres")
     private String nombre;
 
     public Material(int idMaterial, String nombre) {
