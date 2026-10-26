@@ -18,7 +18,67 @@ public class UsuarioService {
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    // AUTENTICACIÓN / LOGIN
+    // REGISTRO CLIENTES
+    @Transactional
+    public void registrar(com.ecommerce.tienda_kalza.adapter.model.RegistroForm form) {
+        if (form == null) {
+            throw new IllegalArgumentException("Los datos de registro son obligatorios.");
+        }
+
+        String nombreCompleto = limpiar(form.getNombreCompleto());
+        if (nombreCompleto == null || nombreCompleto.isBlank()) {
+            throw new IllegalArgumentException("Por favor, ingresa tu nombre completo.");
+        }
+
+        String correo = limpiar(form.getCorreo());
+        if (correo == null || correo.isBlank()) {
+            throw new IllegalArgumentException("El correo electrónico es obligatorio.");
+        }
+
+        if (repository.existsByCorreoIgnoreCase(correo)) {
+            throw new IllegalStateException("Ya existe una cuenta registrada con el correo \"" + correo + "\".");
+        }
+
+        String clave = form.getClave();
+        String confirmarClave = form.getConfirmarClave();
+
+        if (clave == null || clave.isBlank()) {
+            throw new IllegalArgumentException("La contraseña es obligatoria.");
+        }
+
+        if (clave.trim().length() < 6) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres.");
+        }
+
+        if (!clave.equals(confirmarClave)) {
+            throw new IllegalArgumentException("Las contraseñas no coinciden. Por favor verifícalas.");
+        }
+
+        // Separar nombres y apellidos para respetar la entidad JPA
+        String nombres = nombreCompleto;
+        String apellidos = "-";
+        if (nombreCompleto.contains(" ")) {
+            int pos = nombreCompleto.lastIndexOf(' ');
+            nombres = nombreCompleto.substring(0, pos).trim();
+            apellidos = nombreCompleto.substring(pos + 1).trim();
+        }
+
+        UsuarioEntity entity = UsuarioEntity.builder()
+                .nombres(nombres)
+                .apellidos(apellidos)
+                .correo(correo)
+                .clave(passwordEncoder.encode(clave.trim()))
+                .rol(RolUsuario.COMUN)
+                .tipoDeDocumento(TipoDocumento.DNI)
+                .estaActivo(true)
+                .estaBaneado(false)
+                .estaVerificado(false)
+                .build();
+
+        repository.save(entity);
+    }
+
+    // LOGIN
     @Transactional
     public Usuario autenticar(String correo, String clave) {
         String correoLimpio = limpiar(correo);
