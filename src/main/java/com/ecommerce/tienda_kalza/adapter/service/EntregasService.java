@@ -5,6 +5,10 @@ import com.ecommerce.tienda_kalza.adapter.entity.EntregaEntity;
 import com.ecommerce.tienda_kalza.adapter.entity.PuntoEntregaEntity;
 import com.ecommerce.tienda_kalza.adapter.model.*;
 import com.ecommerce.tienda_kalza.adapter.repository.EntregasRepository;
+import com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +29,21 @@ public class EntregasService {
 
     public List<Entrega> listar() {
         return repository.findAll().stream().map(this::aModel).toList();
+    }
+
+    public record Filtro(EstadoEntrega estado, int pagina, int tamanio) {
+        public Filtro {
+            pagina = Math.max(0, pagina);
+            tamanio = Math.max(1, Math.min(100, tamanio));
+        }
+    }
+
+    public Page<Entrega> listar(Filtro filtro) {
+        var paginado = PageRequest.of(filtro.pagina(), filtro.tamanio(), Sort.by("id").descending());
+        return (filtro.estado() == null
+                ? repository.findAll(paginado)
+                : repository.findByEstado(filtro.estado(), paginado))
+                .map(this::aModel);
     }
 
     public List<Entrega> listarPorUsuario(int idUsuario) {
