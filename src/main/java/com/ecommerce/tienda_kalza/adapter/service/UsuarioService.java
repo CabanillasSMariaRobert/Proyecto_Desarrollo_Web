@@ -77,10 +77,20 @@ public class UsuarioService {
         if (nombreCompleto == null || nombreCompleto.isBlank()) {
             throw new IllegalArgumentException("Por favor, ingresa tu nombre completo.");
         }
+        if (nombreCompleto.length() < 3 || nombreCompleto.length() > 150) {
+            throw new IllegalArgumentException("El nombre completo debe tener entre 3 y 150 caracteres.");
+        }
 
         String correo = limpiar(form.getCorreo());
         if (correo == null || correo.isBlank()) {
             throw new IllegalArgumentException("El correo electrónico es obligatorio.");
+        }
+        // Validar formato de correo mediante expresión regular
+        if (!correo.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+            throw new IllegalArgumentException("El correo electrónico no tiene un formato válido.");
+        }
+        if (correo.length() > 255) {
+            throw new IllegalArgumentException("El correo electrónico no puede tener más de 255 caracteres.");
         }
 
         if (repository.existsByCorreoIgnoreCase(correo)) {
@@ -94,8 +104,8 @@ public class UsuarioService {
             throw new IllegalArgumentException("La contraseña es obligatoria.");
         }
 
-        if (clave.trim().length() < 6) {
-            throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres.");
+        if (clave.trim().length() < 6 || clave.trim().length() > 50) {
+            throw new IllegalArgumentException("La contraseña debe tener entre 6 y 50 caracteres.");
         }
 
         if (!clave.equals(confirmarClave)) {
