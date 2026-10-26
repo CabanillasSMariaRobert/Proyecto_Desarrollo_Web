@@ -1,12 +1,15 @@
 package com.ecommerce.tienda_kalza.adapter.service;
 
 import com.ecommerce.tienda_kalza.adapter.entity.CompraEntity;
+import com.ecommerce.tienda_kalza.adapter.entity.DetalleCompraEntity;
 import com.ecommerce.tienda_kalza.adapter.repository.CompraRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 public class CompraService {
@@ -19,9 +22,11 @@ public class CompraService {
     );
 
     private final CompraRepository compras;
+    private final DisponibilidadProductoService disponibilidad;
 
-    public CompraService(CompraRepository compras) {
+    public CompraService(CompraRepository compras, DisponibilidadProductoService disponibilidad) {
         this.compras = compras;
+        this.disponibilidad = disponibilidad;
     }
 
     @Transactional(readOnly = true)
@@ -50,9 +55,27 @@ public class CompraService {
         }
 
         if (compra.getIdCompra() != 0) {
+            var anteriores = compras.consultarDetallesRn01(compra.getIdCompra());
             CompraEntity guardada = obtener(compra.getIdCompra());
             validarTransicion(guardada.getEstado(), compra.getEstado());
             compra.setFechaDeCompra(guardada.getFechaDeCompra());
+            if (anteriores.stream().anyMatch(d -> "pendiente".equals(d.getEstado()))
+                    && !"cancelado".equals(compra.getEstado())) {
+                disponibilidad.validarVariantes(anteriores.stream().map(d -> d.getIdVariante())
+                        .filter(java.util.Objects::nonNull).toList());
+                validarDisponibilidad(compra.getDetalles());
+            } else {
+                // El historial sigue siendo editable según sus reglas; solo nuevas unidades requieren disponibilidad.
+                Map<Integer, Integer> cantidades = new HashMap<>();
+                for (var detalle : anteriores) {
+                    if (detalle.getIdVariante() != null) cantidades.put(detalle.getIdVariante(), detalle.getCantidad());
+                }
+                validarDisponibilidad(compra.getDetalles().stream()
+                        .filter(d -> d == null || d.getVarianteZapato() == null || d.getCantidad() > cantidades
+                                .getOrDefault(d.getVarianteZapato().getIdVariante(), 0)).toList());
+            }
+        } else {
+            validarDisponibilidad(compra.getDetalles());
         }
         return compras.save(compra);
     }
@@ -61,6 +84,11 @@ public class CompraService {
     public void cambiarEstado(int id, String nuevoEstado) {
         CompraEntity compra = obtener(id);
         validarTransicion(compra.getEstado(), nuevoEstado);
+        if (compras.consultarDetallesRn01(id).stream().anyMatch(d -> "pendiente".equals(d.getEstado()))
+                && !"pendiente".equals(nuevoEstado)
+                && !"cancelado".equals(nuevoEstado)) {
+            validarDisponibilidad(compra.getDetalles());
+        }
         compra.setEstado(nuevoEstado);
         compras.save(compra);
     }
@@ -97,5 +125,16 @@ public class CompraService {
             throw new ReglaNegocioException(
                     "El estado solo puede avanzar: de '" + actual + "' no se puede pasar a '" + nuevo + "'.");
         }
+    }
+
+    private void validarDisponibilidad(List<DetalleCompraEntity> detalles) {
+        List<Integer> ids = new ArrayList<>();
+        for (DetalleCompraEntity detalle : detalles) {
+            if (detalle == null || detalle.getVarianteZapato() == null) {
+                throw new ReglaNegocioException("No se pudo identificar la variante del producto.");
+            }
+            ids.add(detalle.getVarianteZapato().getIdVariante());
+        }
+        disponibilidad.validarVariantes(ids);
     }
 }

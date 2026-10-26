@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin/pedidos")
@@ -55,10 +54,11 @@ public class EntregasAdminController {
     public String obtenerPedidosDelUsuarioActual(
             Model modelo,
             @RequestParam(name="estado", required = false)
-            EstadoEntrega estadoActivo
+            EstadoEntrega estadoActivo,
+            @RequestParam(name="pagina", defaultValue = "0") int pagina
     ){
-        List<Pedido> pedidos = this.entregasServicio
-                .listar()
+        var entregas = this.entregasServicio.listar(new EntregasService.Filtro(estadoActivo, pagina, 5));
+        List<Pedido> pedidos = entregas
                 .stream()
                 .map(entrega -> new Pedido(
                         entrega.getId(),
@@ -76,11 +76,11 @@ public class EntregasAdminController {
                         entrega
                 ))
                 .toList();
-        modelo.addAttribute("desde", 1);
-        modelo.addAttribute("hasta", 5);
-        modelo.addAttribute("paginaActual", 0);
-        modelo.addAttribute("totalPedidos", 10);
-        modelo.addAttribute("totalPaginas", 1);
+        modelo.addAttribute("desde", entregas.isEmpty() ? 0 : entregas.getPageable().getOffset() + 1);
+        modelo.addAttribute("hasta", entregas.isEmpty() ? 0 : entregas.getPageable().getOffset() + entregas.getNumberOfElements());
+        modelo.addAttribute("paginaActual", entregas.getNumber());
+        modelo.addAttribute("totalPedidos", entregas.getTotalElements());
+        modelo.addAttribute("totalPaginas", Math.max(1, entregas.getTotalPages()));
         modelo.addAttribute("estadoActivo", estadoActivo);
         modelo.addAttribute("pedidos", pedidos);
         return "admin/pedidos";

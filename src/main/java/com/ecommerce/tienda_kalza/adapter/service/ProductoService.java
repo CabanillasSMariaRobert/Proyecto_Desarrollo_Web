@@ -28,6 +28,26 @@ public class ProductoService {
     @Transactional(readOnly = true)
     public Producto obtener(int id) { return aModel(buscar(id)); }
 
+    @Transactional
+    public void cambiarEstado(int id, boolean activo) {
+        ProductoEntity entity = buscar(id);
+        entity.setEstaActivo(activo);
+        repository.saveAndFlush(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Producto> listarDisponibles(int pagina, String buscar) {
+        return repository.findByEstaActivoTrueAndNombreContainingIgnoreCase(buscar == null ? "" : buscar.trim(),
+                PageRequest.of(Math.max(0, pagina), 10, Sort.by("nombre").and(Sort.by("idProducto"))))
+                .map(this::aModel);
+    }
+
+    @Transactional(readOnly = true)
+    public Producto obtenerDisponible(int id) {
+        return repository.findByIdProductoAndEstaActivoTrue(id).map(this::aModel)
+                .orElseThrow(() -> new ReglaNegocioException("El producto no está disponible para nuevas compras."));
+    }
+
     @Transactional(readOnly = true)
     public List<CategoriaEntity> opcionesCategorias() { return categorias.findAll(Sort.by("nombre")); }
 
@@ -69,6 +89,7 @@ public class ProductoService {
     private Producto aModel(ProductoEntity entity) {
         Producto model = new Producto();
         model.setIdProducto(entity.getIdProducto());
+        model.setEstaActivo(entity.isEstaActivo());
         model.setNombre(entity.getNombre());
         model.setDescripcion(entity.getDescripcion());
         model.setPrecioOriginal(entity.getPrecioOriginal());
