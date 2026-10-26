@@ -28,6 +28,11 @@
             </a>
         </li>
         <li>
+            <a th:href="@{/admin/compras}" th:classappend="${currentPage == 'compras'} ? 'active' : ''">
+                <i class="bi bi-receipt"></i> Compras
+            </a>
+        </li>
+        <li>
             <a th:href="@{/admin/pedidos}" th:classappend="${currentPage == 'pedidos'} ? 'active' : ''">
                 <i class="bi bi-bag"></i> Pedidos
             </a>

@@ -44,6 +44,20 @@ public class CompraService {
     }
 
     @Transactional(readOnly = true)
+    public Page<CompraEntity> listarAdministracion(String buscar, int pagina) {
+        String filtro = buscar == null ? "" : buscar.trim();
+        Sort orden = Sort.by(Sort.Direction.DESC, "fechaDeCompra", "idCompra");
+        var resultado = compras.buscarParaAdministracion(filtro, PageRequest.of(Math.max(0, pagina), 10, orden));
+        if (resultado.getNumber() > 0 && resultado.isEmpty()) {
+            int ultimaPagina = Math.max(0, resultado.getTotalPages() - 1);
+            resultado = compras.buscarParaAdministracion(filtro, PageRequest.of(ultimaPagina, 10, orden));
+        }
+        // Incluye compras sin entrega y carga sus detalles antes de cerrar la transacción.
+        resultado.forEach(compra -> compra.getDetalles().size());
+        return resultado;
+    }
+
+    @Transactional(readOnly = true)
     public Page<CompraEntity> listarPorCliente(int idUsuario, int pagina) {
         var paginado = PageRequest.of(Math.max(0, pagina), 5,
                 Sort.by(Sort.Direction.DESC, "fechaDeCompra", "idCompra"));

@@ -15,7 +15,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
                 // Rutas que exigen sesión obligatoria
-                .addPathPatterns("/perfil/**", "/pedidos/**", "/checkout/**", "/compras/**", "/admin/usuarios/**")
+                .addPathPatterns("/perfil/**", "/pedidos/**", "/checkout/**", "/compras/**", "/admin/usuarios/**", "/admin/compras/**", "/admin/pedidos/**")
                 // Rutas públicas
                 .excludePathPatterns(
                         "/login",

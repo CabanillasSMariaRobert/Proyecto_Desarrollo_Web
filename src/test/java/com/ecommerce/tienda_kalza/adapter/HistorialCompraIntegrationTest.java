@@ -2,6 +2,7 @@ package com.ecommerce.tienda_kalza.adapter;
 
 import com.ecommerce.tienda_kalza.adapter.entity.*;
 import com.ecommerce.tienda_kalza.adapter.model.Usuario;
+import com.ecommerce.tienda_kalza.adapter.enums.RolUsuario;
 import com.ecommerce.tienda_kalza.adapter.service.UsuarioService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
@@ -81,6 +82,48 @@ class HistorialCompraIntegrationTest {
         session.setAttribute("usuarioLogueado", usuario);
         session.setAttribute("rolUsuario", usuario.getRol().name());
         return session;
+    }
+
+    MockHttpSession sesionAdministrador() {
+        int id = new TransactionTemplate(manager).execute(s -> {
+            var admin = cliente("Administrador");
+            admin.setRol(RolUsuario.ADMINISTRADOR);
+            return admin.getIdUsuario();
+        });
+        return sesion(id);
+    }
+
+    @Test void administradorConsultaComprasSinEntregaYDetallesHistoricos() throws Exception {
+        String nombre = "ConsultaFN28-" + UUID.randomUUID();
+        new TransactionTemplate(manager).executeWithoutResult(s -> em.find(UsuarioEntity.class, clienteA).setNombres(nombre));
+        mvc.perform(get("/admin/compras").session(sesionAdministrador()).param("buscar", nombre.toLowerCase()))
+                .andExpect(status().isOk()).andExpect(model().attribute("totalCompras", 7L))
+                .andExpect(content().string(containsString("Sin entrega asignada")))
+                .andExpect(content().string(containsString("Compra privada A")))
+                .andExpect(content().string(not(containsString("Compra privada B"))))
+                .andExpect(content().string(not(containsString("Nombre actual del catálogo"))));
+    }
+
+    @Test void administradorVeEntregasYLaPaginacionNoFallaFueraDeRango() throws Exception {
+        String nombre = "EntregaFN28-" + UUID.randomUUID();
+        new TransactionTemplate(manager).executeWithoutResult(s -> em.find(UsuarioEntity.class, clienteB).setNombres(nombre));
+        var session = sesionAdministrador();
+        mvc.perform(get("/admin/compras").session(session).param("buscar", nombre).param("pagina", "999"))
+                .andExpect(status().isOk()).andExpect(model().attribute("paginaActual", 0))
+                .andExpect(model().attribute("totalCompras", 1L))
+                .andExpect(content().string(containsString("Punto de prueba")))
+                .andExpect(content().string(containsString("Compra privada B")));
+        mvc.perform(get("/admin/compras").session(session).param("buscar", "SIN-RESULTADOS-" + UUID.randomUUID()).param("pagina", "999"))
+                .andExpect(status().isOk()).andExpect(model().attribute("totalCompras", 0L))
+                .andExpect(model().attribute("paginaActual", 0))
+                .andExpect(content().string(containsString("No hay compras para esta búsqueda")));
+        mvc.perform(get("/admin/compras").session(session).param("buscar", nombre).param("pagina", "-1"))
+                .andExpect(status().isOk()).andExpect(model().attribute("paginaActual", 0));
+    }
+
+    @Test void consultaAdministrativaRequiereSesionDeAdministrador() throws Exception {
+        mvc.perform(get("/admin/compras")).andExpect(redirectedUrl("/login"));
+        mvc.perform(get("/admin/compras").session(sesion(clienteA))).andExpect(redirectedUrl("/"));
     }
 
     @Test void anonimoNoPuedeConsultarHistorial() throws Exception {

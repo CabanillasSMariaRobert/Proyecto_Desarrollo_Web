@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
+<body><section th:fragment="content" class="admin-content-inner d-flex flex-column gap-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div><h1 class="h3 fw-bold mb-1">Compras</h1><p class="text-muted mb-0">Consulta todas las compras, incluidas las que aún no tienen entrega.</p></div>
+        <a th:href="@{/admin/pedidos}" class="btn btn-outline-dark">Gestionar entregas</a>
+    </div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <form method="get" th:action="@{/admin/compras}" class="d-flex gap-2">
+        <label for="buscar" class="visually-hidden">Buscar por cliente</label>
+        <input id="buscar" name="buscar" th:value="${buscar}" placeholder="Buscar por nombre o apellido del cliente" class="form-control">
+        <button class="btn btn-dark" type="submit">Buscar</button>
+    </form>
+    <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead><tr><th>Compra</th><th>Cliente</th><th>Fecha</th><th>Estado de compra</th><th>Entrega</th><th>Total</th><th>Detalle</th></tr></thead>
+                <tbody>
+                    <tr th:each="compra : ${compras}">
+                        <td class="fw-semibold" th:text="|#${compra.idCompra}|"></td>
+                        <td th:text="|${compra.cliente.nombres} ${compra.cliente.apellidos}|"></td>
+                        <td th:text="${#temporals.format(compra.fechaDeCompra, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td><span class="badge text-bg-light text-uppercase" th:text="${compra.estado}"></span></td>
+                        <td th:text="${compra.entrega == null ? 'Sin entrega asignada' : compra.entrega.estado}"></td>
+                        <td class="fw-semibold" th:text="|S/ ${compra.totalConDescuento}|"></td>
+                        <td><button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal"
+                                    th:attr="data-bs-target=|#compra-${compra.idCompra}|">Ver detalle</button></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(compras)}"><td colspan="7" class="text-center text-muted py-4">No hay compras para esta búsqueda.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3">
+            <span class="small text-muted" th:text="|Mostrando ${desde} a ${hasta} de ${totalCompras} compras|"></span>
+            <nav class="btn-group" aria-label="Paginación de compras">
+                <a th:href="@{/admin/compras(buscar=${buscar},pagina=${paginaActual > 0 ? paginaActual - 1 : 0})}"
+                   class="btn btn-sm btn-outline-secondary" th:classappend="${paginaActual == 0} ? 'disabled'">Anterior</a>
+                <span class="btn btn-sm btn-outline-secondary disabled" th:text="|${paginaActual + 1} / ${totalPaginas}|"></span>
+                <a th:href="@{/admin/compras(buscar=${buscar},pagina=${paginaActual + 1})}"
+                   class="btn btn-sm btn-outline-secondary" th:classappend="${paginaActual >= totalPaginas - 1} ? 'disabled'">Siguiente</a>
+            </nav>
+        </div>
+    </div>
+    <div th:each="compra : ${compras}" class="modal fade" th:id="|compra-${compra.idCompra}|" tabindex="-1"
+         aria-hidden="true" th:attr="aria-labelledby=|titulo-compra-${compra.idCompra}|">
+        <div class="modal-dialog modal-lg"><div class="modal-content">
+            <div class="modal-header"><h2 class="modal-title fs-5" th:id="|titulo-compra-${compra.idCompra}|" th:text="|Compra #${compra.idCompra}|"></h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body">
+                <p class="mb-1" th:text="|Cliente: ${compra.cliente.nombres} ${compra.cliente.apellidos}|"></p>
+                <p class="text-muted" th:text="${compra.cliente.correo}"></p>
+                <div th:if="${compra.entrega == null}" class="alert alert-light border">Sin entrega asignada.</div>
+                <div th:if="${compra.entrega != null}" class="alert alert-light border">
+                    <strong>Estado de entrega: </strong><span th:text="${compra.entrega.estado}"></span>
+                    <p th:if="${compra.entrega.puntoDeEntrega != null}" class="mb-0"
+                       th:text="|${compra.entrega.puntoDeEntrega.nombre} — ${compra.entrega.puntoDeEntrega.direccion}|"></p>
+                </div>
+                <div class="table-responsive"><table class="table">
+                    <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio original</th><th>Descuento por unidad</th><th>Subtotal</th></tr></thead>
+                    <tbody><tr th:each="detalle : ${compra.detalles}">
+                        <td th:text="${detalle.nombreDelProducto}"></td><td th:text="${detalle.cantidad}"></td>
+                        <td th:text="|S/ ${detalle.precioOriginalXUnidad}|"></td>
+                        <td th:text="|S/ ${detalle.descuentoXUnidad}|"></td>
+                        <td th:text="|S/ ${detalle.precioConDescuento}|"></td>
+                    </tr><tr th:if="${#lists.isEmpty(compra.detalles)}"><td colspan="5" class="text-muted">Sin artículos registrados.</td></tr></tbody>
+                </table></div>
+                <p th:if="${compra.boleta != null}" th:text="|Boleta #${compra.boleta.idBoleta} · Total: S/ ${compra.boleta.total}|"></p>
+                <p class="text-end fw-bold fs-5" th:text="|Total de compra: S/ ${compra.totalConDescuento}|"></p>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button></div>
+        </div></div>
+    </div>
+</section></body></html>

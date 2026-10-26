@@ -29,6 +29,11 @@ public interface CompraRepository extends JpaRepository<CompraEntity, Integer> {
     @EntityGraph(attributePaths = {"cliente", "entrega", "entrega.puntoDeEntrega", "boleta"})
     Page<CompraEntity> findByCliente_IdUsuario(int idUsuario, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"cliente", "entrega", "entrega.puntoDeEntrega", "boleta"})
+    @Query("select c from CompraEntity c where lower(concat(c.cliente.nombres, ' ', c.cliente.apellidos)) "
+            + "like lower(concat('%', :buscar, '%'))")
+    Page<CompraEntity> buscarParaAdministracion(@Param("buscar") String buscar, Pageable pageable);
+
     boolean existsByCliente_IdUsuario(Integer idUsuario);
 
     // Lee el historial persistido antes de evaluar nuevas unidades, sin volcar cambios del formulario.

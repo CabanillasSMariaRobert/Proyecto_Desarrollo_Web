@@ -3,19 +3,14 @@ package com.ecommerce.tienda_kalza.adapter.controller;
 // Autor: Samuel
 
 import com.ecommerce.tienda_kalza.adapter.entity.CompraEntity;
-import com.ecommerce.tienda_kalza.adapter.repository.UsuarioRepository;
 import com.ecommerce.tienda_kalza.adapter.service.CompraService;
 import com.ecommerce.tienda_kalza.adapter.service.ReglaNegocioException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/compras")
@@ -23,10 +18,8 @@ import java.util.List;
 public class CompraAdminController {
 
     private static final String LISTA = "redirect:/admin/compras";
-    private static final Integer TAMANO_PAGINA = 10;
 
     private final CompraService service;
-    private final UsuarioRepository usuarioRepository;
 
     // READ (LISTAR Y PAGINAR)
     @GetMapping
@@ -35,28 +28,17 @@ public class CompraAdminController {
             @RequestParam(defaultValue = "0") Integer pagina,
             Model model) {
 
-        List<CompraEntity> todas = service.listar();
-        int paginaActual = pagina != null && pagina >= 0 ? pagina : 0;
-        int inicio = paginaActual * TAMANO_PAGINA;
-        int fin = Math.min(inicio + TAMANO_PAGINA, todas.size());
-
-        List<CompraEntity> contenido = todas.isEmpty() ? List.of() : todas.subList(inicio, fin);
-        Page<CompraEntity> page = new PageImpl<>(contenido, PageRequest.of(paginaActual, TAMANO_PAGINA), todas.size());
-
-        long total = page.getTotalElements();
-        int inicioMostrar = page.getNumber() * TAMANO_PAGINA;
+        var page = service.listarAdministracion(buscar, pagina == null ? 0 : pagina);
 
         model.addAttribute("compras", page.getContent());
         model.addAttribute("buscar", buscar != null ? buscar : "");
         model.addAttribute("currentPage", "compras");
         model.addAttribute("title", "Compras");
         model.addAttribute("paginaActual", page.getNumber());
-        model.addAttribute("totalPaginas", page.getTotalPages());
-        model.addAttribute("totalCompras", total);
-        model.addAttribute("desde", total == 0 ? 0 : inicioMostrar + 1);
-        model.addAttribute("hasta", inicioMostrar + page.getNumberOfElements());
-        model.addAttribute("usuarios", usuarioRepository.findAll());
-        model.addAttribute("estados", CompraService.ESTADOS);
+        model.addAttribute("totalPaginas", Math.max(1, page.getTotalPages()));
+        model.addAttribute("totalCompras", page.getTotalElements());
+        model.addAttribute("desde", page.isEmpty() ? 0 : page.getPageable().getOffset() + 1);
+        model.addAttribute("hasta", page.isEmpty() ? 0 : page.getPageable().getOffset() + page.getNumberOfElements());
 
         return "admin/compras";
     }
