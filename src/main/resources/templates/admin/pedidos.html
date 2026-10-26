@@ -7,6 +7,8 @@
   <body>
     <div th:fragment="content">
       <div class="admin-content-inner d-flex flex-column gap-4">
+        <div th:if="${mensaje != null}" class="alert alert-success" role="status" th:text="${mensaje}"></div>
+        <div th:if="${error != null}" class="alert alert-danger" role="alert" th:text="${error}"></div>
         <!-- CABECERA -->
         <div
           class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
@@ -342,7 +344,17 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-light" data-bs-dismiss="modal">
+              <form method="post" th:action="@{/admin/pedidos/{id}/estado(id=${pedido.id})}"
+                    class="d-flex flex-wrap align-items-center gap-2 me-auto">
+                <input type="hidden" name="pagina" th:value="${paginaActual}" />
+                <input th:if="${estadoActivo != null}" type="hidden" name="estado" th:value="${estadoActivo}" />
+                <span class="small text-muted">Marcar como:</span>
+                <button th:each="estado : ${T(com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega).values()}"
+                        type="submit" name="nuevoEstado" th:value="${estado.name()}"
+                        class="btn btn-sm btn-outline-secondary" th:text="${estado.name()}"
+                        th:disabled="${pedido.estado == estado.name()}"></button>
+              </form>
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                 Cerrar
               </button>
             </div>

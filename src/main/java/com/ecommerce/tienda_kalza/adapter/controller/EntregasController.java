@@ -1,13 +1,16 @@
 package com.ecommerce.tienda_kalza.adapter.controller;
 
 import com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega;
+import com.ecommerce.tienda_kalza.adapter.model.Entrega;
 import com.ecommerce.tienda_kalza.adapter.service.EntregasService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -28,8 +31,9 @@ public class EntregasController {
             String resumenProductos,
             String claseEstado,
             String estado,
-            double total,
-            String linkHaciaDetalle
+            BigDecimal total,
+            int cantidadItems,
+            Entrega entrega
     ){
         public static String obtenerClaseEstado(EstadoEntrega estado){
             return switch (estado) {
@@ -38,15 +42,18 @@ public class EntregasController {
                 case EstadoEntrega.EN_CAMINO -> "text-bg-info";
                 case EstadoEntrega.ENTREGADO -> "text-bg-success";
                 case EstadoEntrega.PENDIENTE -> "text-bg-warning";
-                case EstadoEntrega.RECOGIDO -> "text-bg-accent";
+                case EstadoEntrega.RECOGIDO -> "text-dark";
             };
         }
     }
 
     @GetMapping
-    public String obtenerPedidosDelUsuarioActual(Model modelo){
-        List<Pedido> pedidos = this.entregasServicio
-                .listarPorUsuario(1)
+    public String obtenerPedidosDelUsuarioActual(
+            Model modelo,
+            @RequestParam(name = "pagina", defaultValue = "0") int pagina
+    ){
+        var entregas = this.entregasServicio.listarPorUsuario(1, pagina, 5);
+        List<Pedido> pedidos = entregas
                 .stream()
                 .map(entrega -> new Pedido(
                         entrega.getId(),
@@ -55,11 +62,17 @@ public class EntregasController {
                         String.join(", ", entrega.getCompra().getDetalles().stream().map(detalle -> detalle.getNombreDelProducto()).toList()),
                         Pedido.obtenerClaseEstado(entrega.getEstado()),
                         entrega.getEstado().name(),
-                        81.57,
-                        "pedidos/" + entrega.getId()
+                        entrega.getCompra().getTotalConDescuento(),
+                        entrega.getCompra().getDetalles().stream().mapToInt(detalle -> detalle.getCantidad()).sum(),
+                        entrega
                 ))
                 .toList();
         modelo.addAttribute("pedidos", pedidos);
+        modelo.addAttribute("desde", entregas.isEmpty() ? 0 : entregas.getPageable().getOffset() + 1);
+        modelo.addAttribute("hasta", entregas.isEmpty() ? 0 : entregas.getPageable().getOffset() + entregas.getNumberOfElements());
+        modelo.addAttribute("paginaActual", entregas.getNumber());
+        modelo.addAttribute("totalPedidos", entregas.getTotalElements());
+        modelo.addAttribute("totalPaginas", Math.max(1, entregas.getTotalPages()));
         return "vistas/pedidos";
     }
 }

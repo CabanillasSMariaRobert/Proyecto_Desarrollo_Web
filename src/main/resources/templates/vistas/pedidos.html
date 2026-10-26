@@ -42,7 +42,7 @@
 
                         <div th:if="${#lists.isEmpty(pedidos)}" class="p-4 p-md-5 text-center text-muted">
                             <i class="bi bi-box-seam fs-2 d-block mb-3" aria-hidden="true"></i>
-                            <p class="mb-0">No realizó ningún pedido hasta ahora</p>
+                            <p class="mb-0" th:text="${totalPedidos == 0} ? 'No realizó ningún pedido hasta ahora' : 'No hay pedidos en esta página'"></p>
                         </div>
 
                         <div th:each="pedido : ${pedidos}" class="p-3 hover-bg border-bottom">
@@ -58,15 +58,148 @@
                                     <span th:class="|badge text-uppercase ${pedido.claseEstado}|" th:text="${pedido.estado}"></span>
                                 </div>
                                 <div class="col-12 col-md-2 d-flex justify-content-between align-items-center md:justify-end">
-                                    <span class="fw-bold" th:text="|S/ ${pedido.total}|"></span>
-                                    <a th:href="${pedido.linkHaciaDetalle}" class="btn btn-sm btn-outline-dark">Ver detalle</a>
+                                    <span class="fw-bold" th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"></span>
+                                    <button type="button" class="btn btn-sm btn-outline-dark"
+                                            data-bs-toggle="modal" th:attr="data-bs-target=${'#detailModal-' + pedido.codigo}">Ver detalle</button>
                                 </div>
                             </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center p-3 border-top small text-muted">
+                            <span th:text="'Mostrando ' + ${desde} + ' a ' + ${hasta} + ' de ' + ${totalPedidos} + ' pedidos'"></span>
+                            <nav class="btn-group" aria-label="Paginación de pedidos">
+                                <a th:href="@{/pedidos(pagina=${paginaActual > 0 ? paginaActual - 1 : 0})}"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   th:classappend="${paginaActual == 0} ? 'disabled' : ''"
+                                   th:attr="aria-disabled=${paginaActual == 0}">Anterior</a>
+                                <span class="btn btn-sm btn-outline-secondary disabled"
+                                      th:text="${paginaActual + 1} + ' / ' + ${totalPaginas}"></span>
+                                <a th:href="@{/pedidos(pagina=${paginaActual + 1})}"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   th:classappend="${paginaActual >= totalPaginas - 1} ? 'disabled' : ''"
+                                   th:attr="aria-disabled=${paginaActual >= totalPaginas - 1}">Siguiente</a>
+                            </nav>
                         </div>
                     </div>
                 </section>
             </div>
         </div>
+      <!-- MODAL DETALLE DE PEDIDO -->
+      <div th:each="pedido : ${pedidos}" class="modal fade" th:id="${'detailModal-' + pedido.codigo}" tabindex="-1" aria-hidden="true" th:attr="aria-labelledby=${'detailModalLabel-' + pedido.codigo}">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title fs-5 fw-bold" th:id="${'detailModalLabel-' + pedido.codigo}">Detalle del pedido</h3>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Cerrar"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                  <span class="small text-muted d-block">Nº de pedido</span>
+                  <span class="fw-bold text-primary" th:text="${'#ORD-' + pedido.codigo}"></span>
+                </div>
+                <div class="col-md-3">
+                  <span class="small text-muted d-block">Cliente</span>
+                  <span class="fw-semibold" th:text="${pedido.entrega.compra.cliente.nombres + ' ' + pedido.entrega.compra.cliente.apellidos}"></span>
+                </div>
+                <div class="col-md-3">
+                  <span class="small text-muted d-block">Fecha</span>
+                  <span class="fw-semibold" th:text="${#temporals.format(pedido.entrega.compra.fechaDeCompra, 'dd/MM/yyyy HH:mm')}"></span>
+                </div>
+                <div class="col-md-3">
+                  <span class="small text-muted d-block">Estado</span>
+                  <span class="badge text-uppercase" th:classappend="${pedido.claseEstado}" th:text="${pedido.estado}"></span>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-4 small">
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Correo</span>
+                  <span th:text="${pedido.entrega.compra.cliente.correo ?: 'Sin registrar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Teléfono</span>
+                  <span th:text="${pedido.entrega.compra.cliente.telefono ?: 'Sin registrar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Nº de compra</span>
+                  <span th:text="${pedido.entrega.compra.idCompra}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Estado de compra</span>
+                  <span th:text="${pedido.entrega.compra.estado}"></span>
+                </div>
+                <div class="col-12" th:if="${pedido.entrega.puntoDeEntrega != null}">
+                  <span class="text-muted d-block">Punto de entrega</span>
+                  <span class="fw-semibold" th:text="${pedido.entrega.puntoDeEntrega.nombre}"></span>
+                  <span class="d-block" th:text="${pedido.entrega.puntoDeEntrega.direccion}"></span>
+                  <span class="text-muted" th:text="${pedido.entrega.puntoDeEntrega.referencia}"></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="text-muted d-block">Asignado</span>
+                  <span th:text="${pedido.entrega.asignadoEl != null ? #temporals.format(pedido.entrega.asignadoEl, 'dd/MM/yyyy HH:mm') : 'Sin asignar'}"></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="text-muted d-block">Recogido</span>
+                  <span th:text="${pedido.entrega.recogidoEl != null ? #temporals.format(pedido.entrega.recogidoEl, 'dd/MM/yyyy HH:mm') : 'Sin recoger'}"></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="text-muted d-block">Entregado</span>
+                  <span th:text="${pedido.entrega.entregadoEl != null ? #temporals.format(pedido.entrega.entregadoEl, 'dd/MM/yyyy HH:mm') : 'Sin entregar'}"></span>
+                </div>
+                <div class="col-md-6">
+                  <span class="text-muted d-block">Total sin descuento</span>
+                  <span th:text="${'S/ ' + #numbers.formatDecimal(pedido.entrega.compra.totalSinDescuento, 1, 'COMMA', 2, 'POINT')}"></span>
+                </div>
+              </div>
+              <div class="table-responsive border rounded-3 mb-4">
+                <table class="table align-middle mb-0 small">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Producto</th>
+                      <th>Cant.</th>
+                      <th class="text-end">Precio unitario</th>
+                      <th class="text-end">Descuento unitario</th>
+                      <th class="text-end">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="detalle : ${pedido.entrega.compra.detalles}">
+                      <td th:text="${detalle.nombreDelProducto}"></td>
+                      <td th:text="${detalle.cantidad}"></td>
+                      <td class="text-end" th:text="${'S/ ' + #numbers.formatDecimal(detalle.precioOriginalXUnidad, 1, 'COMMA', 2, 'POINT')}"></td>
+                      <td class="text-end" th:text="${'S/ ' + #numbers.formatDecimal(detalle.descuentoXUnidad, 1, 'COMMA', 2, 'POINT')}"></td>
+                      <td class="text-end" th:text="${detalle.precioConDescuento != null ? 'S/ ' + #numbers.formatDecimal(detalle.precioConDescuento, 1, 'COMMA', 2, 'POINT') : 'Sin registrar'}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(pedido.entrega.compra.detalles)}">
+                      <td colspan="5" class="text-center text-muted py-3">Sin productos registrados.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div
+                class="d-flex justify-content-between align-items-center border-top pt-3"
+              >
+                <span
+                  ><span class="text-muted small">Artículos: </span
+                  ><span class="fw-semibold" th:text="${pedido.cantidadItems}"></span></span
+                >
+                <span class="fs-5 fw-bold" th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"></span>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-light" data-bs-dismiss="modal">
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     <!-- ============ FOOTER ============ -->
 </div>
 
