@@ -4,7 +4,7 @@ import com.ecommerce.tienda_kalza.adapter.enums.RolUsuario;
 import com.ecommerce.tienda_kalza.adapter.model.LoginForm;
 import com.ecommerce.tienda_kalza.adapter.model.Usuario;
 import com.ecommerce.tienda_kalza.adapter.service.UsuarioService;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,8 +66,17 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public String cerrarSesion(HttpSession session, RedirectAttributes flash) {
-        session.invalidate();
+    public String cerrarSesion(HttpServletRequest request, HttpServletResponse response, RedirectAttributes flash) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate(); // Destruye completamente la sesión
+        }
+
+        // Forzamos cabeceras anti-caché en la respuesta de logout
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+
         flash.addFlashAttribute("mensaje", "Has cerrado sesión correctamente.");
         return "redirect:/login";
     }
