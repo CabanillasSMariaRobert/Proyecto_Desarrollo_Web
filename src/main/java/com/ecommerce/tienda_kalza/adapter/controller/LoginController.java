@@ -45,6 +45,8 @@ public class LoginController {
         try {
             Usuario usuario = usuarioService.autenticar(form.getCorreo(), form.getClave());
 
+            session.removeAttribute("modoAcceso");
+
             // Guardar atributos clave en la sesión HTTP
             session.setAttribute("usuarioLogueado", usuario);
             session.setAttribute("idUsuario", usuario.getIdUsuario());
@@ -72,8 +74,8 @@ public class LoginController {
 
     private String redirigirSegunRol(Usuario usuario) {
         if (usuario.getRol() == RolUsuario.ADMINISTRADOR) {
-            return "redirect:/admin/usuarios";
+            return "redirect:/seleccionar-modo";
         }
-        return "redirect:/";
+        return "redirect:/catalogo";
     }
 }

@@ -1,4 +1,6 @@
 <header class="admin-topbar" th:fragment="topbar">
+    <a th:if="${session.rolUsuario == 'ADMINISTRADOR'}" th:href="@{/seleccionar-modo}"
+       class="btn btn-sm btn-outline-dark me-3">Cambiar modo</a>
     <span class="user-name" th:text="${session.nombreCompleto != null ? session.nombreCompleto : 'Administrador'}">
         Aldhair Salazar Manrique
     </span>

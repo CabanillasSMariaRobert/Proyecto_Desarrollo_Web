@@ -10,6 +10,8 @@
         </nav>
 
         <div class="header-actions">
+            <a th:if="${session.rolUsuario == 'ADMINISTRADOR'}" th:href="@{/seleccionar-modo}"
+               class="btn btn-sm btn-outline-dark">Cambiar modo</a>
             <a th:href="@{/carrito}" class="icon-btn" aria-label="Carrito">
                 <i class="bi bi-cart3"></i>
                 <span class="cart-badge"></span>
