@@ -43,7 +43,7 @@ public class MetodoPagoService {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("El usuario con ID " + idUsuario + " no existe."));
 
-        // 1. Extraer los últimos 4 dígitos
+        // Extraer los últimos 4 dígitos
         String ultimos4 = model.getUltimos4Digitos();
         if (model.getNumeroTarjeta() != null && !model.getNumeroTarjeta().isBlank()) {
             String soloNumeros = model.getNumeroTarjeta().replaceAll("\\D", "");
@@ -58,7 +58,7 @@ public class MetodoPagoService {
             throw new IllegalArgumentException("Los últimos 4 dígitos de la tarjeta son obligatorios.");
         }
 
-        // 2. Procesar fecha unificada "MM/AA" o "MM/AAAA"
+        // Procesar fecha
         if (model.getFechaVencimiento() != null && !model.getFechaVencimiento().isBlank()) {
             String[] partes = model.getFechaVencimiento().trim().split("[/-]");
             if (partes.length == 2) {
@@ -79,7 +79,7 @@ public class MetodoPagoService {
             }
         }
 
-        // 3. Validar mes y año de expiración
+        // Validar mes y año de expiración
         if (model.getExpiraElMes() == null || model.getExpiraElMes() < 1 || model.getExpiraElMes() > 12) {
             throw new IllegalArgumentException("El mes de expiración debe estar entre 1 y 12.");
         }
@@ -88,7 +88,7 @@ public class MetodoPagoService {
             throw new IllegalArgumentException("El año de expiración no puede estar en el pasado.");
         }
 
-        // 4. Validar CVV (3 o 4 dígitos numéricos)
+        // Validar CVV
         if (model.getCvv() != null && !model.getCvv().isBlank()) {
             String cvvLimpio = model.getCvv().trim();
             if (!cvvLimpio.matches("\\d{3,4}")) {
@@ -106,7 +106,7 @@ public class MetodoPagoService {
                 ? model.getPasarela().trim()
                 : "Pasarela Web";
 
-        // 5. Token único simulado de pasarela
+        // Token único simulado de pasarela
         String token = (model.getToken() != null && !model.getToken().isBlank())
                 ? model.getToken()
                 : "tok_" + UUID.randomUUID().toString().replace("-", "").substring(0, 20);

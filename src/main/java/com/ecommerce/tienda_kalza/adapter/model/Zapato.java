@@ -9,18 +9,21 @@ public class Zapato {
     private LocalDate actualizadoEl;
     @Min(value = 1, message = "Debes seleccionar un producto")
     private int idProducto;
+    private boolean estaActivo;
 
     public Zapato(int idZapato, LocalDate creadoEl, LocalDate actualizadoEl, int idProducto){
         this.idZapato = idZapato;
         this.creadoEl = creadoEl;
         this.actualizadoEl = actualizadoEl;
         this.idProducto = idProducto;
+        this.estaActivo = true;
     }
 
     public Zapato(LocalDate creadoEl, LocalDate actualizadoEl, int idProducto){
         this.creadoEl = creadoEl;
         this.actualizadoEl = actualizadoEl;
         this.idProducto = idProducto;
+        this.estaActivo = true;
     }
 
     public Zapato(){
@@ -37,4 +40,7 @@ public class Zapato {
 
     public int getIdProducto() { return idProducto; }
     public void setIdProducto(int idProducto) { this.idProducto = idProducto; }
+
+    public boolean isEstaActivo() { return estaActivo; }
+    public void setEstaActivo(boolean estaActivo) { this.estaActivo = estaActivo; }
 }

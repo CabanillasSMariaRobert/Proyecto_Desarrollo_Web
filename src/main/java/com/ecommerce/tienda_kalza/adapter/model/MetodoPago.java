@@ -23,8 +23,8 @@ public class MetodoPago {
 
     // Campos auxiliares para la recepción del formulario web
     private String numeroTarjeta;
-    private String fechaVencimiento; // Recibe "MM/AA" o "MM/AAAA"
-    private String cvv;              // Código de seguridad (3 o 4 dígitos)
+    private String fechaVencimiento;
+    private String cvv;
 
     @Builder.Default
     private LocalDateTime creadoEl = LocalDateTime.now();

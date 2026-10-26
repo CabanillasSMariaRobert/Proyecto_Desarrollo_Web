@@ -26,14 +26,13 @@ public class CarritoController {
 
     @GetMapping
     public String verCarrito(Model model) {
-        // Variables requeridas por fragments/general/layout.html
         model.addAttribute("title", "Tu Carrito | KALZA");
         model.addAttribute("currentPage", "carrito");
 
-        // 1. Obtener el usuario actual de forma segura (primer usuario disponible en la BD)
+        // Obtener el usuario actual de forma segura (primer usuario disponible en la BD)
         Integer idUsuarioActual = obtenerIdUsuarioActual();
 
-        // 2. Cargar métodos de pago guardados del usuario (protegido contra fallos)
+        // Cargar metodos de pago guardados
         try {
             List<MetodoPago> metodosPago = metodoPagoService.listarPorUsuario(idUsuarioActual);
             model.addAttribute("metodosPago", metodosPago != null ? metodosPago : List.of());
@@ -42,7 +41,7 @@ public class CarritoController {
         }
         model.addAttribute("redes", RedUsada.values());
 
-        // 3. Datos de productos en el carrito para la visualización
+        // Datos de productos en el carrito para la visualización
         List<Map<String, Object>> items = List.of(
                 Map.of(
                         "imagen", "AeroGlide Pro Runner.webp",
@@ -76,7 +75,7 @@ public class CarritoController {
         return "vistas/carrito";
     }
 
-    // Guardar nuevo método de pago desde el carrito
+    // Guardar nuevo metodo de pago
     @PostMapping("/metodo-pago/guardar")
     public String guardarMetodoPago(@ModelAttribute("metodoPago") MetodoPago metodoPago, RedirectAttributes flash) {
         try {
@@ -89,7 +88,7 @@ public class CarritoController {
         return REDIRECT_CARRITO;
     }
 
-    // Eliminar método de pago desde el carrito
+    // Eliminar metodo de pago
     @PostMapping("/metodo-pago/{id}/eliminar")
     public String eliminarMetodoPago(@PathVariable Integer id, RedirectAttributes flash) {
         try {
