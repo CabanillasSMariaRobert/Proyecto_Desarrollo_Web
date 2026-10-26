@@ -3,11 +3,15 @@ package com.ecommerce.tienda_kalza.adapter.controller;
 import com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega;
 import com.ecommerce.tienda_kalza.adapter.model.Entrega;
 import com.ecommerce.tienda_kalza.adapter.service.EntregasService;
+import com.ecommerce.tienda_kalza.adapter.service.ReglaNegocioException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.math.BigDecimal;
@@ -23,6 +27,27 @@ public class EntregasAdminController {
     * */
     public EntregasAdminController(EntregasService entregasServicio){
         this.entregasServicio = entregasServicio;
+    }
+
+    @PostMapping("/{id}/estado")
+    public String cambiarEstado(
+            @PathVariable("id") int id,
+            @RequestParam("nuevoEstado") EstadoEntrega nuevoEstado,
+            @RequestParam(name = "estado", required = false) EstadoEntrega estadoActivo,
+            @RequestParam(name = "pagina", defaultValue = "0") int pagina,
+            RedirectAttributes flash
+    ) {
+        try {
+            entregasServicio.cambiarEstado(id, nuevoEstado);
+            flash.addFlashAttribute("mensaje", "Estado del pedido actualizado correctamente.");
+        } catch (ReglaNegocioException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        }
+        if (estadoActivo != null) {
+            flash.addAttribute("estado", estadoActivo);
+        }
+        flash.addAttribute("pagina", Math.max(0, pagina));
+        return "redirect:/admin/pedidos";
     }
 
     public record Pedido(
@@ -51,7 +76,7 @@ public class EntregasAdminController {
     }
 
     @GetMapping
-    public String obtenerPedidosDelUsuarioActual(
+    public String obtenerPedidos(
             Model modelo,
             @RequestParam(name="estado", required = false)
             EstadoEntrega estadoActivo,

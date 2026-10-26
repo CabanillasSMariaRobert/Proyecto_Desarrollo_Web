@@ -17,14 +17,21 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class EntregasService {
-    /**
-     * Por ahora el servicio de entregas esta como transaccional readOnly=true
-     * porque por el momento solo lee datos
-     * */
     private final EntregasRepository repository;
 
     public EntregasService(EntregasRepository repository) {
         this.repository = repository;
+    }
+
+    @Transactional
+    public void cambiarEstado(int id, EstadoEntrega estado) {
+        if (estado == null) {
+            throw new ReglaNegocioException("Selecciona un estado de entrega.");
+        }
+        EntregaEntity entrega = repository.findById(id)
+                .orElseThrow(() -> new ReglaNegocioException("No se encontró el pedido solicitado."));
+        entrega.setEstado(estado);
+        repository.save(entrega);
     }
 
     public List<Entrega> listar() {
