@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
+<body><div th:fragment="content" class="container py-4 d-flex flex-column gap-4">
+<h1 class="h3">Materiales</h1><div class="d-flex gap-2 flex-wrap"><a class="btn btn-outline-dark" th:href="@{/admin/productos}">Productos</a><a class="btn btn-outline-dark" th:href="@{/admin/zapatos}">Calzados</a><a class="btn btn-outline-dark" th:href="@{/admin/materiales}">Materiales</a><a class="btn btn-outline-dark" th:href="@{/catalogo}">Ver catálogo</a></div><div th:if="${mensaje}" class="alert alert-success" role="status" th:text="${mensaje}"></div>
+<div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+<form th:object="${material}" method="post" class="card card-body gap-2"
+ th:action="${material.idMaterial == 0} ? @{/admin/materiales/crear} : @{/admin/materiales/{id}/actualizar(id=${material.idMaterial})}">
+<h2 class="h5" th:text="${material.idMaterial == 0} ? 'Registrar material' : 'Editar material'"></h2><div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger"><p th:each="e : ${#fields.allErrors()}" th:text="${e}" class="mb-1"></p></div>
+<label for="nombre">Nombre</label><input id="nombre" th:field="*{nombre}" required maxlength="150" class="form-control">
+<div><button class="btn btn-dark">Guardar</button> <a th:href="@{/admin/materiales}" class="btn btn-light">Cancelar</a></div></form>
+<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Material</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+<tr th:each="m : ${page.content}"><td th:text="${m.nombre}"></td><td th:text="${m.estaActivo} ? 'Activo' : 'Inactivo'"></td><td>
+<a class="btn btn-sm btn-outline-dark" th:href="@{/admin/materiales/{id}/editar(id=${m.idMaterial})}">Editar</a>
+<form th:if="${m.estaActivo}" class="d-inline" method="post" th:action="@{/admin/materiales/{id}/desactivar(id=${m.idMaterial})}"><button class="btn btn-sm btn-outline-danger">Desactivar</button></form>
+</td></tr><tr th:if="${page.empty}"><td colspan="3">No hay materiales registrados.</td></tr></tbody></table></div><div class="d-flex justify-content-between"><span th:text="|${page.totalElements} registros|"></span><div><a class="btn btn-outline-secondary btn-sm" th:if="${page.hasPrevious()}" th:href="@{/admin/materiales(pagina=${page.number - 1})}">Anterior</a> <a class="btn btn-outline-secondary btn-sm" th:if="${page.hasNext()}" th:href="@{/admin/materiales(pagina=${page.number + 1})}">Siguiente</a></div></div>
+</div></body></html>

@@ -19,37 +19,28 @@
         <div class="row g-4 g-lg-5">
             <!-- ITEMS DEL CARRITO Y METODOS DE PAGO -->
             <div class="col-lg-8">
-                <!-- ITEMS -->
-                <div class="d-flex flex-column gap-3 mb-4">
-                    <div class="card border rounded-3 p-3" th:each="item : ${items}">
-                        <div class="row g-3 align-items-center">
-                            <div class="col-4 col-sm-3 col-md-2">
-                                <div class="rounded-3 overflow-hidden" style="aspect-ratio:1/1; background:#f5f5f5;">
-                                    <img th:src="@{'/img/productos/' + ${item.imagen}}"
-                                         class="w-100 h-100 object-fit-cover" th:alt="${item.nombre}">
-                                </div>
-                            </div>
-                            <div class="col-8 col-sm-9 col-md-10">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h3 class="h6 fw-bold mb-1" th:text="${item.nombre}"></h3>
-                                        <!-- Línea corregida sin colisión de barras de Thymeleaf -->
-                                        <p class="small text-muted mb-2"
-                                           th:text="|Talla: ${item.talla}| + ' | Color: ' + ${item.color}"></p>
-                                    </div>
-                                    <span class="fw-bold" th:text="|S/ ${item.precioUnitario}|"></span>
-                                </div>
-                                <div class="d-flex align-items-center gap-3 mt-2">
-                                    <div class="input-group input-group-sm" style="width: 130px;">
-                                        <button class="btn btn-outline-secondary" type="button">-</button>
-                                        <span class="input-group-text fw-bold" th:text="${item.cantidad}">1</span>
-                                        <button class="btn btn-outline-secondary" type="button">+</button>
-                                    </div>
-                                    <button class="btn btn-link text-danger p-0 small">
-                                        <i class="bi bi-trash me-1"></i>Eliminar
-                                    </button>
-                                </div>
-                            </div>
+                <div th:if="${#lists.isEmpty(items)}" class="alert alert-info">
+                    Tu carrito está vacío. <a th:href="@{/catalogo}">Explorar catálogo</a>
+                </div>
+                <div class="card p-3 mb-3" th:each="item : ${items}">
+                    <div class="d-flex gap-3">
+                        <img th:if="${item.imagen != null}" th:src="${item.imagen}" th:alt="${item.nombre}"
+                             style="width:100px;height:100px;object-fit:contain">
+                        <div class="flex-grow-1">
+                            <h2 class="h6" th:text="${item.nombre}"></h2>
+                            <p th:if="${item.idProducto > 0}" th:text="|Talla: ${item.talla} · Color: ${item.color}|"></p>
+                            <p th:if="${!item.disponible}" class="text-danger" th:text="${item.aviso}"></p>
+                            <p th:text="|S/ ${item.precioUnitario} por par · Subtotal S/ ${item.subtotal}|"></p>
+                            <form th:if="${item.idProducto > 0}" method="post"
+                                  th:action="@{/carrito/{id}/actualizar(id=${item.idVariante})}" class="d-flex gap-2 mb-2">
+                                <label th:for="|cantidad-${item.idVariante}|" class="visually-hidden">Cantidad</label>
+                                <input th:id="|cantidad-${item.idVariante}|" type="number" name="cantidad" min="1"
+                                       th:value="${item.cantidad}" class="form-control" style="max-width:100px" required>
+                                <button class="btn btn-outline-dark">Actualizar</button>
+                            </form>
+                            <form method="post" th:action="@{/carrito/{id}/retirar(id=${item.idVariante})}">
+                                <button class="btn btn-outline-danger btn-sm">Retirar</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -100,23 +91,16 @@
                     <h2 class="h5 fw-bold border-bottom pb-2 mb-3">Resumen del pedido</h2>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted" th:text="|Subtotal (${resumen.totalItems} items)|">Subtotal</span>
-                        <span class="fw-semibold" th:text="|S/ ${resumen.subtotal}|">S/ 0.00</span>
+                        <span class="fw-semibold" th:text="|S/ ${resumen.total}|">S/ 0.00</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Envío</span>
-                        <span class="fw-semibold" th:text="${resumen.envioTexto}">Gratis</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">IGV</span>
-                        <span class="fw-semibold" th:text="|S/ ${resumen.igv}|">S/ 0.00</span>
-                    </div>
+                    <p class="small text-muted">Importes según los precios actuales del catálogo.</p>
                     <div class="d-flex justify-content-between align-items-end border-top pt-3 mb-4">
                         <span class="fw-bold">Total</span>
                         <span class="fs-4 fw-bold" th:text="|S/ ${resumen.total}|">S/ 0.00</span>
                     </div>
-                    <a th:href="@{/checkout}" class="btn btn-blue w-100 py-2">
-                        Procesar pago
-                    </a>
+                    <div class="alert alert-secondary small mb-0">
+                        Agregar artículos al carrito no reserva existencias.
+                    </div>
                 </div>
             </div>
         </div>

@@ -45,7 +45,15 @@ public class ZapatoMaterialService {
         asociacion.setId(id);
         asociacion.setZapato(zapato);
         asociacion.setMaterial(material);
-        repository.saveAndFlush(asociacion);
+        ZapatoMaterialEntity guardada = repository.save(asociacion);
+        // Mantiene ambos lados sincronizados cuando se consultan en la misma transacción.
+        if (zapato.getMateriales().stream().noneMatch(a -> a.getId().equals(id))) {
+            zapato.getMateriales().add(guardada);
+        }
+        if (material.getMateriales().stream().noneMatch(a -> a.getId().equals(id))) {
+            material.getMateriales().add(guardada);
+        }
+        repository.flush();
     }
 
     // READ (lista)
@@ -64,6 +72,9 @@ public class ZapatoMaterialService {
         ZapatoMaterialEntity asociacion = repository.findById(id).orElseThrow(() ->
                         new IllegalArgumentException("La asociación entre el calzado y el material no existe."));
 
+        // Evita que el cascade del padre vuelva a persistir una asociación retirada.
+        asociacion.getZapato().getMateriales().removeIf(a -> a.getId().equals(id));
+        asociacion.getMaterial().getMateriales().removeIf(a -> a.getId().equals(id));
         repository.delete(asociacion);
         repository.flush();
     }

@@ -1,129 +1,14 @@
 <!DOCTYPE html>
-<html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
-<body>
-
-<div th:fragment="content">
-    <!-- ============ HEADER ============ -->
-    <!-- ============ CONTENIDO ============ -->
-        <div class="container">
-
-            <!-- PRODUCTO -->
-            <div class="row g-4 g-lg-5 mb-5">
-                <!-- IMAGENES -->
-                <div class="col-lg-7">
-                    <div class="position-relative rounded-3 overflow-hidden mb-3"
-                        style="aspect-ratio: 4/3; background:#f5f5f5;">
-                        <img th:src="@{'/img/productos/' + ${producto.imagenes[0].src}}"
-                            class="w-100 h-100 object-fit-cover" th:alt="${producto.imagenes[0].alt}">
-                        <span th:if="${producto.nuevo}" class="badge bg-dark position-absolute top-0 start-0 m-3 text-uppercase">Nuevo</span>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-6" th:each="imagen, i : ${producto.imagenes}" th:if="${i.index > 0}">
-                            <div class="rounded-3 overflow-hidden" style="aspect-ratio: 1/1; background:#f5f5f5;">
-                                <img th:src="@{'/img/productos/' + ${imagen.src}}"
-                                    class="w-100 h-100 object-fit-cover" th:alt="${imagen.alt}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- INFORMACION PRODUCTO -->
-                <div class="col-lg-5">
-                    <h1 class="fs-2 fw-bold" th:text="${producto.nombre}"></h1>
-                    <p class="fs-5 text-muted" th:text="${producto.subtitulo}"></p>
-                    <div class="fs-2 fw-bold mb-4" style="color: var(--kalza-blue);"
-                         th:text="|S/ ${producto.precio}|"></div>
-
-                    <p class="text-muted mb-5" th:text="${producto.descripcion}"></p>
-
-                    <!-- SELECCION TALLA -->
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-bold">Seleccione una talla</span>
-                            <a href="#" class="small text-muted text-decoration-underline" data-bs-toggle="modal"
-                                data-bs-target="#guiaTallasModal">Guía de tallas</a>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button th:each="talla : ${producto.tallas}" type="button"
-                                th:class="|btn btn-sm size-btn ${talla.seleccionada ? 'btn-dark' : (talla.habilitada ? 'btn-outline-dark' : 'btn-outline-secondary disabled')}|"
-                                th:text="${talla.etiqueta}"></button>
-                        </div>
-                    </div>
-
-                    <p class="small fw-semibold mb-4" style="color: var(--kalza-blue);">
-                        <i class="bi bi-check-circle me-1"></i><span th:text="${producto.mensajeStock}"></span>
-                    </p>
-
-                    <button class="btn btn-blue w-100 py-2 mb-3">Agregar al carrito</button>
-                    <button class="btn btn-outline-dark w-100 py-2">Favoritos</button>
-                </div>
-            </div>
-
-            <!-- PRODUCTOS RELACIONADOS -->
-            <section class="border-top pt-5">
-                <h2 class="kalza-section-title mb-4">Completa tu estilo</h2>
-                <div class="row g-4">
-                    <div class="col-6 col-md-3" th:each="relacionado : ${producto.relacionados}">
-                        <div class="card border-0 shadow-sm h-100 card-hover">
-                            <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f5f5f5;">
-                                <a th:href="@{/producto}">
-                                    <img th:src="@{'/img/productos/' + ${relacionado.imagen}}"
-                                        class="w-100 h-100 object-fit-cover" th:alt="${relacionado.nombre}">
-                                </a>
-                            </div>
-                            <div class="card-body">
-                                <a th:href="@{/producto}" class="text-decoration-none text-dark">
-                                    <h3 class="h6 fw-bold" th:text="${relacionado.nombre}"></h3>
-                                </a>
-                                <p class="mb-0 text-muted" th:text="|S/ ${relacionado.precio}|"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    <!-- ============ FOOTER ============ -->
-    <!-- MODAL GUIA DE TALLAS -->
-    <div class="modal fade" id="guiaTallasModal" tabindex="-1" aria-labelledby="guiaTallasLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="guiaTallasLabel">Guía de tallas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted small mb-4">
-                        Las tallas son en tallaje US (hombre/mujer). Si estás entre dos tallas, te recomendamos
-                        elegir la talla mayor.
-                    </p>
-                    <div class="table-responsive">
-                        <table class="table table-bordered align-middle text-center mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col">US Hombre</th>
-                                    <th scope="col">US Mujer</th>
-                                    <th scope="col">EU</th>
-                                    <th scope="col">Largo del pie (cm)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="fila : ${guiaTallas}">
-                                    <td th:text="${fila.usHombre}"></td>
-                                    <td th:text="${fila.usMujer}"></td>
-                                    <td th:text="${fila.eu}"></td>
-                                    <td th:text="${fila.largoPie}"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-dark" data-bs-dismiss="modal">Entendido</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-</body>
-</html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<body><div th:fragment="content" class="container py-4 d-flex flex-column gap-4">
+<a th:href="@{/catalogo}">Volver al catálogo</a><div th:if="${mensaje}" class="alert alert-success" role="status" th:text="${mensaje}"></div>
+<div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+<div class="row g-4"><div class="col-md-6"><img th:if="${producto.imagen != null}" th:src="${producto.imagen}" th:alt="${producto.nombre}" class="img-fluid" style="max-height:480px;object-fit:contain"></div>
+<div class="col-md-6"><p th:text="${producto.marca}" class="text-muted"></p><h1 th:text="${producto.nombre}"></h1><p class="fs-3 fw-bold" th:text="|S/ ${producto.precio}|"></p><p th:text="${producto.descripcion}"></p>
+<h2 class="h5">Materiales</h2><ul><li th:each="m : ${producto.materiales}" th:text="${m}"></li></ul><p th:if="${#lists.isEmpty(producto.materiales)}" class="text-muted">Composición no especificada.</p>
+<form th:action="@{/carrito/agregar}" method="post" class="d-flex flex-column gap-3">
+<label for="variante">Talla europea y color</label><select id="variante" name="idVariante" class="form-select" required><option value="">Selecciona una combinación</option><option th:each="v : ${producto.variantes}" th:value="${v.idVariante}" th:disabled="${v.stock == 0}" th:text="|Talla ${v.talla} · ${v.color} · ${v.stock} pares disponibles|"></option></select>
+<p th:if="${#lists.isEmpty(producto.variantes)}" class="text-muted">No hay variantes activas.</p>
+<label for="cantidad">Cantidad de pares</label><input id="cantidad" type="number" name="cantidad" min="1" value="1" class="form-control" required>
+<button class="btn btn-dark" th:disabled="${#lists.isEmpty(producto.variantes)}">Agregar al carrito</button><small class="text-muted">La disponibilidad se comprueba al agregar al carrito; no se reservan existencias.</small></form></div></div>
+</div></body></html>

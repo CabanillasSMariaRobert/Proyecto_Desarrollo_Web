@@ -41,9 +41,11 @@ public class ZapatoEntity {
 
     // Relación con VarianteZapato: Referencial
     @OneToMany(mappedBy = "zapato", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @Builder.Default
     private List<VarianteZapatoEntity> variantes = new ArrayList<>();
 
     // Relación con ZapatoMaterial: Referencial
     @OneToMany(mappedBy = "zapato", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ZapatoMaterialEntity> materiales = new ArrayList<>();
 }

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/carrito")
@@ -23,9 +22,10 @@ public class CarritoController {
 
     private final MetodoPagoService metodoPagoService;
     private final UsuarioRepository usuarioRepository;
+    private final com.ecommerce.tienda_kalza.adapter.service.CarritoService carrito;
 
     @GetMapping
-    public String verCarrito(Model model) {
+    public String verCarrito(Model model, jakarta.servlet.http.HttpSession session) {
         model.addAttribute("title", "Tu Carrito | KALZA");
         model.addAttribute("currentPage", "carrito");
 
@@ -41,35 +41,8 @@ public class CarritoController {
         }
         model.addAttribute("redes", RedUsada.values());
 
-        // Datos de productos en el carrito para la visualización
-        List<Map<String, Object>> items = List.of(
-                Map.of(
-                        "imagen", "AeroGlide Pro Runner.webp",
-                        "nombre", "AeroGlide Pro Runner",
-                        "talla", "10.5",
-                        "color", "Negro Obsidiana",
-                        "precioUnitario", "145.00",
-                        "cantidad", 1
-                ),
-                Map.of(
-                        "imagen", "Court Classic Low.webp",
-                        "nombre", "Court Classic Low",
-                        "talla", "9",
-                        "color", "Blanco Nube",
-                        "precioUnitario", "95.00",
-                        "cantidad", 2
-                )
-        );
-
-        Map<String, Object> resumen = Map.of(
-                "totalItems", 3,
-                "subtotal", "335.00",
-                "envioTexto", "Gratis",
-                "igv", "60.30",
-                "total", "395.30"
-        );
-
-        model.addAttribute("items", items);
+        var resumen = carrito.consultar(session);
+        model.addAttribute("items", resumen.items());
         model.addAttribute("resumen", resumen);
 
         return "vistas/carrito";
@@ -98,6 +71,36 @@ public class CarritoController {
         } catch (Exception e) {
             flash.addFlashAttribute("error", e.getMessage());
         }
+        return REDIRECT_CARRITO;
+    }
+
+    @PostMapping("/agregar")
+    public String agregar(@RequestParam int idVariante, @RequestParam int cantidad,
+                          jakarta.servlet.http.HttpSession session, RedirectAttributes flash) {
+        try {
+            carrito.agregar(session, idVariante, cantidad);
+            flash.addFlashAttribute("mensaje", "Artículo agregado al carrito.");
+        } catch (com.ecommerce.tienda_kalza.adapter.service.ReglaNegocioException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        }
+        return REDIRECT_CARRITO;
+    }
+
+    @PostMapping("/{idVariante}/actualizar")
+    public String actualizar(@PathVariable int idVariante, @RequestParam int cantidad,
+                             jakarta.servlet.http.HttpSession session, RedirectAttributes flash) {
+        try {
+            carrito.actualizar(session, idVariante, cantidad);
+            flash.addFlashAttribute("mensaje", "Cantidad actualizada.");
+        } catch (com.ecommerce.tienda_kalza.adapter.service.ReglaNegocioException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        }
+        return REDIRECT_CARRITO;
+    }
+
+    @PostMapping("/{idVariante}/retirar")
+    public String retirar(@PathVariable int idVariante, jakarta.servlet.http.HttpSession session) {
+        carrito.retirar(session, idVariante);
         return REDIRECT_CARRITO;
     }
 

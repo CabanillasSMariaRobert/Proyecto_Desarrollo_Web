@@ -32,13 +32,13 @@ son comportamientos de Java/Hibernate y no equivalen a DEFAULT SQL.
   forman parte literal del nombre resultante `"'metodos_de_pago'"`.
   El script lo conserva para corresponder al codigo. Normalizar ese nombre
   requiere corregir la entidad y planificar el cambio de la base existente.
-- ProductoEntity no tiene un atributo esta_activo; CategoriaEntity si lo tiene.
+- ProductoEntity, ZapatoEntity, VarianteZapatoEntity y MaterialEntity tienen esta_activo.
 - TokenEntity declara tipo como String y token como el enum TipoToken.
   Esto limita token al valor RESTABLECIMIENTO_CLAVE; debe revisarse antes
   de implementar tokens aleatorios de recuperacion.
 - El detalle ya referencia id_variante_de_zapato. No guarda talla/color historicos.
 - No existe una tabla de historial de intentos de entrega.
-- La combinacion zapato/talla/color aun no tiene restriccion UNIQUE en JPA.
+- La combinacion zapato/talla/color tiene restriccion UNIQUE en JPA y en el script.
 - El estado de compra es String, con valor Java inicial "pendiente";
   no tiene un catalogo cerrado de estados a nivel SQL.
 - EntregaEntity permite id_compra nulo, aunque si impone unicidad.

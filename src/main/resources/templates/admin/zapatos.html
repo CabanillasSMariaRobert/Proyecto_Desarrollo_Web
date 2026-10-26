@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
+<body><div th:fragment="content" class="container py-4 d-flex flex-column gap-4">
+<h1 class="h3">Calzados</h1><div class="d-flex gap-2 flex-wrap"><a class="btn btn-outline-dark" th:href="@{/admin/productos}">Productos</a><a class="btn btn-outline-dark" th:href="@{/admin/zapatos}">Calzados</a><a class="btn btn-outline-dark" th:href="@{/admin/materiales}">Materiales</a><a class="btn btn-outline-dark" th:href="@{/catalogo}">Ver catálogo</a></div><div th:if="${mensaje}" class="alert alert-success" role="status" th:text="${mensaje}"></div>
+<div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+<p>Registra primero el producto y luego vincúlalo como calzado para administrar tallas, colores y composición.</p>
+<form th:object="${zapato}" method="post" th:action="@{/admin/zapatos/crear}" class="card card-body gap-2"><h2 class="h5">Registrar calzado</h2><div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger"><p th:each="e : ${#fields.allErrors()}" th:text="${e}" class="mb-1"></p></div>
+<label for="producto">Producto sin calzado asociado</label><select id="producto" th:field="*{idProducto}" class="form-select" required>
+<option value="0">Selecciona un producto</option><option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"></option></select>
+<p th:if="${#lists.isEmpty(productos)}" class="text-muted">No hay productos activos disponibles para vincular.</p>
+<div><button class="btn btn-dark" th:disabled="${#lists.isEmpty(productos)}">Registrar</button></div></form>
+<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Producto</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+<tr th:each="z : ${page.content}"><td th:text="${z.nombre}"></td><td th:text="${z.activo} ? 'Activo' : 'Inactivo'"></td><td>
+<a class="btn btn-outline-dark btn-sm" th:href="@{/admin/zapatos/{id}(id=${z.idZapato})}">Variantes y materiales</a>
+<form th:if="${z.activo}" class="d-inline" method="post" th:action="@{/admin/zapatos/{id}/desactivar(id=${z.idZapato})}"><button class="btn btn-outline-danger btn-sm">Desactivar</button></form>
+</td></tr><tr th:if="${page.empty}"><td colspan="3">No hay calzados registrados.</td></tr></tbody></table></div><div class="d-flex justify-content-between"><span th:text="|${page.totalElements} registros|"></span><div><a class="btn btn-outline-secondary btn-sm" th:if="${page.hasPrevious()}" th:href="@{/admin/zapatos(pagina=${page.number - 1})}">Anterior</a> <a class="btn btn-outline-secondary btn-sm" th:if="${page.hasNext()}" th:href="@{/admin/zapatos(pagina=${page.number + 1})}">Siguiente</a></div></div>
+</div></body></html>

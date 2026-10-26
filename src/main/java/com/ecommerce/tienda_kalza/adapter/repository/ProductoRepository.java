@@ -17,7 +17,9 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, Intege
     Optional<ProductoEntity> findByIdProductoAndEstaActivoTrue(int idProducto);
 
     // Proyección escalar: consulta el estado actual, incluso si el carrito conserva entidades antiguas.
-    @Query("select v.idVariante as idVariante, p.nombre as nombreProducto, p.estaActivo as estaActivo "
+    @Query("select v.idVariante as idVariante, p.nombre as nombreProducto, "
+            + "case when p.estaActivo = true and z.estaActivo = true and v.estaActivo = true "
+            + "then true else false end as estaActivo "
             + "from VarianteZapatoEntity v join v.zapato z join z.producto p where v.idVariante in :ids")
     List<DisponibilidadVariante> consultarDisponibilidad(@Param("ids") Collection<Integer> ids);
 

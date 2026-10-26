@@ -20,6 +20,8 @@
                 <i class="bi bi-box-seam"></i> Productos
             </a>
         </li>
+        <li><a th:href="@{/admin/zapatos}" th:classappend="${currentPage == 'zapatos'} ? 'active' : ''"><i class="bi bi-grid"></i> Calzados y variantes</a></li>
+        <li><a th:href="@{/admin/materiales}" th:classappend="${currentPage == 'materiales'} ? 'active' : ''"><i class="bi bi-layers"></i> Materiales</a></li>
         <li>
             <a th:href="@{/admin/categorias}" th:classappend="${currentPage == 'categorias'} ? 'active' : ''">
                 <i class="bi bi-tags"></i> Categorías
