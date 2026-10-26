@@ -18,6 +18,54 @@ public class UsuarioService {
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
 
+    // AUTENTICACIÓN / LOGIN
+    @Transactional
+    public Usuario autenticar(String correo, String clave) {
+        String correoLimpio = limpiar(correo);
+        String claveLimpia = (clave != null) ? clave.trim() : "";
+
+        if (correoLimpio == null || claveLimpia.isEmpty()) {
+            throw new IllegalArgumentException("Debe ingresar su correo electrónico y contraseña.");
+        }
+
+        UsuarioEntity entity = repository.findByCorreoIgnoreCase(correoLimpio)
+                .orElseThrow(() -> new IllegalArgumentException("El correo o la contraseña son incorrectos."));
+
+        // Verificación con BCrypt
+        boolean coincide = false;
+        try {
+            coincide = passwordEncoder.matches(claveLimpia, entity.getClave());
+        } catch (Exception e) {
+            coincide = false;
+        }
+
+        // Respaldo por si quedó algún registro con contraseña sin hashear en la BD de pruebas
+        if (!coincide && claveLimpia.equals(entity.getClave())) {
+            coincide = true;
+            entity.setClave(passwordEncoder.encode(claveLimpia));
+            repository.save(entity);
+        }
+
+        if (!coincide) {
+            throw new IllegalArgumentException("El correo o la contraseña son incorrectos.");
+        }
+
+        // Validación de usuario bloqueado
+        if (Boolean.TRUE.equals(entity.getEstaBaneado())) {
+            String razon = (entity.getRazonDeBaneo() != null && !entity.getRazonDeBaneo().isBlank())
+                    ? ": " + entity.getRazonDeBaneo()
+                    : ".";
+            throw new IllegalStateException("Tu cuenta ha sido bloqueada" + razon);
+        }
+
+        // Validación de usuario inactivo
+        if (!Boolean.TRUE.equals(entity.getEstaActivo())) {
+            throw new IllegalStateException("Tu cuenta se encuentra inactiva. Comunícate con soporte.");
+        }
+
+        return aModel(entity);
+    }
+
     // CREATE
     @Transactional
     public void crear(Usuario model) {
