@@ -22,7 +22,7 @@ public class MarcaService {
     }
 
     @Transactional(readOnly = true)
-    public List<MarcaEntity> opciones() { return repository.findAll(Sort.by("nombre")); }
+    public List<MarcaEntity> opciones() { return repository.findByEstaActivoTrueOrderByNombreAsc(); }
 
     @Transactional(readOnly = true)
     public Marca obtener(int id) {
@@ -31,6 +31,7 @@ public class MarcaService {
         model.setIdMarca(id);
         model.setNombre(entity.getNombre());
         model.setDescripcion(entity.getDescripcion());
+        model.setEstaActivo(entity.isEstaActivo());
         return model;
     }
 
@@ -44,6 +45,13 @@ public class MarcaService {
         entity.setNombre(nombre);
         entity.setDescripcion(model.getDescripcion() == null ? null : model.getDescripcion().trim());
         repository.saveAndFlush(entity);
+    }
+
+    @Transactional
+    public void cambiarEstado(int id, boolean activo) {
+        MarcaEntity marca = buscar(id);
+        marca.setEstaActivo(activo);
+        repository.saveAndFlush(marca);
     }
 
     private MarcaEntity buscar(int id) {

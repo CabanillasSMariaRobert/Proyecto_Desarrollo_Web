@@ -57,6 +57,17 @@ public class MarcaAdminController {
         return listar(0, model);
     }
 
+    @PostMapping("/{id}/estado")
+    public String cambiarEstado(@PathVariable int id, @RequestParam boolean activo, RedirectAttributes flash) {
+        try {
+            service.cambiarEstado(id, activo);
+            flash.addFlashAttribute("mensaje", activo ? "Marca activada correctamente." : "Marca desactivada correctamente.");
+        } catch (IllegalArgumentException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/marcas";
+    }
+
     private String vista(Model model) {
         model.addAttribute("title", "Marcas");
         model.addAttribute("currentPage", "productos");

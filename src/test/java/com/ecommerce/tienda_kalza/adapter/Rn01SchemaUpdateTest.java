@@ -1,6 +1,7 @@
 package com.ecommerce.tienda_kalza.adapter;
 
 import com.ecommerce.tienda_kalza.adapter.repository.ProductoRepository;
+import com.ecommerce.tienda_kalza.adapter.repository.MarcaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,13 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.sql.init.mode=always", "spring.sql.init.schema-locations=classpath:rn01-productos-anteriores.sql"})
 class Rn01SchemaUpdateTest {
     @Autowired ProductoRepository productos;
+    @Autowired MarcaRepository marcas;
+
+    @Test void marcaAnteriorQuedaActivaAlAgregarColumnaRn04() {
+        var anterior = marcas.findById(42).orElseThrow();
+        assertThat(anterior.isEstaActivo()).isTrue();
+        assertThat(anterior.getNombre()).isEqualTo("Marca anterior");
+    }
 
     @Test void agregaColumnaConDefaultSinPerderProductosExistentes() {
         var anterior = productos.findById(42).orElseThrow();

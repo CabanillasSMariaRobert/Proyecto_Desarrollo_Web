@@ -17,4 +17,8 @@ public class MarcaEntity {
 
     @Column(name = "descripcion", length = 500)
     private String descripcion;
+
+    @Builder.Default
+    @Column(name = "esta_activo", nullable = false, columnDefinition = "boolean default true")
+    private boolean estaActivo = true;
 }

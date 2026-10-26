@@ -24,11 +24,20 @@
             <a class="btn btn-light" th:href="@{/admin/marcas}">Cancelar</a></div>
     </form>
     <div class="card border-0 shadow-sm table-responsive">
-        <table class="table align-middle"><thead><tr><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr></thead>
+        <table class="table align-middle"><thead><tr><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr></thead>
             <tbody><tr th:each="item : ${page.content}"><td th:text="${item.nombre}"></td>
-                <td th:text="${item.descripcion}"></td><td><a class="btn btn-sm btn-outline-secondary"
-                th:href="@{/admin/marcas/{id}/editar(id=${item.idMarca})}">Editar</a></td></tr>
-            <tr th:if="${page.empty}"><td colspan="3">No hay marcas registradas.</td></tr></tbody></table>
+                <td th:text="${item.descripcion}"></td>
+                <td><span class="badge" th:classappend="${item.estaActivo} ? 'text-bg-success' : 'text-bg-secondary'"
+                          th:text="${item.estaActivo} ? 'Activa' : 'Inactiva'"></span></td>
+                <td><a class="btn btn-sm btn-outline-secondary"
+                th:href="@{/admin/marcas/{id}/editar(id=${item.idMarca})}">Editar</a>
+                    <form method="post" class="d-inline" th:action="@{/admin/marcas/{id}/estado(id=${item.idMarca})}">
+                        <input type="hidden" name="activo" th:value="${!item.estaActivo}">
+                        <button class="btn btn-sm btn-outline-dark" type="submit"
+                                th:text="${item.estaActivo} ? 'Desactivar' : 'Activar'"></button>
+                    </form>
+                </td></tr>
+            <tr th:if="${page.empty}"><td colspan="4">No hay marcas registradas.</td></tr></tbody></table>
         <div class="d-flex justify-content-between p-3">
             <span th:text="|${page.totalElements} marcas|"></span><div>
             <a class="btn btn-sm btn-outline-secondary" th:classappend="${page.first} ? 'disabled'"

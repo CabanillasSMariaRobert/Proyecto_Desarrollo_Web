@@ -52,6 +52,16 @@ public class ProductoService {
     public List<CategoriaEntity> opcionesCategorias() { return categorias.findByEstaActivoTrueOrderByNombreAsc(); }
 
     @Transactional(readOnly = true)
+    public List<MarcaEntity> opcionesMarcas(Integer idProducto) {
+        List<MarcaEntity> opciones = new ArrayList<>(marcas.findByEstaActivoTrueOrderByNombreAsc());
+        if (idProducto != null && idProducto > 0) {
+            MarcaEntity actual = buscar(idProducto).getMarca();
+            if (!actual.isEstaActivo()) opciones.add(actual);
+        }
+        return opciones;
+    }
+
+    @Transactional(readOnly = true)
     public List<CategoriaEntity> categoriasInactivasAsociadas(int idProducto) {
         return categorias.encontrarInactivasAsociadas(idProducto);
     }
@@ -61,6 +71,11 @@ public class ProductoService {
         ProductoEntity entity = id == null ? new ProductoEntity() : buscar(id);
         MarcaEntity marca = marcas.findById(model.getIdMarca())
                 .orElseThrow(() -> new IllegalArgumentException("La marca seleccionada no existe."));
+        boolean conservaMarca = entity.getMarca() != null
+                && entity.getMarca().getIdMarca() == marca.getIdMarca();
+        if (!marca.isEstaActivo() && !conservaMarca) {
+            throw new IllegalArgumentException("La marca está inactiva y no admite nuevas asignaciones.");
+        }
         Set<Integer> ids = new LinkedHashSet<>(model.getIdsCategorias());
         if (ids.size() != model.getIdsCategorias().size()) {
             throw new IllegalArgumentException("No se puede asociar la misma categoría más de una vez.");

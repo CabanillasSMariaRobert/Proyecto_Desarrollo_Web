@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller @RequestMapping("/admin/productos") @RequiredArgsConstructor
 public class ProductoAdminController {
     private final ProductoService service;
-    private final MarcaService marcas;
 
     @PostMapping("/{id}/estado")
     public String cambiarEstado(@PathVariable int id, @RequestParam boolean activo, RedirectAttributes flash) {
@@ -36,7 +35,8 @@ public class ProductoAdminController {
         model.addAttribute("buscar", buscar);
         model.addAttribute("title", "Productos");
         model.addAttribute("currentPage", "productos");
-        model.addAttribute("marcas", marcas.opciones());
+        Producto formulario = model.getAttribute("producto") instanceof Producto p ? p : null;
+        model.addAttribute("marcas", service.opcionesMarcas(formulario == null ? null : formulario.getIdProducto()));
         model.addAttribute("categorias", service.opcionesCategorias());
         if (model.getAttribute("producto") instanceof Producto producto && producto.getIdProducto() > 0) {
             model.addAttribute("categoriasConservadas", service.categoriasInactivasAsociadas(producto.getIdProducto()));

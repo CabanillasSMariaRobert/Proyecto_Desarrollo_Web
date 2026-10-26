@@ -49,6 +49,21 @@ de carritos por sesion, con H2 en memoria y open-in-view desactivado.
 En este entorno se utiliza JBR 25 y la opcion Maven `-Dlombok.version=1.18.46`
 para verificar sin modificar la version declarada en el pom del equipo.
 
+## RN04: marcas inactivas
+
+En `/admin/marcas` se pueden desactivar y reactivar marcas sin eliminarlas.
+Las marcas nuevas y las existentes anteriores a RN04 quedan activas por defecto.
+El formulario de productos ofrece marcas activas y, al editar, permite conservar
+su marca actual aunque este inactiva. El servicio rechaza una nueva asignacion
+inactiva, incluso si se envia directamente desde un formulario manipulado.
+Desactivar una marca no desactiva sus productos ni impide sus ventas.
+Editar el nombre o descripcion de una marca no cambia su estado.
+
+La columna `esta_activo` de marcas se agrega mediante Hibernate con `ddl-auto=update`
+y DEFAULT TRUE, conservando los registros existentes. El script `schema-h2.sql`
+tambien incluye esa columna para bases vacias. `Rn04IntegrationTest` y
+`Rn01SchemaUpdateTest` verifican el flujo y la compatibilidad del esquema anterior.
+
 ## Confirmacion de inventario
 
 `CompraService.cambiarEstado(id, "pagado")` descuenta el stock de las variantes de
