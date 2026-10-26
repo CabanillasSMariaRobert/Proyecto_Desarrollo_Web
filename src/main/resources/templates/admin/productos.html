@@ -55,7 +55,7 @@
     <div class="card border-0 shadow-sm table-responsive">
         <table class="table table-striped align-middle mb-0"><thead><tr>
             <th>Imagen</th><th>Nombre</th><th>Marca</th><th>Categorías</th><th>Precio original</th>
-            <th>Descuento</th><th>Precio final</th><th>Tallas</th><th>Stock</th><th>Acciones</th>
+            <th>Descuento</th><th>Precio final</th><th>Tallas</th><th>Stock</th><th>Estado</th><th>Acciones</th>
         </tr></thead><tbody>
         <tr th:each="item : ${page.content}">
             <td><img th:if="${!#strings.isEmpty(item.urlImagen)}" th:src="${item.urlImagen}" th:alt="${item.nombre}" width="48" height="48" class="rounded-3 object-fit-cover"></td>
@@ -65,8 +65,16 @@
             <td th:text="|${item.descuento * 100} %|"></td>
             <td th:text="|S/ ${#numbers.formatDecimal(item.precioConDescuento, 1, 2)}|"></td>
             <td class="text-muted">Integración pendiente</td><td class="text-muted">Integración pendiente</td>
-            <td><a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/productos/{id}/editar(id=${item.idProducto})}">Editar</a></td>
-        </tr><tr th:if="${page.empty}"><td colspan="10" class="text-center py-4">No hay productos que coincidan con la búsqueda.</td></tr>
+            <td><span class="badge" th:classappend="${item.estaActivo} ? 'text-bg-success' : 'bg-light text-muted'"
+                      th:text="${item.estaActivo} ? 'Activo' : 'Inactivo'"></span></td>
+            <td><a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/productos/{id}/editar(id=${item.idProducto})}">Editar</a>
+                <form method="post" class="d-inline" th:action="@{/admin/productos/{id}/estado(id=${item.idProducto})}">
+                    <input type="hidden" name="activo" th:value="${!item.estaActivo}">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary"
+                            th:text="${item.estaActivo} ? 'Desactivar' : 'Activar'"></button>
+                </form>
+            </td>
+        </tr><tr th:if="${page.empty}"><td colspan="11" class="text-center py-4">No hay productos que coincidan con la búsqueda.</td></tr>
         </tbody></table>
         <div class="d-flex justify-content-between p-3">
             <span th:text="|${page.totalElements} productos — página ${page.number + 1}|"></span><div>

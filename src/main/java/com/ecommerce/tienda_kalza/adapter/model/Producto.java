@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter @Setter
 public class Producto {
     private int idProducto;
+    private boolean estaActivo = true;
     @NotBlank(message = "El nombre es obligatorio.")
     @Size(max = 150, message = "El nombre admite hasta 150 caracteres.")
     private String nombre;

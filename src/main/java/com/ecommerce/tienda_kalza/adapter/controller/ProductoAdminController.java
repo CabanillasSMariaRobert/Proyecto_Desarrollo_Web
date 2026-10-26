@@ -16,6 +16,19 @@ public class ProductoAdminController {
     private final ProductoService service;
     private final MarcaService marcas;
 
+    @PostMapping("/{id}/estado")
+    public String cambiarEstado(@PathVariable int id, @RequestParam boolean activo, RedirectAttributes flash) {
+        try {
+            service.cambiarEstado(id, activo);
+            flash.addFlashAttribute("mensaje", activo ? "Producto activado correctamente." : "Producto desactivado correctamente.");
+        } catch (IllegalArgumentException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            flash.addFlashAttribute("error", "No se pudo cambiar el estado del producto.");
+        }
+        return "redirect:/admin/productos";
+    }
+
     @GetMapping
     public String listar(@RequestParam(defaultValue = "0") int pagina,
                          @RequestParam(defaultValue = "") String buscar, Model model) {

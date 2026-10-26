@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,6 +24,11 @@ public class ProductoEntity {
 
     @Column(name = "nombre", length = 150, nullable = false)
     private String nombre;
+
+    @Column(name = "esta_activo", nullable = false)
+    @ColumnDefault("true")
+    @Builder.Default
+    private boolean estaActivo = true;
 
     @Column(name = "descripcion", length = 2000)
     private String descripcion;
