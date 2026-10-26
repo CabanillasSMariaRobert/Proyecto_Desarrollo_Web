@@ -5,6 +5,7 @@ import com.ecommerce.tienda_kalza.adapter.entity.EntregaEntity;
 import com.ecommerce.tienda_kalza.adapter.entity.PuntoEntregaEntity;
 import com.ecommerce.tienda_kalza.adapter.model.*;
 import com.ecommerce.tienda_kalza.adapter.repository.EntregasRepository;
+import com.ecommerce.tienda_kalza.adapter.repository.CompraRepository;
 import com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,10 +22,12 @@ import java.time.ZoneId;
 public class EntregasService {
     private final EntregasRepository repository;
     private final CompraService compraService;
+    private final CompraRepository compras;
 
-    public EntregasService(EntregasRepository repository,CompraService compraService) {
+    public EntregasService(EntregasRepository repository, CompraService compraService, CompraRepository compras) {
         this.repository = repository;
         this.compraService=compraService;
+        this.compras = compras;
     }
 
     @Transactional
@@ -40,6 +43,17 @@ public class EntregasService {
         }
         if (anterior == null || !anterior.permiteTransicionA(estado)) {
             throw new ReglaNegocioException("No se permite cambiar la entrega de " + anterior + " a " + estado + ".");
+        }
+
+        if (entrega.getCompra() == null) throw new ReglaNegocioException("La entrega no tiene una compra asociada.");
+        // Bloquea también la compra para no atenderla mientras otra operación la cancela.
+        CompraEntity compra = compras.buscarParaActualizar(entrega.getCompra().getIdCompra())
+                .orElseThrow(() -> new ReglaNegocioException("La compra no existe."));
+        if (estado == EstadoEntrega.CANCELADO) {
+            if (!"pendiente".equals(compra.getEstado()))
+                throw new ReglaNegocioException("Solo se puede cancelar la entrega de una compra pendiente de pago.");
+        } else if (!List.of("pagado", "enviado").contains(compra.getEstado())) {
+            throw new ReglaNegocioException("Solo se pueden atender entregas de compras pagadas o enviadas.");
         }
 
         LocalDateTime ahora = LocalDateTime.now(ZoneId.of("America/Lima"));
@@ -61,15 +75,13 @@ public class EntregasService {
         }
 
         // CompraService conserva sus propias reglas. Si rechaza el cambio, no se actualiza el seguimiento.
-        if (entrega.getCompra() != null) {
-            int idCompra = entrega.getCompra().getIdCompra();
-            switch (estado) {
-                case EN_CAMINO -> compraService.cambiarEstado(idCompra, "enviado");
-                case ENTREGADO -> compraService.cambiarEstado(idCompra, "entregado");
-                case CANCELADO -> compraService.cambiarEstado(idCompra, "cancelado");
-                default -> {
-                    // Un reparto FALLADO no equivale a cancelar o reembolsar una compra ya enviada.
-                }
+        int idCompra = compra.getIdCompra();
+        switch (estado) {
+            case EN_CAMINO -> compraService.cambiarEstado(idCompra, "enviado");
+            case ENTREGADO -> compraService.cambiarEstado(idCompra, "entregado");
+            case CANCELADO -> compraService.cambiarEstado(idCompra, "cancelado");
+            default -> {
+                // Un reparto FALLADO no equivale a cancelar o reembolsar una compra ya enviada.
             }
         }
         entrega.setEstado(estado);

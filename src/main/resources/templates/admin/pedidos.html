@@ -375,7 +375,9 @@
                 <button th:each="estado : ${T(com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega).values()}"
                         type="submit" name="nuevoEstado" th:value="${estado.name()}"
                         class="btn btn-sm btn-outline-secondary" th:text="${estado.name()}"
-                        th:disabled="${!pedido.entrega.estado.permiteTransicionA(estado)}"></button>
+                        th:disabled="${!pedido.entrega.estado.permiteTransicionA(estado)
+                            or (estado.name() == 'CANCELADO' and pedido.entrega.compra.estado != 'pendiente')
+                            or (estado.name() != 'CANCELADO' and pedido.entrega.compra.estado != 'pagado' and pedido.entrega.compra.estado != 'enviado')}"></button>
               </form>
               <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                 Cerrar

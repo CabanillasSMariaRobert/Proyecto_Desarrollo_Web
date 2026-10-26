@@ -101,6 +101,8 @@ public class EntregasAdminController {
                         entrega
                 ))
                 .toList();
+        modelo.addAttribute("title", "Entregas | KALZA");
+        modelo.addAttribute("currentPage", "pedidos");
         modelo.addAttribute("desde", entregas.isEmpty() ? 0 : entregas.getPageable().getOffset() + 1);
         modelo.addAttribute("hasta", entregas.isEmpty() ? 0 : entregas.getPageable().getOffset() + entregas.getNumberOfElements());
         modelo.addAttribute("paginaActual", entregas.getNumber());

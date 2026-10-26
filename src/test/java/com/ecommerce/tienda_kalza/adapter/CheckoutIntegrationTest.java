@@ -2,6 +2,8 @@ package com.ecommerce.tienda_kalza.adapter;
 
 import com.ecommerce.tienda_kalza.adapter.entity.*;
 import com.ecommerce.tienda_kalza.adapter.enums.RedUsada;
+import com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega;
+import com.ecommerce.tienda_kalza.adapter.enums.RolUsuario;
 import com.ecommerce.tienda_kalza.adapter.service.*;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
@@ -29,6 +31,8 @@ class CheckoutIntegrationTest {
     @Autowired MockMvc mvc;
     @Autowired CarritoService carrito;
     @Autowired UsuarioService usuarios;
+    @Autowired CheckoutService checkout;
+    @Autowired EntregasService seguimiento;
     TransactionTemplate tx;
     int cliente, otroCliente, variante, punto, metodo, metodoAjeno;
     long comprasAntes, boletasAntes, entregasAntes;
@@ -91,6 +95,106 @@ class CheckoutIntegrationTest {
 
     long contar(String entity) { return tx.execute(s -> em.createQuery("select count(e) from " + entity + " e", Long.class).getSingleResult()); }
     int stock() { return tx.execute(s -> em.find(VarianteZapatoEntity.class, variante).getStock()); }
+
+    int entregaPagada() {
+        var session = sesion(cliente);
+        carrito.agregar(session, variante, 1);
+        int idCompra = checkout.confirmar(cliente, carrito.consultar(session).items(), metodo, punto, true);
+        return tx.execute(s -> em.find(CompraEntity.class, idCompra).getEntrega().getId());
+    }
+
+    int entregaSinPago(String estadoCompra) {
+        return tx.execute(s -> {
+            var compra = CompraEntity.builder().cliente(em.find(UsuarioEntity.class, cliente)).estado(estadoCompra)
+                    .totalSinDescuento(BigDecimal.TEN).totalConDescuento(BigDecimal.TEN).build();
+            em.persist(compra);
+            var entrega = new EntregaEntity();
+            entrega.setCompra(compra);
+            entrega.setPuntoDeEntrega(em.find(PuntoEntregaEntity.class, punto));
+            em.persist(entrega);
+            return entrega.getId();
+        });
+    }
+
+    MockHttpSession sesionAdmin() {
+        int id = tx.execute(s -> {
+            var admin = crearCliente();
+            admin.setRol(RolUsuario.ADMINISTRADOR);
+            return admin.getIdUsuario();
+        });
+        return sesion(id);
+    }
+
+    @Test void seguimientoCompletoRegistraFechasYSeMuestraEnAmbasVistas() throws Exception {
+        int id = entregaPagada();
+        assertThatThrownBy(() -> seguimiento.cambiarEstado(id, EstadoEntrega.ENTREGADO))
+                .isInstanceOf(ReglaNegocioException.class);
+        for (var estado : new EstadoEntrega[]{EstadoEntrega.ASIGNADO, EstadoEntrega.RECOGIDO,
+                EstadoEntrega.EN_CAMINO, EstadoEntrega.ENTREGADO}) seguimiento.cambiarEstado(id, estado);
+        var fecha = tx.execute(s -> {
+            var e = em.find(EntregaEntity.class, id);
+            assertThat(e.getAsignadoEl()).isNotNull();
+            assertThat(e.getRecogidoEl()).isAfterOrEqualTo(e.getAsignadoEl());
+            assertThat(e.getEntregadoEl()).isAfterOrEqualTo(e.getRecogidoEl());
+            assertThat(e.getCompra().getEstado()).isEqualTo("entregado");
+            return e.getEntregadoEl();
+        });
+        seguimiento.cambiarEstado(id, EstadoEntrega.ENTREGADO);
+        tx.executeWithoutResult(s -> assertThat(em.find(EntregaEntity.class, id).getEntregadoEl()).isEqualTo(fecha));
+        mvc.perform(get("/pedidos").session(sesion(cliente))).andExpect(status().isOk())
+                .andExpect(content().string(containsString("ENTREGADO")));
+        mvc.perform(get("/admin/pedidos").session(sesionAdmin())).andExpect(status().isOk())
+                .andExpect(content().string(containsString("ENTREGADO")));
+        assertThat(stock()).isEqualTo(2);
+    }
+
+    @Test void seguimientoRechazaComprasCanceladasOSinPagoSinCambiarFechas() {
+        for (String estado : new String[]{"pendiente", "cancelado"}) {
+            int id = entregaSinPago(estado);
+            assertThatThrownBy(() -> seguimiento.cambiarEstado(id, EstadoEntrega.ASIGNADO))
+                    .isInstanceOf(ReglaNegocioException.class);
+            tx.executeWithoutResult(s -> {
+                var e = em.find(EntregaEntity.class, id);
+                assertThat(e.getEstado()).isEqualTo(EstadoEntrega.PENDIENTE);
+                assertThat(e.getAsignadoEl()).isNull();
+                assertThat(e.getCompra().getEstado()).isEqualTo(estado);
+            });
+        }
+        assertThat(stock()).isEqualTo(3);
+    }
+
+    @Test void repartoFalladoConservaCompraYNoReponeStock() {
+        int id = entregaPagada();
+        for (var estado : new EstadoEntrega[]{EstadoEntrega.ASIGNADO, EstadoEntrega.RECOGIDO,
+                EstadoEntrega.EN_CAMINO, EstadoEntrega.FALLADO}) seguimiento.cambiarEstado(id, estado);
+        tx.executeWithoutResult(s -> {
+            var e = em.find(EntregaEntity.class, id);
+            assertThat(e.getEstado()).isEqualTo(EstadoEntrega.FALLADO);
+            assertThat(e.getCompra().getEstado()).isEqualTo("enviado");
+            assertThat(e.getEntregadoEl()).isNull();
+        });
+        assertThatThrownBy(() -> seguimiento.cambiarEstado(id, EstadoEntrega.ENTREGADO))
+                .isInstanceOf(ReglaNegocioException.class);
+        assertThat(stock()).isEqualTo(2);
+    }
+
+    @Test void cancelaSoloEntregasDeComprasPendientesYExigeAdministrador() throws Exception {
+        int pendiente = entregaSinPago("pendiente");
+        seguimiento.cambiarEstado(pendiente, EstadoEntrega.CANCELADO);
+        tx.executeWithoutResult(s -> {
+            var e = em.find(EntregaEntity.class, pendiente);
+            assertThat(e.getCompra().getEstado()).isEqualTo("cancelado");
+            assertThat(e.getEstado()).isEqualTo(EstadoEntrega.CANCELADO);
+        });
+        int pagada = entregaPagada();
+        mvc.perform(post("/admin/pedidos/{id}/estado", pagada).param("nuevoEstado", "ASIGNADO"))
+                .andExpect(redirectedUrl("/login"));
+        mvc.perform(post("/admin/pedidos/{id}/estado", pagada).session(sesion(cliente)).param("nuevoEstado", "ASIGNADO"))
+                .andExpect(redirectedUrl("/"));
+        mvc.perform(post("/admin/pedidos/{id}/estado", pagada).session(sesionAdmin()).param("nuevoEstado", "CANCELADO"))
+                .andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("error"));
+        tx.executeWithoutResult(s -> assertThat(em.find(EntregaEntity.class, pagada).getCompra().getEstado()).isEqualTo("pagado"));
+    }
     void sinCambios() {
         assertThat(contar("CompraEntity")).isEqualTo(comprasAntes);
         assertThat(contar("BoletaEntity")).isEqualTo(boletasAntes);
