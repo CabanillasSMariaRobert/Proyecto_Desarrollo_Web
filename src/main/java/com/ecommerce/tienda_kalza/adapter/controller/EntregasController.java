@@ -1,78 +1,54 @@
 package com.ecommerce.tienda_kalza.adapter.controller;
 
-import com.ecommerce.tienda_kalza.adapter.enums.EstadoEntrega;
-import com.ecommerce.tienda_kalza.adapter.model.Entrega;
-import com.ecommerce.tienda_kalza.adapter.service.EntregasService;
+import com.ecommerce.tienda_kalza.adapter.entity.CompraEntity;
+import com.ecommerce.tienda_kalza.adapter.entity.EntregaEntity;
+import com.ecommerce.tienda_kalza.adapter.service.CompraService;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.time.LocalDate;
+import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/pedidos")
+@RequiredArgsConstructor
 public class EntregasController {
-    private final EntregasService entregasServicio;
+    private final CompraService compras;
 
-    /*
-    *  Maneja todas las rutas de pedidos
-    * */
-    public EntregasController(EntregasService entregasServicio){
-        this.entregasServicio = entregasServicio;
-    }
-
-    public record Pedido(int codigo,
-            LocalDate fecha,
-            List<String> imagenes,
-            String resumenProductos,
-            String claseEstado,
-            String estado,
-            BigDecimal total,
-            int cantidadItems,
-            Entrega entrega
-    ){
-        public static String obtenerClaseEstado(EstadoEntrega estado){
-            return switch (estado) {
-                case EstadoEntrega.CANCELADO, EstadoEntrega.FALLADO -> "text-bg-danger";
-                case EstadoEntrega.ASIGNADO -> "text-bg-primary";
-                case EstadoEntrega.EN_CAMINO -> "text-bg-info";
-                case EstadoEntrega.ENTREGADO -> "text-bg-success";
-                case EstadoEntrega.PENDIENTE -> "text-bg-warning";
-                case EstadoEntrega.RECOGIDO -> "text-dark";
-            };
-        }
-    }
+    public record Pedido(int codigo, LocalDate fecha, String resumenProductos, String claseEstado,
+                         String estado, BigDecimal total, int cantidadItems, CompraEntity compra, EntregaEntity entrega) {}
 
     @GetMapping
-    public String obtenerPedidosDelUsuarioActual(
-            Model modelo,
-            @RequestParam(name = "pagina", defaultValue = "0") int pagina
-    ){
-        var entregas = this.entregasServicio.listarPorUsuario(1, pagina, 5);
-        List<Pedido> pedidos = entregas
-                .stream()
-                .map(entrega -> new Pedido(
-                        entrega.getId(),
-                        entrega.getCreadoEl().toLocalDate(),
-                        List.of("adidas Forum Low.jpg"),
-                        String.join(", ", entrega.getCompra().getDetalles().stream().map(detalle -> detalle.getNombreDelProducto()).toList()),
-                        Pedido.obtenerClaseEstado(entrega.getEstado()),
-                        entrega.getEstado().name(),
-                        entrega.getCompra().getTotalConDescuento(),
-                        entrega.getCompra().getDetalles().stream().mapToInt(detalle -> detalle.getCantidad()).sum(),
-                        entrega
-                ))
-                .toList();
-        modelo.addAttribute("pedidos", pedidos);
-        modelo.addAttribute("desde", entregas.isEmpty() ? 0 : entregas.getPageable().getOffset() + 1);
-        modelo.addAttribute("hasta", entregas.isEmpty() ? 0 : entregas.getPageable().getOffset() + entregas.getNumberOfElements());
-        modelo.addAttribute("paginaActual", entregas.getNumber());
-        modelo.addAttribute("totalPedidos", entregas.getTotalElements());
-        modelo.addAttribute("totalPaginas", Math.max(1, entregas.getTotalPages()));
+    public String obtenerPedidosDelUsuarioActual(Model modelo, HttpSession session,
+            @RequestParam(name = "pagina", defaultValue = "0") int pagina) {
+        // El propietario se obtiene de la sesión, nunca de parámetros del navegador.
+        if (!(session.getAttribute("idUsuario") instanceof Integer idUsuario)
+                || session.getAttribute("usuarioLogueado") == null) return "redirect:/login";
+        var historial = compras.listarPorCliente(idUsuario, pagina);
+        modelo.addAttribute("pedidos", historial.map(compra -> new Pedido(
+                compra.getIdCompra(), compra.getFechaDeCompra().toLocalDate(),
+                String.join(", ", compra.getDetalles().stream().map(d -> d.getNombreDelProducto()).toList()),
+                claseEstado(compra.getEstado()), compra.getEstado(), compra.getTotalConDescuento(),
+                compra.getDetalles().stream().mapToInt(d -> d.getCantidad()).sum(), compra, compra.getEntrega()
+        )).getContent());
+        modelo.addAttribute("desde", historial.isEmpty() ? 0 : historial.getPageable().getOffset() + 1);
+        modelo.addAttribute("hasta", historial.isEmpty() ? 0 : historial.getPageable().getOffset() + historial.getNumberOfElements());
+        modelo.addAttribute("paginaActual", historial.getNumber());
+        modelo.addAttribute("totalPedidos", historial.getTotalElements());
+        modelo.addAttribute("totalPaginas", Math.max(1, historial.getTotalPages()));
+        modelo.addAttribute("title", "Mis compras | KALZA");
+        modelo.addAttribute("currentPage", "pedidos");
         return "vistas/pedidos";
+    }
+
+    private String claseEstado(String estado) {
+        return switch (estado) {
+            case "pagado", "entregado" -> "text-bg-success";
+            case "enviado" -> "text-bg-info";
+            case "cancelado" -> "text-bg-danger";
+            default -> "text-bg-warning";
+        };
     }
 }

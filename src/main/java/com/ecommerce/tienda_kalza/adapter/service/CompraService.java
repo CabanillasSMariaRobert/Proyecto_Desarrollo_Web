@@ -5,6 +5,9 @@ import com.ecommerce.tienda_kalza.adapter.entity.DetalleCompraEntity;
 import com.ecommerce.tienda_kalza.adapter.repository.CompraRepository;
 import com.ecommerce.tienda_kalza.adapter.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -38,6 +41,16 @@ public class CompraService {
     @Transactional(readOnly = true)
     public List<CompraEntity> listar() {
         return compras.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CompraEntity> listarPorCliente(int idUsuario, int pagina) {
+        var paginado = PageRequest.of(Math.max(0, pagina), 5,
+                Sort.by(Sort.Direction.DESC, "fechaDeCompra", "idCompra"));
+        var historial = compras.findByCliente_IdUsuario(idUsuario, paginado);
+        // Carga los detalles antes de cerrar la transacción para mostrarlos en la vista.
+        historial.forEach(compra -> compra.getDetalles().size());
+        return historial;
     }
 
     @Transactional(readOnly = true)
