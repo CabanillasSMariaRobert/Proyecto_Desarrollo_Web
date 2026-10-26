@@ -3,6 +3,7 @@ package com.ecommerce.tienda_kalza.adapter.service;
 import com.ecommerce.tienda_kalza.adapter.entity.CompraEntity;
 import com.ecommerce.tienda_kalza.adapter.entity.DetalleCompraEntity;
 import com.ecommerce.tienda_kalza.adapter.repository.CompraRepository;
+import com.ecommerce.tienda_kalza.adapter.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +24,15 @@ public class CompraService {
 
     private final CompraRepository compras;
     private final DisponibilidadProductoService disponibilidad;
+    private final InventarioService inventario;
+    private final UsuarioRepository usuarios;
 
-    public CompraService(CompraRepository compras, DisponibilidadProductoService disponibilidad) {
+    public CompraService(CompraRepository compras, DisponibilidadProductoService disponibilidad,
+                         InventarioService inventario, UsuarioRepository usuarios) {
         this.compras = compras;
         this.disponibilidad = disponibilidad;
+        this.inventario = inventario;
+        this.usuarios = usuarios;
     }
 
     @Transactional(readOnly = true)
@@ -42,11 +48,6 @@ public class CompraService {
 
     @Transactional
     public CompraEntity guardar(CompraEntity compra) {
-        // Validar que el cliente se encuentre activo antes de procesar una nueva compra
-        if (compra.getCliente() != null && !Boolean.TRUE.equals(compra.getCliente().getEstaActivo())) {
-            throw new ReglaNegocioException("El usuario se encuentra inactivo y no puede realizar nuevas compras (RN05).");
-        }
-
         if (compra.getTotalConDescuento() == null || compra.getTotalSinDescuento() == null) {
             throw new ReglaNegocioException("Los totales de la compra son obligatorios.");
         }
@@ -60,9 +61,12 @@ public class CompraService {
         }
 
         if (compra.getIdCompra() != 0) {
+            compras.buscarParaActualizar(compra.getIdCompra())
+                    .orElseThrow(() -> new ReglaNegocioException("La compra no existe."));
             var anteriores = compras.consultarDetallesRn01(compra.getIdCompra());
             CompraEntity guardada = obtener(compra.getIdCompra());
-            validarTransicion(guardada.getEstado(), compra.getEstado());
+            String estadoAnterior = anteriores.get(0).getEstado();
+            validarTransicion(estadoAnterior, compra.getEstado());
             compra.setFechaDeCompra(guardada.getFechaDeCompra());
             if (anteriores.stream().anyMatch(d -> "pendiente".equals(d.getEstado()))
                     && !"cancelado".equals(compra.getEstado())) {
@@ -79,20 +83,48 @@ public class CompraService {
                         .filter(d -> d == null || d.getVarianteZapato() == null || d.getCantidad() > cantidades
                                 .getOrDefault(d.getVarianteZapato().getIdVariante(), 0)).toList());
             }
+            if (esVenta(estadoAnterior)) {
+                Map<Integer, Integer> cantidadesAnteriores = new HashMap<>();
+                for (var d : anteriores) {
+                    if (d.getIdVariante() != null) cantidadesAnteriores.put(d.getIdVariante(), d.getCantidad());
+                }
+                Map<Integer, Integer> cantidadesNuevas = new HashMap<>();
+                for (var d : compra.getDetalles()) {
+                    if (d == null || d.getVarianteZapato() == null)
+                        throw new ReglaNegocioException("El detalle de la compra no es válido.");
+                    cantidadesNuevas.merge(d.getVarianteZapato().getIdVariante(), d.getCantidad(), Integer::sum);
+                }
+                if (!cantidadesAnteriores.equals(cantidadesNuevas)) {
+                    throw new ReglaNegocioException("No se pueden cambiar las variantes o cantidades de una compra ya pagada.");
+                }
+            }
+            if (!esVenta(estadoAnterior) && esVenta(compra.getEstado())) {
+                validarClienteActivo(compra);
+                inventario.descontar(compra.getDetalles());
+            }
         } else {
+            validarClienteActivo(compra);
             validarDisponibilidad(compra.getDetalles());
+            if (esVenta(compra.getEstado())) inventario.descontar(compra.getDetalles());
         }
         return compras.save(compra);
     }
 
     @Transactional
     public void cambiarEstado(int id, String nuevoEstado) {
-        CompraEntity compra = obtener(id);
-        validarTransicion(compra.getEstado(), nuevoEstado);
+        CompraEntity compra = compras.buscarParaActualizar(id)
+                .orElseThrow(() -> new ReglaNegocioException("La compra no existe."));
+        // Proyección persistida: no depende de un estado modificado en memoria.
+        String anterior = compras.consultarDetallesRn01(id).get(0).getEstado();
+        validarTransicion(anterior, nuevoEstado);
         if (compras.consultarDetallesRn01(id).stream().anyMatch(d -> "pendiente".equals(d.getEstado()))
                 && !"pendiente".equals(nuevoEstado)
                 && !"cancelado".equals(nuevoEstado)) {
             validarDisponibilidad(compra.getDetalles());
+        }
+        if (!esVenta(anterior) && esVenta(nuevoEstado)) {
+            validarClienteActivo(compra);
+            inventario.descontar(compra.getDetalles());
         }
         compra.setEstado(nuevoEstado);
         compras.save(compra);
@@ -109,6 +141,7 @@ public class CompraService {
     }
 
     private void validarTransicion(String actual, String nuevo) {
+        if (!ESTADOS.contains(nuevo)) throw new ReglaNegocioException("Estado de compra no válido.");
         if (actual.equals(nuevo)) {
             return; // guardar sin cambiar el estado no es una transición
         }
@@ -129,6 +162,18 @@ public class CompraService {
         if (ORDEN.get(nuevo) <= ORDEN.get(actual)) {
             throw new ReglaNegocioException(
                     "El estado solo puede avanzar: de '" + actual + "' no se puede pasar a '" + nuevo + "'.");
+        }
+    }
+
+    private boolean esVenta(String estado) {
+        return List.of("pagado", "enviado", "entregado").contains(estado);
+    }
+
+    // Consulta la base de datos para no confiar en datos antiguos del cliente.
+    private void validarClienteActivo(CompraEntity compra) {
+        if (compra.getCliente() == null
+                || !usuarios.existsByIdUsuarioAndEstaActivoTrue(compra.getCliente().getIdUsuario())) {
+            throw new ReglaNegocioException("El cliente no existe o está inactivo y no puede realizar nuevas compras.");
         }
     }
 

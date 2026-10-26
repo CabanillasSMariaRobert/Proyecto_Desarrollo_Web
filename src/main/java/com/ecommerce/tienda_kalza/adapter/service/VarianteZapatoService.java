@@ -25,7 +25,7 @@ public class VarianteZapatoService {
 
     @Transactional
     public void guardar(Integer id, @NotNull @Valid VarianteZapato model){
-        VarianteZapatoEntity entity = id == null ?  new VarianteZapatoEntity() : buscar(id);
+        VarianteZapatoEntity entity = id == null ? new VarianteZapatoEntity() : buscarParaActualizar(id);
 
         ZapatoEntity zapato = buscarZapato(model.getIdZapato());
 
@@ -79,7 +79,7 @@ public class VarianteZapatoService {
     // DELETE
     @Transactional
     public void desactivar(int id) {
-        VarianteZapatoEntity variante = buscar(id);
+        VarianteZapatoEntity variante = buscarParaActualizar(id);
 
         if (!variante.isEstaActivo()) throw new IllegalStateException("La variante ya está desactivada.");
 
@@ -89,7 +89,7 @@ public class VarianteZapatoService {
 
     @Transactional
     public void activar(int id) {
-        VarianteZapatoEntity variante = buscar(id);
+        VarianteZapatoEntity variante = buscarParaActualizar(id);
 
         if (variante.isEstaActivo()) throw new IllegalStateException("La variante ya está activa.");
 
@@ -101,6 +101,11 @@ public class VarianteZapatoService {
 
     private VarianteZapatoEntity buscar(int id){
         return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("La variante no existe."));
+    }
+
+    private VarianteZapatoEntity buscarParaActualizar(int id) {
+        return repository.buscarParaActualizar(id).orElseThrow(() ->
+                new IllegalArgumentException("La variante no existe."));
     }
 
     private ZapatoEntity buscarZapato(int id){

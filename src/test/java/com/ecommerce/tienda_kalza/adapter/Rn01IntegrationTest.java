@@ -262,7 +262,7 @@ class Rn01IntegrationTest {
         assertThat(detalle.getPrecioOriginalXUnidad()).isEqualByComparingTo("80.00");
         assertThat(detalle.getPrecioConDescuento()).isEqualByComparingTo("80.00");
         assertThat(detalle.getCantidad()).isEqualTo(1);
-        assertThat(detalle.getVarianteZapato().getStock()).isEqualTo(10);
+        assertThat(detalle.getVarianteZapato().getStock()).isEqualTo(9); // la venta ya descontó una unidad
         assertThat(historial.getBoleta().getIdBoleta()).isEqualTo(idBoleta);
         assertThat(historial.getBoleta().getTotal()).isEqualByComparingTo("80.00");
         compras.cambiarEstado(idCompra, "enviado"); // no bloquea la logística de compras pagadas

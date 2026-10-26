@@ -3,7 +3,9 @@ package com.ecommerce.tienda_kalza.adapter.repository;
 // Autor: Samuel
 
 import com.ecommerce.tienda_kalza.adapter.entity.CompraEntity;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -14,9 +16,13 @@ import java.util.List;
 
 @Repository
 public interface CompraRepository extends JpaRepository<CompraEntity, Integer> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select c from CompraEntity c where c.idCompra = :id")
+    @QueryHints(@QueryHint(name = "org.hibernate.flushMode", value = "COMMIT"))
+    java.util.Optional<CompraEntity> buscarParaActualizar(@Param("id") int id);
+
     List<CompraEntity> findByEstado(String estado);
 
-    // Verifica si el usuario tiene compras registradas en el historial
     boolean existsByCliente_IdUsuario(Integer idUsuario);
 
     // Lee el historial persistido antes de evaluar nuevas unidades, sin volcar cambios del formulario.

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
+    boolean existsByIdUsuarioAndEstaActivoTrue(Integer idUsuario);
 
     // Metodo para el Login
     Optional<UsuarioEntity> findByCorreoIgnoreCase(String correo);
