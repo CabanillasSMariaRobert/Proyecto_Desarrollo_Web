@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 public class Token {
     private Long id;
 
-    private String tipo;
-    private TipoToken token;
+    private TipoToken tipo;
+    private String token;
 
     private LocalDateTime creadoEl;
     private LocalDateTime expiraEl;
@@ -25,8 +25,8 @@ public class Token {
     // Constructor completo
     public Token(
             Long id,
-            String tipo,
-            TipoToken token,
+            TipoToken tipo,
+            String token,
             LocalDateTime creadoEl,
             LocalDateTime expiraEl,
             LocalDateTime usadoEl,
@@ -43,8 +43,8 @@ public class Token {
 
     // Constructor sin id
     public Token(
-            String tipo,
-            TipoToken token,
+            TipoToken tipo,
+            String token,
             LocalDateTime creadoEl,
             LocalDateTime expiraEl,
             LocalDateTime usadoEl,
@@ -60,8 +60,8 @@ public class Token {
 
     // Constructor sin id ni usadoEl
     public Token(
-            String tipo,
-            TipoToken token,
+            TipoToken tipo,
+            String token,
             LocalDateTime creadoEl,
             LocalDateTime expiraEl,
             Usuario usuario
@@ -76,8 +76,8 @@ public class Token {
 
     // Constructor sin id, creadoEl ni usadoEl
     public Token(
-            String tipo,
-            TipoToken token,
+            TipoToken tipo,
+            String token,
             LocalDateTime expiraEl,
             Usuario usuario
     ){

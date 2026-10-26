@@ -18,11 +18,11 @@ public class TokenEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String tipo;
-    @Enumerated (EnumType.STRING)
-    @Column(nullable = false)
-    private TipoToken token;
+    private TipoToken tipo;
+    @Column(nullable = false, length = 64, unique = true)
+    private String token;
 
     @CreationTimestamp
     @Column(name="creado_el", nullable = false)
@@ -42,8 +42,8 @@ public class TokenEntity {
     // Constructor completo
     public TokenEntity(
             int id,
-            String tipo,
-            TipoToken token,
+            TipoToken tipo,
+            String token,
             LocalDateTime creadoEl,
             LocalDateTime expiraEl,
             LocalDateTime usadoEl,
@@ -60,8 +60,8 @@ public class TokenEntity {
 
     // Constructor sin id
     public TokenEntity(
-            String tipo,
-            TipoToken token,
+            TipoToken tipo,
+            String token,
             LocalDateTime creadoEl,
             LocalDateTime expiraEl,
             LocalDateTime usadoEl,
@@ -77,8 +77,8 @@ public class TokenEntity {
 
     // Constructor sin id ni usadoEl
     public TokenEntity(
-            String tipo,
-            TipoToken token,
+            TipoToken tipo,
+            String token,
             LocalDateTime creadoEl,
             LocalDateTime expiraEl,
             UsuarioEntity usuario
@@ -93,8 +93,8 @@ public class TokenEntity {
 
     // Constructor sin id, creadoEl ni usadoEl
     public TokenEntity(
-            String tipo,
-            TipoToken token,
+            TipoToken tipo,
+            String token,
             LocalDateTime expiraEl,
             UsuarioEntity usuario
     ){
