@@ -45,7 +45,7 @@ public class EntregasAdminController {
                 case EstadoEntrega.EN_CAMINO -> "text-bg-info";
                 case EstadoEntrega.ENTREGADO -> "text-bg-success";
                 case EstadoEntrega.PENDIENTE -> "text-bg-warning";
-                case EstadoEntrega.RECOGIDO -> "text-bg-accent";
+                case EstadoEntrega.RECOGIDO -> "text-dark";
             };
         }
     }

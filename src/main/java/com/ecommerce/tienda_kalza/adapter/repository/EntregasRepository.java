@@ -12,6 +12,8 @@ import java.util.List;
 public interface EntregasRepository extends JpaRepository<EntregaEntity, Integer> {
     Page<EntregaEntity> findByEstado(EstadoEntrega estado, Pageable pageable);
 
+    Page<EntregaEntity> findByCompra_Cliente_IdUsuario(int idUsuario, Pageable pageable);
+
     @Override
     @EntityGraph(attributePaths = {"compra.cliente", "compra.detalles", "puntoDeEntrega"})
     List<EntregaEntity> findAll();

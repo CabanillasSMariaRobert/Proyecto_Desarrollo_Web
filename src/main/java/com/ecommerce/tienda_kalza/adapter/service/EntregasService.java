@@ -51,6 +51,12 @@ public class EntregasService {
                 .stream().map(this::aModel).toList();
     }
 
+    public Page<Entrega> listarPorUsuario(int idUsuario, int pagina, int tamanio) {
+        var filtro = new Filtro(null, pagina, tamanio);
+        var paginado = PageRequest.of(filtro.pagina(), filtro.tamanio(), Sort.by("id").descending());
+        return repository.findByCompra_Cliente_IdUsuario(idUsuario, paginado).map(this::aModel);
+    }
+
     private Entrega aModel(EntregaEntity entity) {
         return new Entrega(
                 entity.getId(), aCompra(entity.getCompra()), aPuntoEntrega(entity.getPuntoDeEntrega()),
