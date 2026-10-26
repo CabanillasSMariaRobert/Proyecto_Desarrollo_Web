@@ -136,6 +136,15 @@ class CalzadoWebIntegrationTest {
                 .andExpect(flash().attributeExists("error"));
         assertThat(asociaciones.count()).isZero();
         assertThat(materiales.existsById(idMaterial)).isTrue();
+        mvc.perform(get("/admin/materiales")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("/admin/materiales/" + idMaterial + "/activar")));
+        mvc.perform(post("/admin/materiales/{id}/activar", idMaterial))
+                .andExpect(redirectedUrl("/admin/materiales")).andExpect(flash().attributeExists("mensaje"));
+        em.clear();
+        assertThat(materiales.findById(idMaterial).orElseThrow().isEstaActivo()).isTrue();
+        mvc.perform(post("/admin/zapatos/{id}/materiales/asignar", idZapato).param("idMaterial", "" + idMaterial))
+                .andExpect(flash().attributeExists("mensaje"));
+        assertThat(asociaciones.count()).isEqualTo(1);
     }
 
     @Test void calzadoInactivoDesapareceDelCatalogoYRechazaVariantes() throws Exception {

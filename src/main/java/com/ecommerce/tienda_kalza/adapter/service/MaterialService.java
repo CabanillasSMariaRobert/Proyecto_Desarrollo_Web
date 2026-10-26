@@ -58,6 +58,14 @@ public class MaterialService {
         repository.saveAndFlush(material);
     }
 
+    @Transactional
+    public void activar(int id) {
+        MaterialEntity material = buscar(id);
+        if (material.isEstaActivo()) throw new IllegalStateException("El material ya está activo.");
+        material.setEstaActivo(true);
+        repository.saveAndFlush(material);
+    }
+
     private MaterialEntity buscar(int id){
         return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("El material no existe."));
     }

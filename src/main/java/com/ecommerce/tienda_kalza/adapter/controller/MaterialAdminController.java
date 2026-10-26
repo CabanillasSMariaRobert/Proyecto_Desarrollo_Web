@@ -68,4 +68,17 @@ public class MaterialAdminController {
         }
         return "redirect:/admin/materiales";
     }
+
+    @PostMapping("/{id}/activar")
+    public String activar(@PathVariable int id, RedirectAttributes flash) {
+        try {
+            service.activar(id);
+            flash.addFlashAttribute("mensaje", "Material activado correctamente.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            flash.addFlashAttribute("error", "No se pudo activar el material.");
+        }
+        return "redirect:/admin/materiales";
+    }
 }
