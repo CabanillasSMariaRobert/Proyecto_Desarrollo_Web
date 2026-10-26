@@ -1,192 +1,149 @@
 <!doctype html>
-<html lang="es" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/admin/layout :: layout(~{::content})}">
   <body>
     <div class="admin-content-inner d-flex flex-column gap-4" th:fragment="content">
-      <!-- CABECERA -->
-      <div
-        class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3"
-      >
-        <div>
-          <h2 class="fs-3 fw-bold mb-1">Panel general</h2>
-          <p class="text-muted mb-0">Métricas clave y actividad reciente.</p>
-        </div>
-        <div class="d-flex gap-2">
-          <button class="btn btn-outline-dark">Exportar reporte</button>
-          <button class="btn btn-dark">Agregar widget</button>
-        </div>
-      </div>
+      <header>
+        <h2 class="fs-3 fw-bold mb-1">Panel de métricas</h2>
+        <p class="text-muted mb-0">Ventas, compras, usuarios y entregas en un solo lugar.</p>
+      </header>
+      <p class="small text-muted mb-0">
+        Fecha de referencia: <strong th:text="${#temporals.format(metricas.fecha, 'dd/MM/yyyy')}"></strong>
+      </p>
 
-      <!-- TARJETAS INDICADORAS DE RENDIMIENTO (VENTAS, USUARIOS, PEDIDOS y ALERTAS DE STOCK) -->
-      <div class="row g-3">
-        <div class="col-6 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 p-3">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="small text-muted text-uppercase">Ventas del día</span>
-              <i class="bi bi-cash-stack text-primary"></i>
-            </div>
-            <div
-              class="fs-4 fw-bold"
-              th:text="'S/ ' + ${#numbers.formatDecimal(metricas.ventasHoy, 1, 'COMMA', 2, 'POINT')}"
-            >
-              —
-            </div>
-            <div class="small text-success">
-              <i class="bi bi-arrow-up-right"></i>
-              <span th:text="${metricas.variacionVentas}">—</span>
-            </div>
+      <section aria-labelledby="indicadores-titulo">
+        <h3 id="indicadores-titulo" class="h5 fw-bold mb-3">Indicadores actuales</h3>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-5 g-3">
+          <div class="col" th:each="indicador : ${metricas.indicadores}">
+            <article class="card border-0 shadow-sm h-100 p-3">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                <h4 class="small text-muted mb-0" th:text="${indicador.nombre}"></h4>
+                <i class="bi text-primary" th:classappend="${indicador.icono}" aria-hidden="true"></i>
+              </div>
+              <div class="fs-4 fw-bold" th:text="${indicador.unidad == 'S/' ? 'S/ ' + #numbers.formatDecimal(indicador.valor, 1, 'COMMA', 2, 'POINT') : #numbers.formatInteger(indicador.valor, 1, 'COMMA')}"></div>
+              <span th:if="${indicador.unidad != 'S/'}" class="small text-muted" th:text="${indicador.unidad}"></span>
+              <p class="small text-muted mt-2 mb-0" th:text="${indicador.referencia}"></p>
+            </article>
           </div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 p-3">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="small text-muted text-uppercase">Pedidos pendientes</span>
-              <i class="bi bi-truck"></i>
-            </div>
-            <div class="fs-4 fw-bold" th:text="${metricas.pedidosPendientes}">
-              —
-            </div>
-            <div class="small text-muted">Requieren atención</div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 p-3">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="small text-muted text-uppercase">Usuarios activos</span>
-              <i class="bi bi-people"></i>
-            </div>
-            <div
-              class="fs-4 fw-bold"
-              th:text="${#numbers.formatInteger(metricas.usuariosActivos, 1, 'COMMA')}"
-            >
-              —
-            </div>
-            <div class="small text-success">
-              <i class="bi bi-arrow-up-right"></i>
-              <span th:text="${metricas.variacionUsuarios}">—</span>
-            </div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="card h-100 p-3 text-bg-danger border-0">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="small text-uppercase">Alertas de stock</span>
-              <i class="bi bi-exclamation-triangle"></i>
-            </div>
-            <div class="fs-4 fw-bold" th:text="${metricas.alertasStock} + ' items'">
-              —
-            </div>
-            <div class="small text-decoration-underline">Revisar inventario</div>
-          </div>
-        </div>
-      </div>
+        <p class="small text-muted mt-3 mb-0">Usuarios activos: habilitados y no baneados, de cualquier rol. Entregas en atención: PENDIENTE, ASIGNADO, RECOGIDO o EN_CAMINO.</p>
+      </section>
 
-      <!-- GRÁFICOS -->
-      <div class="row g-3">
-        <div class="col-lg-8">
-          <div class="card border-0 shadow-sm h-100 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h3 class="h6 fw-bold mb-0">Resumen de ingresos</h3>
-              <!-- TODO: el selector de período es visual. La serie del modelo
-                   siempre son 7 días; falta el parámetro de período en el
-                   controlador cuando se conecte la base de datos. -->
-              <select class="form-select form-select-sm w-auto">
-                <option>Últimos 30 días</option>
-                <option>Este trimestre</option>
-                <option>Este año</option>
-              </select>
-            </div>
-            <!-- Gráfico de barras: la altura sale del modelo, no del HTML -->
-            <div class="d-flex align-items-end gap-2" style="height: 220px">
-              <div
-                th:each="punto : ${metricas.ingresos}"
-                class="flex-grow-1 rounded-top"
-                th:classappend="${punto.destacado} ? 'text-bg-primary' : 'bg-secondary-subtle'"
-                th:style="'height:' + ${punto.porcentaje} + '%'"
-                th:title="${punto.etiqueta} + ': S/ ' + ${#numbers.formatDecimal(punto.monto, 1, 'COMMA', 2, 'POINT')}"
-                th:attr="aria-label=${punto.etiqueta}"
-              ></div>
-            </div>
-          </div>
+      <section aria-labelledby="series-titulo">
+        <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2 mb-3">
+          <h3 id="series-titulo" class="h5 fw-bold mb-0">Evolución de las operaciones</h3>
+          <span class="small text-muted">Seis meses hasta el actual · Compras diarias: últimos siete días</span>
         </div>
-
-        <!-- TOP PRODUCTOS MÁS VENDIDOS -->
-        <div class="col-lg-4">
-          <div class="card border-0 shadow-sm h-100 p-4">
-            <h3 class="h6 fw-bold mb-4">Más vendidos</h3>
-            <ul class="list-unstyled d-flex flex-column gap-3">
-              <li
-                th:each="producto, iter : ${metricas.topProductos}"
-                class="d-flex align-items-center gap-3"
-                th:classappend="${iter.last} ? '' : 'border-bottom pb-3'"
-              >
-                <img
-                  th:src="@{'/img/productos/' + ${producto.imagen}}"
-                  width="48"
-                  height="48"
-                  class="rounded-3 object-fit-cover"
-                  alt="Producto"
-                />
-                <div class="flex-grow-1">
-                  <div class="fw-bold small" th:text="${producto.nombre}">—</div>
-                  <div class="small text-muted">
-                    <span th:text="${producto.unidades}">—</span> unidades
-                  </div>
+        <div class="row g-3">
+          <div class="col-12 col-xl-6" th:each="serie : ${metricas.series}">
+            <article class="card border-0 shadow-sm h-100 p-3 p-md-4">
+              <h4 class="h6 fw-bold mb-2" th:text="${serie.nombre}"></h4>
+              <p class="small text-muted mb-3" th:text="${serie.descripcion}"></p>
+              <figure class="mb-0">
+                <div class="small fw-semibold text-muted mb-2" th:text="${serie.unidad == 'S/' ? 'Importe vendido (S/)' : 'Cantidad de ' + serie.unidad}"></div>
+                <div class="position-relative" style="height: 280px; width: 100%;">
+                  <canvas class="w-100 h-100" th:id="${'grafico-' + serie.codigo}" role="img" th:attr="aria-label=${serie.nombre + '. ' + serie.descripcion}">
+                    Los valores del gráfico están disponibles en la tabla inferior.
+                  </canvas>
                 </div>
-                <span
-                  class="fw-bold small"
-                  th:text="'S/ ' + ${#numbers.formatDecimal(producto.total, 1, 'COMMA', 2, 'POINT')}"
-                  >—</span
-                >
-              </li>
-            </ul>
+                <figcaption class="small text-muted text-center" th:text="${serie.ejeX}"></figcaption>
+              </figure>
+              <details class="mt-3 small">
+                <summary class="text-primary">Ver valores del gráfico</summary>
+                <div class="table-responsive mt-2">
+                  <table class="table table-sm mb-0">
+                    <caption class="visually-hidden" th:text="${serie.nombre}"></caption>
+                    <thead><tr><th scope="col" th:text="${serie.ejeX}"></th><th scope="col" class="text-end" th:text="${serie.unidad}"></th></tr></thead>
+                    <tbody><tr th:each="punto : ${serie.puntos}"><th scope="row" th:text="${punto.etiqueta}"></th><td class="text-end" th:text="${serie.unidad == 'S/' ? #numbers.formatDecimal(punto.valor, 1, 'COMMA', 2, 'POINT') : #numbers.formatInteger(punto.valor, 1, 'COMMA')}"></td></tr></tbody>
+                  </table>
+                </div>
+              </details>
+            </article>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- PEDIDOS RECIENTES -->
-      <div class="card border-0 shadow-sm p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3 class="h6 fw-bold mb-0">Pedidos recientes</h3>
-          <a th:href="@{/admin/pedidos}" class="small text-primary">Ver todos</a>
+      <section class="card border-0 shadow-sm p-3 p-md-4" aria-labelledby="stock-titulo">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <h3 id="stock-titulo" class="h5 fw-bold mb-0">Variantes con existencias bajas</h3>
+          <span class="badge text-bg-warning" th:text="${#lists.size(metricas.variantesBajas)} + ' variantes'"></span>
         </div>
+        <p class="small text-muted">Combinaciones de talla y color con entre 0 y 4 pares disponibles. Incluye variantes agotadas.</p>
         <div class="table-responsive">
           <table class="table align-middle mb-0">
-            <thead>
-              <tr>
-                <th>Pedido</th>
-                <th>Cliente</th>
-                <th>Fecha</th>
-                <th>Estado</th>
-                <th class="text-end">Monto</th>
-              </tr>
-            </thead>
+            <thead><tr><th scope="col">Producto</th><th scope="col">Talla</th><th scope="col">Color</th><th scope="col" class="text-end">Stock (pares)</th><th scope="col">Disponibilidad</th></tr></thead>
             <tbody>
-              <tr th:each="pedido : ${metricas.pedidosRecientes}">
-                <td class="fw-semibold" th:text="'#ORD-' + ${pedido.id}">—</td>
-                <td th:text="${pedido.cliente}">—</td>
-                <td
-                  class="text-muted"
-                  th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy')}"
-                  >—</td
-                >
-                <td>
-                  <span
-                    class="badge text-uppercase"
-                    th:classappend="${pedido.estado.claseCss()}"
-                    th:text="${pedido.estado}"
-                    >—</span
-                  >
-                </td>
-                <td
-                  class="text-end fw-semibold"
-                  th:text="'S/ ' + ${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 2, 'POINT')}"
-                  >—</td
-                >
+              <tr th:each="variante : ${metricas.variantesBajas}">
+                <td class="fw-semibold" th:text="${variante.producto}"></td><td th:text="${variante.talla}"></td><td th:text="${variante.color}"></td>
+                <td class="text-end" th:text="${variante.stock}"></td>
+                <td><span class="badge" th:classappend="${variante.stock == 0} ? 'text-bg-danger' : 'text-bg-warning'" th:text="${variante.stock == 0} ? 'Agotado' : 'Stock bajo'"></span></td>
               </tr>
+              <tr th:if="${#lists.isEmpty(metricas.variantesBajas)}"><td colspan="5" class="text-center text-muted py-3">No hay variantes con existencias bajas.</td></tr>
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
+      <p id="error-graficos" class="alert alert-warning mb-0" role="alert" hidden>No se pudieron cargar los gráficos. Puedes consultar los valores en las tablas de cada métrica.</p>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.6.1/dist/chart.umd.min.js"></script>
+      <script th:inline="javascript">
+        (() => {
+          const series = /*[[${metricas.series}]]*/ [];
+          if (typeof Chart === 'undefined') {
+            document.getElementById('error-graficos').hidden = false;
+            document.querySelectorAll('[aria-labelledby="series-titulo"] details').forEach(tabla => tabla.open = true);
+            return;
+          }
+          series.forEach(serie => {
+            const moneda = serie.unidad === 'S/';
+            const formato = new Intl.NumberFormat('es-PE', moneda
+              ? { style: 'currency', currency: 'PEN' }
+              : { maximumFractionDigits: 0 });
+            new Chart(document.getElementById(`grafico-${serie.codigo}`), {
+              type: serie.linea ? 'line' : 'bar',
+              data: {
+                labels: serie.puntos.map(punto => punto.etiqueta),
+                datasets: [{
+                  label: serie.nombre,
+                  data: serie.puntos.map(punto => punto.valor),
+                  borderColor: '#0d6efd',
+                  backgroundColor: serie.linea ? 'rgba(13, 110, 253, 0.12)' : '#0d6efd',
+                  borderWidth: serie.linea ? 3 : 0,
+                  borderRadius: serie.linea ? 0 : 4,
+                  pointRadius: 4,
+                  pointHoverRadius: 6,
+                  tension: 0.2,
+                  fill: false
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                resizeDelay: 100,
+                locale: 'es-PE',
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    callbacks: {
+                      label: contexto => moneda
+                        ? formato.format(contexto.parsed.y)
+                        : `${formato.format(contexto.parsed.y)} ${serie.unidad}`
+                    }
+                  }
+                },
+                scales: {
+                  x: { grid: { display: false }, title: { display: true, text: serie.ejeX } },
+                  y: {
+                    beginAtZero: true,
+                    title: { display: true, text: moneda ? 'Importe vendido (S/)' : `Cantidad de ${serie.unidad}` },
+                    ticks: { precision: 0, callback: valor => formato.format(valor) }
+                  }
+                }
+              }
+            });
+          });
+        })();
+      </script>
     </div>
   </body>
 </html>

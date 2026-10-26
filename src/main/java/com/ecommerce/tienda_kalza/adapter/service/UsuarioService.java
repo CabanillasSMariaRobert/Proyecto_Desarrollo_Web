@@ -18,6 +18,114 @@ public class UsuarioService {
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
 
+    // REGISTRO CLIENTES
+    @Transactional
+    public void registrar(com.ecommerce.tienda_kalza.adapter.model.RegistroForm form) {
+        if (form == null) {
+            throw new IllegalArgumentException("Los datos de registro son obligatorios.");
+        }
+
+        String nombreCompleto = limpiar(form.getNombreCompleto());
+        if (nombreCompleto == null || nombreCompleto.isBlank()) {
+            throw new IllegalArgumentException("Por favor, ingresa tu nombre completo.");
+        }
+
+        String correo = limpiar(form.getCorreo());
+        if (correo == null || correo.isBlank()) {
+            throw new IllegalArgumentException("El correo electrónico es obligatorio.");
+        }
+
+        if (repository.existsByCorreoIgnoreCase(correo)) {
+            throw new IllegalStateException("Ya existe una cuenta registrada con el correo \"" + correo + "\".");
+        }
+
+        String clave = form.getClave();
+        String confirmarClave = form.getConfirmarClave();
+
+        if (clave == null || clave.isBlank()) {
+            throw new IllegalArgumentException("La contraseña es obligatoria.");
+        }
+
+        if (clave.trim().length() < 6) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres.");
+        }
+
+        if (!clave.equals(confirmarClave)) {
+            throw new IllegalArgumentException("Las contraseñas no coinciden. Por favor verifícalas.");
+        }
+
+        // Separar nombres y apellidos para respetar la entidad JPA
+        String nombres = nombreCompleto;
+        String apellidos = "-";
+        if (nombreCompleto.contains(" ")) {
+            int pos = nombreCompleto.lastIndexOf(' ');
+            nombres = nombreCompleto.substring(0, pos).trim();
+            apellidos = nombreCompleto.substring(pos + 1).trim();
+        }
+
+        UsuarioEntity entity = UsuarioEntity.builder()
+                .nombres(nombres)
+                .apellidos(apellidos)
+                .correo(correo)
+                .clave(passwordEncoder.encode(clave.trim()))
+                .rol(RolUsuario.COMUN)
+                .tipoDeDocumento(TipoDocumento.DNI)
+                .estaActivo(true)
+                .estaBaneado(false)
+                .estaVerificado(false)
+                .build();
+
+        repository.save(entity);
+    }
+
+    // LOGIN
+    @Transactional
+    public Usuario autenticar(String correo, String clave) {
+        String correoLimpio = limpiar(correo);
+        String claveLimpia = (clave != null) ? clave.trim() : "";
+
+        if (correoLimpio == null || claveLimpia.isEmpty()) {
+            throw new IllegalArgumentException("Debe ingresar su correo electrónico y contraseña.");
+        }
+
+        UsuarioEntity entity = repository.findByCorreoIgnoreCase(correoLimpio)
+                .orElseThrow(() -> new IllegalArgumentException("El correo o la contraseña son incorrectos."));
+
+        // Verificación con BCrypt
+        boolean coincide = false;
+        try {
+            coincide = passwordEncoder.matches(claveLimpia, entity.getClave());
+        } catch (Exception e) {
+            coincide = false;
+        }
+
+        // Respaldo por si quedó algún registro con contraseña sin hashear en la BD de pruebas
+        if (!coincide && claveLimpia.equals(entity.getClave())) {
+            coincide = true;
+            entity.setClave(passwordEncoder.encode(claveLimpia));
+            repository.save(entity);
+        }
+
+        if (!coincide) {
+            throw new IllegalArgumentException("El correo o la contraseña son incorrectos.");
+        }
+
+        // Validación de usuario bloqueado
+        if (Boolean.TRUE.equals(entity.getEstaBaneado())) {
+            String razon = (entity.getRazonDeBaneo() != null && !entity.getRazonDeBaneo().isBlank())
+                    ? ": " + entity.getRazonDeBaneo()
+                    : ".";
+            throw new IllegalStateException("Tu cuenta ha sido bloqueada" + razon);
+        }
+
+        // Validación de usuario inactivo
+        if (!Boolean.TRUE.equals(entity.getEstaActivo())) {
+            throw new IllegalStateException("Tu cuenta se encuentra inactiva. Comunícate con soporte.");
+        }
+
+        return aModel(entity);
+    }
+
     // CREATE
     @Transactional
     public void crear(Usuario model) {

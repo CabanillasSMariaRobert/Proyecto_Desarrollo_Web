@@ -1,103 +1,60 @@
 <!DOCTYPE html>
-<html lang="es" th:replace="~{fragments/general/layout :: layout(~{::content})}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/general/layout :: layout(~{::content})}">
 <body>
-
-<div th:fragment="content">
-    <!-- ============ HEADER ============ -->
-    <!-- ============ CONTENIDO ============ -->
-        <div class="container">
-            <div class="row g-5">
-
-                <div class="col-lg-6">
-                    <h1 class="fs-2 fw-bold">Contacta con nosotros</h1>
-                    <p class="text-muted lead">
-                        Si tienes alguna pregunta, sugerencia o comentario, no dudes en ponerte en
-                        contacto con nosotros. Estamos aquí para ayudarte y asegurarnos de que tengas
-                        la mejor experiencia posible.
-                    </p>
-
-                    <ul class="list-unstyled mt-4">
-                        <li class="mb-3 d-flex align-items-start gap-3" th:each="canal : ${canales}">
-                            <i class="bi fs-4" th:class="'bi ' + ${canal.icono}"></i>
-                            <div>
-                                <h3 class="h6 mb-0" th:text="${canal.titulo}"></h3>
-                                <p class="mb-0 text-muted" th:text="${canal.valor}"></p>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <h3 class="h6 mt-4">Horario de atención</h3>
-                    <table class="table table-bordered w-auto">
-                        <thead class="table-dark">
-                            <tr>
-                                <th scope="col">Día</th>
-                                <th scope="col">Horario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="horario : ${horarios}">
-                                <td th:text="${horario.dia}"></td>
-                                <td th:text="${horario.horario}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="col-lg-6">
-                    <form class="p-4 border rounded-3 shadow-sm bg-white">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label fw-semibold">Nombre</label>
-                            <input type="text" id="nombre" name="nombre" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="correo" class="form-label fw-semibold">Correo electrónico</label>
-                            <input type="email" id="correo" name="correo" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="mensaje" class="form-label fw-semibold">Mensaje</label>
-                            <textarea id="mensaje" name="mensaje" rows="5" class="form-control" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-blue w-100 py-2">
-                            <i class="bi bi-send-fill me-2"></i>Enviar
-                        </button>
-                    </form>
-                </div>
+<div th:fragment="content" class="container py-5">
+    <div class="row g-5">
+        <section class="col-lg-6" aria-labelledby="titulo-contacto">
+            <h1 id="titulo-contacto" class="fs-2 fw-bold">Contacta con nosotros</h1>
+            <p class="text-muted lead">Conoce nuestros canales y horarios de atención. En KALZA te orientamos sobre modelos, tallas y disponibilidad.</p>
+            <ul class="list-unstyled mt-4">
+                <li class="mb-4 d-flex gap-3"><i class="bi bi-geo-alt-fill fs-4" aria-hidden="true"></i><div><h2 class="h6 mb-1">Ubicación</h2><p class="mb-0 text-muted">Lima, Perú. Atención virtual.</p></div></li>
+                <li class="mb-4 d-flex gap-3"><i class="bi bi-envelope-fill fs-4" aria-hidden="true"></i><div><h2 class="h6 mb-1">Correo de referencia</h2><p class="mb-0 text-muted">contacto@kalza.example</p></div></li>
+                <li class="mb-4 d-flex gap-3"><i class="bi bi-chat-dots-fill fs-4" aria-hidden="true"></i><div><h2 class="h6 mb-1">Consultas</h2><p class="mb-0 text-muted">Información sobre el catálogo, variantes y seguimiento de pedidos.</p></div></li>
+            </ul>
+            <p class="small text-muted">Los datos de contacto y horarios son referenciales para esta demostración académica. El correo indicado no recibe mensajes.</p>
+            <h2 class="h5 mt-4">Horario de atención de referencia</h2>
+            <div class="table-responsive"><table class="table table-bordered w-auto">
+                <caption>Horario expresado en hora de Lima.</caption>
+                <thead class="table-dark"><tr><th scope="col">Día</th><th scope="col">Horario</th></tr></thead>
+                <tbody><tr><th scope="row">Lunes a viernes</th><td>09:00 a 18:00</td></tr><tr><th scope="row">Sábado</th><td>09:00 a 13:00</td></tr><tr><th scope="row">Domingo</th><td>Sin atención</td></tr></tbody>
+            </table></div>
+            <a th:href="@{/catalogo}" class="btn btn-outline-dark mt-3">Consultar catálogo</a>
+        </section>
+        <section class="col-lg-6" aria-labelledby="titulo-formulario">
+            <div class="p-4 p-md-5 border rounded-4 shadow-sm bg-white h-100">
+                <h2 id="titulo-formulario" class="h3 fw-bold mb-3">Escríbenos</h2>
+                <p class="text-muted" id="aviso-formulario">Formulario de demostración. Los datos no se envían ni se guardan.</p>
+                <form onsubmit="return false;" aria-describedby="aviso-formulario">
+                    <div class="mb-3">
+                        <label for="contacto-nombre" class="form-label fw-semibold">Nombre</label>
+                        <input id="contacto-nombre" type="text" class="form-control" maxlength="150" placeholder="Tu nombre" autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contacto-correo" class="form-label fw-semibold">Correo electrónico</label>
+                        <input id="contacto-correo" type="email" class="form-control" maxlength="255" placeholder="tu@correo.com" autocomplete="off">
+                    </div>
+                    <div class="mb-4">
+                        <label for="contacto-mensaje" class="form-label fw-semibold">Mensaje</label>
+                        <textarea id="contacto-mensaje" class="form-control" rows="5" maxlength="2000" placeholder="Escribe tu consulta"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-blue w-100 py-2"
+                            onclick="document.getElementById('contacto-demo').hidden = false;">
+                        <i class="bi bi-send me-2" aria-hidden="true"></i>Enviar
+                    </button>
+                </form>
             </div>
-
-            <!-- ============ POLÍTICA DE PRIVACIDAD ============ -->
-            <section id="privacidad" class="border-top pt-5 mt-5">
-                <h2 class="fs-2 fw-bold mb-3">Política de privacidad</h2>
-                <p class="text-muted">
-                    En KALZA nos tomamos muy en serio la protección de tus datos personales. Esta política
-                    explica qué información recopilamos, cómo la usamos y los derechos que tienes sobre ella.
-                </p>
-
-                <div class="row g-3 mt-1 mb-4">
-                    <div class="col-md-6" th:each="seccion : ${privacidad}">
-                        <h3 class="h6 fw-bold" th:text="${seccion.titulo}"></h3>
-                        <p class="text-muted mb-0" th:text="${seccion.descripcion}"></p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ============ TÉRMINOS DE SERVICIO ============ -->
-            <section id="terminos" class="border-top pt-5 mt-5">
-                <h2 class="fs-2 fw-bold mb-3">Términos de servicio</h2>
-                <p class="text-muted">
-                    Al utilizar el sitio web de KALZA aceptas los siguientes términos y condiciones. Te
-                    recomendamos leerlos antes de realizar una compra.
-                </p>
-
-                <div class="row g-3 mt-1 mb-4">
-                    <div class="col-md-6" th:each="seccion : ${terminos}">
-                        <h3 class="h6 fw-bold" th:text="${seccion.titulo}"></h3>
-                        <p class="text-muted mb-0" th:text="${seccion.descripcion}"></p>
-                    </div>
-                </div>
-            </section>
-        </div>
-    <!-- ============ FOOTER ============ -->
+        </section>
+    </div>
+    <section id="privacidad" class="border-top pt-5 mt-5" aria-labelledby="titulo-privacidad">
+        <h2 id="titulo-privacidad" class="fs-2 fw-bold mb-3">Privacidad de esta demostración</h2>
+        <p class="text-muted">El formulario de esta página es únicamente visual: no envía ni almacena la información ingresada. Utiliza datos ficticios para probar su presentación.</p>
+        <div class="row g-4"><div class="col-md-6"><h3 class="h6 fw-bold">Datos de prueba</h3><p class="text-muted mb-0">Los formularios de cuenta y compra pueden utilizar nombres, correos y direcciones ficticios para demostrar sus funciones.</p></div>
+        <div class="col-md-6"><h3 class="h6 fw-bold">Carrito</h3><p class="text-muted mb-0">La selección del carrito se mantiene en la sesión del navegador y puede actualizarse o retirarse desde esa sección.</p></div></div>
+    </section>
+    <section id="terminos" class="border-top pt-5 mt-5" aria-labelledby="titulo-terminos">
+        <h2 id="titulo-terminos" class="fs-2 fw-bold mb-3">Términos de uso de la demostración</h2>
+        <div class="row g-4"><div class="col-md-6"><h3 class="h6 fw-bold">Finalidad académica</h3><p class="text-muted mb-0">KALZA permite demostrar un proceso de comercio electrónico de calzado. Las operaciones de prueba no representan cobros ni entregas comerciales reales.</p></div>
+        <div class="col-md-6"><h3 class="h6 fw-bold">Precios y disponibilidad</h3><p class="text-muted mb-0">Consulta el precio y las existencias de cada variante en el catálogo. La disponibilidad puede cambiar después de agregar productos al carrito.</p></div></div>
+    </section>
 </div>
-
-</body>
-</html>
+</body></html>
