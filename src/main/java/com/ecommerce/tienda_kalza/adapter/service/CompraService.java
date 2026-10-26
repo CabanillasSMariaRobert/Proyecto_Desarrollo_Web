@@ -42,6 +42,11 @@ public class CompraService {
 
     @Transactional
     public CompraEntity guardar(CompraEntity compra) {
+        // Validar que el cliente se encuentre activo antes de procesar una nueva compra
+        if (compra.getCliente() != null && !Boolean.TRUE.equals(compra.getCliente().getEstaActivo())) {
+            throw new ReglaNegocioException("El usuario se encuentra inactivo y no puede realizar nuevas compras (RN05).");
+        }
+
         if (compra.getTotalConDescuento() == null || compra.getTotalSinDescuento() == null) {
             throw new ReglaNegocioException("Los totales de la compra son obligatorios.");
         }

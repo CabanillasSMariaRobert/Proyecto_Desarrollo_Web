@@ -65,11 +65,16 @@
                         <td>
                             <span class="badge text-bg-light text-uppercase border" th:text="${usuario.rol}">COMUN</span>
                         </td>
+
+                        <!-- ESTADO (RN05: ACTIVO / INACTIVO) -->
                         <td>
-                            <span th:if="${!usuario.estaBaneado}" class="badge text-bg-success text-uppercase">Activo</span>
-                            <span th:if="${usuario.estaBaneado}" class="badge bg-danger text-white text-uppercase">Bloqueado</span>
+                            <span th:if="${usuario.estaActivo}" class="badge text-bg-success text-uppercase">Activo</span>
+                            <span th:unless="${usuario.estaActivo}" class="badge bg-secondary text-white text-uppercase">Inactivo</span>
                         </td>
+
+                        <!-- ACCIONES (SOLO EDITAR Y DESACTIVAR/ACTIVAR) -->
                         <td class="text-end">
+                            <!-- Botón Editar -->
                             <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Editar"
                                     data-bs-toggle="modal" data-bs-target="#editModal"
                                     th:data-id="${usuario.idUsuario}"
@@ -79,13 +84,17 @@
                                     th:data-rol="${usuario.rol}">
                                 <i class="bi bi-pencil"></i>
                             </button>
+
+                            <!-- Botón Desactivar / Activar (RN05) -->
                             <form th:action="@{/admin/usuarios/{id}/estado(id=${usuario.idUsuario})}" method="post" class="d-inline">
-                                <button th:if="${!usuario.estaBaneado}" type="submit" class="btn btn-sm btn-outline-secondary" title="Bloquear"
-                                        onclick="return confirm('¿Deseas bloquear a este usuario?');">
-                                    <i class="bi bi-ban"></i>
+                                <button th:if="${usuario.estaActivo}" type="submit" class="btn btn-sm btn-outline-warning"
+                                        title="Desactivar usuario (RN05)"
+                                        onclick="return confirm('¿Deseas desactivar a este usuario? Su historial de compras se conservará intacto.');">
+                                    <i class="bi bi-person-x"></i>
                                 </button>
-                                <button th:if="${usuario.estaBaneado}" type="submit" class="btn btn-sm btn-outline-primary" title="Desbloquear">
-                                    <i class="bi bi-check-circle"></i>
+                                <button th:unless="${usuario.estaActivo}" type="submit" class="btn btn-sm btn-outline-success"
+                                        title="Reactivar usuario">
+                                    <i class="bi bi-person-check"></i>
                                 </button>
                             </form>
                         </td>

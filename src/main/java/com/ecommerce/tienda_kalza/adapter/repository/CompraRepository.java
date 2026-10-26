@@ -16,6 +16,9 @@ import java.util.List;
 public interface CompraRepository extends JpaRepository<CompraEntity, Integer> {
     List<CompraEntity> findByEstado(String estado);
 
+    // Verifica si el usuario tiene compras registradas en el historial
+    boolean existsByCliente_IdUsuario(Integer idUsuario);
+
     // Lee el historial persistido antes de evaluar nuevas unidades, sin volcar cambios del formulario.
     @Query("select c.estado as estado, v.idVariante as idVariante, d.cantidad as cantidad "
             + "from CompraEntity c left join c.detalles d left join d.varianteZapato v where c.idCompra = :id")

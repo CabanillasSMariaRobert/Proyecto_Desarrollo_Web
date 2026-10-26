@@ -67,13 +67,12 @@ public class UsuarioAdminController {
         return LISTA;
     }
 
-    // TOGGLE ESTADO (BLOQUEAR / DESBLOQUEAR)
+    // RN05: ACTIVAR / DESACTIVAR (MANEJA LA REGLA DIRECTAMENTE)
     @PostMapping("/{id}/estado")
     public String cambiarEstado(@PathVariable Integer id, RedirectAttributes flash) {
         try {
-            boolean activo = service.cambiarEstado(id);
-            flash.addFlashAttribute("mensaje",
-                    activo ? "Usuario reactivado correctamente." : "Usuario bloqueado correctamente.");
+            String mensaje = service.cambiarEstado(id);
+            flash.addFlashAttribute("mensaje", mensaje);
         } catch (Exception e) {
             flash.addFlashAttribute("error", e.getMessage());
         }

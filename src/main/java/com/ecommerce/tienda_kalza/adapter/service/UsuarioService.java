@@ -3,7 +3,9 @@ package com.ecommerce.tienda_kalza.adapter.service;
 import com.ecommerce.tienda_kalza.adapter.entity.UsuarioEntity;
 import com.ecommerce.tienda_kalza.adapter.enums.RolUsuario;
 import com.ecommerce.tienda_kalza.adapter.enums.TipoDocumento;
+import com.ecommerce.tienda_kalza.adapter.model.RegistroForm;
 import com.ecommerce.tienda_kalza.adapter.model.Usuario;
+import com.ecommerce.tienda_kalza.adapter.repository.CompraRepository;
 import com.ecommerce.tienda_kalza.adapter.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -16,11 +18,57 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
+    private final CompraRepository compraRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // REGISTRO CLIENTES
+    // AUTENTICACIÓN / LOGIN
     @Transactional
-    public void registrar(com.ecommerce.tienda_kalza.adapter.model.RegistroForm form) {
+    public Usuario autenticar(String correo, String clave) {
+        String correoLimpio = limpiar(correo);
+        String claveLimpia = (clave != null) ? clave.trim() : "";
+
+        if (correoLimpio == null || claveLimpia.isEmpty()) {
+            throw new IllegalArgumentException("Debe ingresar su correo electrónico y contraseña.");
+        }
+
+        UsuarioEntity entity = repository.findByCorreoIgnoreCase(correoLimpio)
+                .orElseThrow(() -> new IllegalArgumentException("El correo o la contraseña son incorrectos."));
+
+        boolean coincide = false;
+        try {
+            coincide = passwordEncoder.matches(claveLimpia, entity.getClave());
+        } catch (Exception e) {
+            coincide = false;
+        }
+
+        if (!coincide && claveLimpia.equals(entity.getClave())) {
+            coincide = true;
+            entity.setClave(passwordEncoder.encode(claveLimpia));
+            repository.save(entity);
+        }
+
+        if (!coincide) {
+            throw new IllegalArgumentException("El correo o la contraseña son incorrectos.");
+        }
+
+        if (Boolean.TRUE.equals(entity.getEstaBaneado())) {
+            String razon = (entity.getRazonDeBaneo() != null && !entity.getRazonDeBaneo().isBlank())
+                    ? ": " + entity.getRazonDeBaneo()
+                    : ".";
+            throw new IllegalStateException("Tu cuenta ha sido bloqueada" + razon);
+        }
+
+        // RN05: Impide iniciar sesión si la cuenta está desactivada
+        if (!Boolean.TRUE.equals(entity.getEstaActivo())) {
+            throw new IllegalStateException("Tu cuenta se encuentra inactiva. Comunícate con soporte.");
+        }
+
+        return aModel(entity);
+    }
+
+    // REGISTRO DESDE LA VISTA PÚBLICA
+    @Transactional
+    public void registrar(RegistroForm form) {
         if (form == null) {
             throw new IllegalArgumentException("Los datos de registro son obligatorios.");
         }
@@ -54,7 +102,6 @@ public class UsuarioService {
             throw new IllegalArgumentException("Las contraseñas no coinciden. Por favor verifícalas.");
         }
 
-        // Separar nombres y apellidos para respetar la entidad JPA
         String nombres = nombreCompleto;
         String apellidos = "-";
         if (nombreCompleto.contains(" ")) {
@@ -78,55 +125,7 @@ public class UsuarioService {
         repository.save(entity);
     }
 
-    // LOGIN
-    @Transactional
-    public Usuario autenticar(String correo, String clave) {
-        String correoLimpio = limpiar(correo);
-        String claveLimpia = (clave != null) ? clave.trim() : "";
-
-        if (correoLimpio == null || claveLimpia.isEmpty()) {
-            throw new IllegalArgumentException("Debe ingresar su correo electrónico y contraseña.");
-        }
-
-        UsuarioEntity entity = repository.findByCorreoIgnoreCase(correoLimpio)
-                .orElseThrow(() -> new IllegalArgumentException("El correo o la contraseña son incorrectos."));
-
-        // Verificación con BCrypt
-        boolean coincide = false;
-        try {
-            coincide = passwordEncoder.matches(claveLimpia, entity.getClave());
-        } catch (Exception e) {
-            coincide = false;
-        }
-
-        // Respaldo por si quedó algún registro con contraseña sin hashear en la BD de pruebas
-        if (!coincide && claveLimpia.equals(entity.getClave())) {
-            coincide = true;
-            entity.setClave(passwordEncoder.encode(claveLimpia));
-            repository.save(entity);
-        }
-
-        if (!coincide) {
-            throw new IllegalArgumentException("El correo o la contraseña son incorrectos.");
-        }
-
-        // Validación de usuario bloqueado
-        if (Boolean.TRUE.equals(entity.getEstaBaneado())) {
-            String razon = (entity.getRazonDeBaneo() != null && !entity.getRazonDeBaneo().isBlank())
-                    ? ": " + entity.getRazonDeBaneo()
-                    : ".";
-            throw new IllegalStateException("Tu cuenta ha sido bloqueada" + razon);
-        }
-
-        // Validación de usuario inactivo
-        if (!Boolean.TRUE.equals(entity.getEstaActivo())) {
-            throw new IllegalStateException("Tu cuenta se encuentra inactiva. Comunícate con soporte.");
-        }
-
-        return aModel(entity);
-    }
-
-    // CREATE
+    // CREATE (ADMIN)
     @Transactional
     public void crear(Usuario model) {
         String correo = limpiar(model.getCorreo());
@@ -140,7 +139,6 @@ public class UsuarioService {
 
         UsuarioEntity entity = new UsuarioEntity();
 
-        // Manejo de nombre y apellido obligatorio
         String nombres = limpiar(model.getNombres());
         String apellidos = limpiar(model.getApellidos());
 
@@ -222,16 +220,40 @@ public class UsuarioService {
         repository.save(entity);
     }
 
-    // TOGGLE ESTADO (BLOQUEAR / DESBLOQUEAR)
+    // RN05: ELIMINACIÓN FÍSICA CON RECHAZO SI TIENE COMPRAS
     @Transactional
-    public boolean cambiarEstado(Integer id) {
+    public void eliminar(Integer id) {
         UsuarioEntity entity = buscar(id);
-        boolean estaBaneadoActual = Boolean.TRUE.equals(entity.getEstaBaneado());
 
-        entity.setEstaBaneado(!estaBaneadoActual);
+        // Validación de RN05: Si el usuario tiene compras registradas, se rechaza la eliminación física
+        if (compraRepository.existsByCliente_IdUsuario(id)) {
+            throw new ReglaNegocioException(
+                    "No se puede eliminar físicamente al usuario \"" + entity.getNombres() + " " + entity.getApellidos() +
+                            "\": tiene compras registradas. Debe desactivarse su cuenta para conservar su historial comercial (RN05)."
+            );
+        }
+
+        // Si no tiene compras, se permite la eliminación física
+        repository.delete(entity);
+    }
+
+    // RN05: DESACTIVACIÓN CON VALIDACIÓN DE HISTORIAL DE COMPRAS
+    @Transactional
+    public String cambiarEstado(Integer id) {
+        UsuarioEntity entity = buscar(id);
+        boolean nuevoEstado = !Boolean.TRUE.equals(entity.getEstaActivo());
+        entity.setEstaActivo(nuevoEstado);
         repository.save(entity);
-
-        return !Boolean.TRUE.equals(entity.getEstaBaneado());
+        // Si se acaba de desactivar (estaActivo = false)
+        if (!nuevoEstado) {
+            // Verificamos si tiene compras registradas (RN05)
+            boolean tieneCompras = compraRepository.existsByCliente_IdUsuario(id);
+            if (tieneCompras) {
+                return "Usuario desactivado. Su cuenta queda inactiva pero su historial de compras se conserva intacto conforme a la RN05.";
+            }
+            return "Usuario desactivado correctamente.";
+        }
+        return "Usuario reactivado correctamente.";
     }
 
     private UsuarioEntity buscar(Integer id) {
